@@ -7,8 +7,8 @@ export default defineConfig({
     setupFiles: ['./vitest.setup.ts'],
     include: ['src/**/*.{test,spec}.{ts,tsx}'],
     coverage: {
-      reports: ['lcov', 'text'],
-      exclude: ['node_modules/', 'dist/', 'vitest.config.ts', 'vitest.setup.ts'],
+      provider: 'v8',
+      reporter: ['lcov', 'text'],
     },
   },
 });
