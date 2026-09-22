@@ -1,58 +1,57 @@
+import { OpenAPI } from './generated/core/OpenAPI';
 import { AuthService } from '@ble-frontend/auth';
-import { AppError, parseBackendError } from '@ble-frontend/domain-types';
-import { v4 as uuidv4 } from 'uuid';
+
+let _uuidv4: (() => string) | null = null;
+
+async function getUuidv4(): Promise<string> {
+  if (_uuidv4) return _uuidv4();
+  const mod = await import('uuid');
+  _uuidv4 = mod.v4;
+  return mod.v4();
+}
 
 /**
- * Interceptor chain for the OpenAPI generated client.
- * - Injects Authorization: Bearer token
- * - Generates X-Idempotency-Key for mutating requests
- * - Appends X-Trace-Id for distributed tracing
- * - Normalizes backend ErrorResponse into typed AppError
+ * Configures the auto-generated OpenAPI client.
+ *
+ * The generated fetch client uses an Interceptors<T> pipeline:
+ * - request interceptors receive a RequestInit and can mutate headers
+ * - response interceptors receive a Response
+ *
+ * Call `initApiClient()` once at app bootstrap before making API calls.
  */
-export class ApiInterceptors {
-  private static generateTraceId(): string {
-    return uuidv4();
-  }
+export function initApiClient(baseURL: string = 'http://localhost:8080'): void {
+  OpenAPI.BASE = baseURL;
+  OpenAPI.WITH_CREDENTIALS = false;
+  OpenAPI.CREDENTIALS = 'same-origin';
 
-  private static generateIdempotencyKey(): string {
-    return uuidv4();
-  }
+  OpenAPI.interceptors.request.use(async (request) => {
+    const [token, traceId, idempotencyKey] = await Promise.all([
+      (async () => {
+        const t = AuthService.getToken();
+        return t && !AuthService.isTokenExpired() ? t : null;
+      })(),
+      getUuidv4(),
+      getUuidv4(),
+    ]);
 
-  /**
-   * Returns headers to attach to every request.
-   */
-  static getRequestHeaders(method: string): Record<string, string> {
-    const headers: Record<string, string> = {
-      'X-Trace-Id': this.generateTraceId(),
-    };
+    const headers = new Headers(request.headers as HeadersInit);
 
-    const token = AuthService.getToken();
-    if (token && !AuthService.isTokenExpired()) {
-      headers['Authorization'] = `Bearer ${token}`;
+    if (token) {
+      headers.set('Authorization', `Bearer ${token}`);
     }
 
     const mutatingMethods = ['POST', 'PUT', 'DELETE', 'PATCH'];
-    if (mutatingMethods.includes(method.toUpperCase())) {
-      headers['X-Idempotency-Key'] = this.generateIdempotencyKey();
+    if (mutatingMethods.includes((request.method || 'GET').toUpperCase())) {
+      headers.set('X-Idempotency-Key', idempotencyKey);
     }
 
-    return headers;
-  }
+    headers.set('X-Trace-Id', traceId);
 
-  /**
-   * Wraps a fetch response and throws a typed AppError on failure.
-   */
-  static async handleResponse(response: Response): Promise<Response> {
-    if (!response.ok) {
-      const data = await response.json().catch(() => ({}));
-      const error: any = {
-        response: { status: response.status, data },
-      };
-      throw parseBackendError(error);
-    }
-    return response;
-  }
+    return {
+      ...request,
+      headers,
+    };
+  });
 }
 
-export { parseBackendError } from '@ble-frontend/domain-types';
-export type { AppError } from '@ble-frontend/domain-types';
+export { OpenAPI };
