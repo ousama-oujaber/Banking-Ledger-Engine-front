@@ -21,6 +21,8 @@
     "reset": "nx reset"
   },
   "devDependencies": {
+    "@angular/animations": "19.2.25",
+    "@angular/build": "19.2.25",
     "@angular/cdk": "19",
     "@angular/cli": "19",
     "@angular/compiler": "19",

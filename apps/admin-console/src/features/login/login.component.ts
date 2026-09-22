@@ -1,10 +1,12 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 import { AuthService } from '@ble-frontend/auth';
 
 @Component({
   selector: 'ble-login',
   standalone: true,
+  imports: [FormsModule],
   template: `
     <div class="login-container">
       <form (ngSubmit)="onSubmit()" class="login-form">

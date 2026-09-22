@@ -4,6 +4,7 @@ import { RouterOutlet, Router } from '@angular/router';
 @Component({
   selector: 'ble-layout',
   standalone: true,
+  imports: [RouterOutlet],
   template: `
     <div class="admin-layout">
       <nav class="sidebar">

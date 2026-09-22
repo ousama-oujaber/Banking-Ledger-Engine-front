@@ -1,0 +1,54 @@
+{
+  "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+  "version": 1,
+  "newProjectRoot": "apps",
+  "projects": {
+    "admin-console": {
+      "projectType": "application",
+      "root": "apps/admin-console",
+      "sourceRoot": "apps/admin-console/src",
+      "prefix": "ble",
+      "architect": {
+        "build": {
+          "builder": "@angular/build:application",
+          "options": {
+            "outputPath": "dist/apps/admin-console",
+            "index": "apps/admin-console/index.html",
+            "browser": "apps/admin-console/src/main.ts",
+            "tsConfig": "apps/admin-console/tsconfig.json",
+            "assets": [],
+            "styles": []
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false
+            },
+            "development": {
+              "optimization": false,
+              "sourceMap": true
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "serve": {
+          "builder": "@angular/build:dev-server",
+          "configurations": {
+            "production": {
+              "buildTarget": "admin-console:build:production"
+            },
+            "development": {
+              "buildTarget": "admin-console:build:development"
+            }
+          },
+          "defaultConfiguration": "development",
+          "options": {
+            "port": 4200,
+            "proxyConfig": "apps/admin-console/proxy.conf.json"
+          }
+        }
+      }
+    }
+  }
+}
