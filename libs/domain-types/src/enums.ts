@@ -1,6 +1,7 @@
 /**
- * Domain status and type enumerations matching backend DDD aggregates.
+ * Domain status and type enumerations matching backend DDD aggregates and Spring Boot APIs.
  */
+
 export enum AccountStatus {
   ACTIVE = 'ACTIVE',
   FROZEN = 'FROZEN',
@@ -26,11 +27,27 @@ export enum TransactionType {
   FEE_CHARGED = 'FEE_CHARGED',
   ADJUSTMENT = 'ADJUSTMENT',
   REVERSAL = 'REVERSAL',
+  DEPOSIT_REVERSAL = 'DEPOSIT_REVERSAL',
+  WITHDRAWAL_REVERSAL = 'WITHDRAWAL_REVERSAL',
+  TRANSFER_REVERSAL = 'TRANSFER_REVERSAL',
+  HOLD_CAPTURE_REVERSAL = 'HOLD_CAPTURE_REVERSAL',
+  FX_TRANSFER_REVERSAL = 'FX_TRANSFER_REVERSAL',
+  INTEREST_CREDIT = 'INTEREST_CREDIT',
+  INTEREST_CREDIT_REVERSAL = 'INTEREST_CREDIT_REVERSAL',
+  INTEREST_DEBIT = 'INTEREST_DEBIT',
+  INTEREST_DEBIT_REVERSAL = 'INTEREST_DEBIT_REVERSAL',
 }
 
-export enum EntryType {
-  DEBIT = 'DEBIT',
-  CREDIT = 'CREDIT',
+export enum TransactionState {
+  INITIATED = 'INITIATED',
+  PENDING = 'PENDING',
+  AUTHORIZED = 'AUTHORIZED',
+  POSTED = 'POSTED',
+  SETTLED = 'SETTLED',
+  FAILED = 'FAILED',
+  CANCELLED = 'CANCELLED',
+  EXPIRED = 'EXPIRED',
+  REVERSED = 'REVERSED',
 }
 
 export enum TransactionStatus {
@@ -40,11 +57,45 @@ export enum TransactionStatus {
   REVERSED = 'REVERSED',
 }
 
+export enum EntryType {
+  DEBIT = 'DEBIT',
+  CREDIT = 'CREDIT',
+}
+
 export enum HoldStatus {
   PLACED = 'PLACED',
   CAPTURED = 'CAPTURED',
   RELEASED = 'RELEASED',
   EXPIRED = 'EXPIRED',
+}
+
+export enum SettlementBatchStatus {
+  PENDING = 'PENDING',
+  PROCESSING = 'PROCESSING',
+  SETTLED = 'SETTLED',
+  FAILED = 'FAILED',
+  CLOSED = 'CLOSED',
+}
+
+export enum ReconciliationStatus {
+  BALANCED = 'BALANCED',
+  DISCREPANCY_DETECTED = 'DISCREPANCY_DETECTED',
+  PENDING_REVIEW = 'PENDING_REVIEW',
+  RESOLVED = 'RESOLVED',
+}
+
+export enum ReconciliationCaseStatus {
+  OPEN = 'OPEN',
+  ASSIGNED = 'ASSIGNED',
+  ESCALATED = 'ESCALATED',
+  RESOLVED = 'RESOLVED',
+  CLOSED = 'CLOSED',
+}
+
+export enum FeeCalculationType {
+  FIXED = 'FIXED',
+  PERCENTAGE = 'PERCENTAGE',
+  TIERED = 'TIERED',
 }
 
 export enum UserRole {
@@ -53,4 +104,10 @@ export enum UserRole {
   AUDITOR = 'AUDITOR',
   ADMIN = 'ADMIN',
   SYSTEM = 'SYSTEM',
+}
+
+export enum NotificationChannel {
+  WEBHOOK = 'WEBHOOK',
+  EMAIL = 'EMAIL',
+  IN_APP = 'IN_APP',
 }
