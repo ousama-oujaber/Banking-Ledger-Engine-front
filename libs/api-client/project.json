@@ -12,7 +12,19 @@
     "lint": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "eslint libs/api-client/src/index.ts libs/api-client/src/client.ts libs/api-client/src/interceptors.ts"
+        "command": "eslint libs/api-client/src/index.ts libs/api-client/src/client.ts libs/api-client/src/interceptors.ts libs/api-client/src/client.spec.ts libs/api-client/src/interceptors.spec.ts"
+      }
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "vitest run --config libs/api-client/vitest.config.mjs"
+      }
+    },
+    "generate": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "ts-node tools/scripts/generate-api-client.ts"
       }
     }
   }

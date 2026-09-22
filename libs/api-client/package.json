@@ -1,5 +1,6 @@
 {
   "name": "@ble-frontend/api-client",
   "version": "0.0.0",
+  "type": "module",
   "description": "Auto-generated OpenAPI TypeScript client with idempotency and trace interceptors"
 }
