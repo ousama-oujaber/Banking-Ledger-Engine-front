@@ -1,5 +1,13 @@
 {
   "name": "auth",
   "rootPath": "libs/auth",
-  "tags": ["scope:shared", "type:library"]
+  "tags": ["scope:shared", "type:library"],
+  "targets": {
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsc -p libs/auth/tsconfig.json --noEmit"
+      }
+    }
+  }
 }

@@ -31,7 +31,10 @@
       "executor": "@nx/jest:jest"
     },
     "typecheck": {
-      "executor": "nx:typescript"
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsc -p apps/admin-console/tsconfig.json --noEmit"
+      }
     }
   }
 }

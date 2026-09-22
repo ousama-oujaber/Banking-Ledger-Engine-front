@@ -1,5 +1,13 @@
 {
   "name": "domain-types",
   "rootPath": "libs/domain-types",
-  "tags": ["scope:shared", "type:library"]
+  "tags": ["scope:shared", "type:library"],
+  "targets": {
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsc -p libs/domain-types/tsconfig.json --noEmit"
+      }
+    }
+  }
 }

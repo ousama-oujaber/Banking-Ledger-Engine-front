@@ -1,5 +1,13 @@
 {
   "name": "api-client",
   "rootPath": "libs/api-client",
-  "tags": ["scope:shared", "type:library"]
+  "tags": ["scope:shared", "type:library"],
+  "targets": {
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsc -p libs/api-client/tsconfig.json --noEmit"
+      }
+    }
+  }
 }
