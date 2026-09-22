@@ -5,33 +5,28 @@
   "tags": ["scope:cust", "type:app"],
   "targets": {
     "serve": {
-      "executor": "@nx/vite:dev",
+      "executor": "nx:run-commands",
       "options": {
-        "config": "apps/customer-portal/vite.config.ts"
+        "command": "vite apps/customer-portal"
       }
     },
     "build": {
-      "executor": "@nx/vite:build",
+      "executor": "nx:run-commands",
       "options": {
-        "config": "apps/customer-portal/vite.config.ts"
-      },
-      "configurations": {
-        "production": {
-          "configFile": "apps/customer-portal/vite.config.ts"
-        }
+        "command": "vite build apps/customer-portal"
       }
     },
-    "lint": {
-      "executor": "@nx/eslint:lint"
-    },
     "test": {
-      "executor": "@nx/vitest:test",
+      "executor": "nx:run-commands",
       "options": {
-        "config": "apps/customer-portal/vitest.config.ts"
+        "command": "vitest run --config apps/customer-portal/vitest.config.ts"
       }
     },
     "typecheck": {
-      "executor": "nx:typescript"
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsc -p apps/customer-portal/tsconfig.json --noEmit"
+      }
     }
   }
 }

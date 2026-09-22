@@ -8,11 +8,20 @@ dist
 dist-*
 build
 
-# Nx cache
+# Nx & Angular cache & data
+.angular/
 .nx/cache
+.nx/workspace-data
 .nx/workspace-cache
 .nx/project-graph
 .nx/daemon
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
 
 # IDE
 .idea
@@ -28,3 +37,6 @@ Thumbs.db
 .env
 .env.local
 .env.*.local
+
+# Other
+project-doc/

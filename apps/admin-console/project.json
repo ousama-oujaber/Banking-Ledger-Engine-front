@@ -5,23 +5,15 @@
   "tags": ["scope:admin", "type:app"],
   "targets": {
     "serve": {
-      "executor": "@nx/angular:module Federation",
+      "executor": "nx:run-commands",
       "options": {
-        "port": 4200,
-        "proxyConfig": "apps/admin-console/proxy.conf.json"
+        "command": "ng serve admin-console"
       }
     },
     "build": {
-      "executor": "@nx/angular:webpack-browser",
+      "executor": "nx:run-commands",
       "options": {
-        "browser": "apps/admin-console/index.html",
-        "outputPath": "dist/apps/admin-console"
-      },
-      "configurations": {
-        "production": {
-          "fileReplacements": [],
-          "optimization": true
-        }
+        "command": "ng build admin-console"
       }
     },
     "lint": {
@@ -31,7 +23,10 @@
       "executor": "@nx/jest:jest"
     },
     "typecheck": {
-      "executor": "nx:typescript"
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsc -p apps/admin-console/tsconfig.json --noEmit"
+      }
     }
   }
 }

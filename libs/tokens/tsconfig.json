@@ -3,6 +3,6 @@
   "compilerOptions": {
     "outDir": "../../dist/libs/tokens"
   },
-  "include": ["src/**/*.css"],
+  "include": ["src/**/*.css", "src/**/*.ts"],
   "exclude": ["node_modules", "tmp"]
 }

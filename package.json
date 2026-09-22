@@ -21,13 +21,20 @@
     "reset": "nx reset"
   },
   "devDependencies": {
+    "@angular/animations": "19.2.25",
+    "@angular/build": "19.2.25",
     "@angular/cdk": "19",
     "@angular/cli": "19",
     "@angular/compiler": "19",
     "@angular/core": "19",
     "@angular/platform-browser": "19",
+    "@hey-api/openapi-ts": "^0.50.0",
     "@testing-library/jest-dom": "^7.0.1",
     "@testing-library/react": "^16.3.3",
+    "@types/node": "^26.6.2",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@types/react-router-dom": "^5.3.3",
     "@vitejs/plugin-react": "^6.1.1",
     "@vitest/coverage-v8": "^5.0.1",
     "jsdom": "^30.1.1",
@@ -38,6 +45,7 @@
     "rxjs": "7.8",
     "ts-node": "^10.9.2",
     "typescript": "^5.6.3",
+    "vite": "^8.3.0",
     "vitest": "^5.0.1"
   },
   "engines": {
@@ -45,7 +53,9 @@
     "pnpm": ">=9.0.0"
   },
   "dependencies": {
-    "@hey-api/openapi-ts": "^0.99.0",
+    "@angular/common": "19",
+    "@angular/forms": "19",
+    "@angular/router": "19",
     "decimal.js": "^10.6.0",
     "react-router-dom": "^7.18.4",
     "uuid": "^14.0.2"
