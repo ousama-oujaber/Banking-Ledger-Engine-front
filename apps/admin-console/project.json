@@ -17,7 +17,10 @@
       }
     },
     "lint": {
-      "executor": "@nx/eslint:lint"
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "eslint apps/admin-console/src"
+      }
     },
     "test": {
       "executor": "@nx/jest:jest"

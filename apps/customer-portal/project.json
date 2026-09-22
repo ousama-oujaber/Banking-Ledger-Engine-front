@@ -27,6 +27,12 @@
       "options": {
         "command": "tsc -p apps/customer-portal/tsconfig.json --noEmit"
       }
+    },
+    "lint": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "eslint apps/customer-portal/src"
+      }
     }
   }
 }

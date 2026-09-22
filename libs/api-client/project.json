@@ -8,6 +8,12 @@
       "options": {
         "command": "tsc -p libs/api-client/tsconfig.json --noEmit"
       }
+    },
+    "lint": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "eslint libs/api-client/src/index.ts libs/api-client/src/client.ts libs/api-client/src/interceptors.ts"
+      }
     }
   }
 }

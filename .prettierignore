@@ -1,0 +1,11 @@
+node_modules/
+dist/
+dist-*/
+build/
+.nx/
+.angular/
+.pnpm/
+.pnpm-store/
+libs/api-client/src/generated/
+project-doc/
+pnpm-lock.yaml
