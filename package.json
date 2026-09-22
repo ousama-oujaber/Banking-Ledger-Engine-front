@@ -8,7 +8,7 @@
     "start": "nx serve",
     "build": "nx build",
     "serve": "nx run-many --target=serve --projects=customer-portal,admin-console",
-    "test": "nx test",
+    "test": "nx run-many --target=test --all",
     "test:ci": "nx run-many --target=test --all --coverage=true",
     "lint": "nx run-many --target=lint --all",
     "typecheck": "nx run-many --target=typecheck --all",

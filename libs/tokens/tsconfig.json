@@ -1,7 +1,23 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "outDir": "../../dist/libs/tokens"
+    "baseUrl": "../..",
+    "target": "ES2022",
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "outDir": "../../dist/libs/tokens",
+    "lib": ["ES2022", "DOM"],
+    "types": ["@types/node"],
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "paths": {
+      "@ble-frontend/domain-types": ["libs/domain-types/src/index.ts"],
+      "@ble-frontend/api-client": ["libs/api-client/src/index.ts"],
+      "@ble-frontend/auth": ["libs/auth/src/index.ts"],
+      "@ble-frontend/tokens": ["libs/tokens/src/index.ts"]
+    }
   },
   "include": ["src/**/*.css", "src/**/*.ts"],
   "exclude": ["node_modules", "tmp"]
