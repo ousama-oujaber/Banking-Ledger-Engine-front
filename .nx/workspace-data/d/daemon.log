@@ -1,0 +1,12 @@
+[NX v20.8.4 Daemon Server] - 2026-09-22T12:24:31.996Z - Started listening on: /tmp/9494689a1932f81fa605/d.sock
+[NX v20.8.4 Daemon Server] - 2026-09-22T12:24:31.997Z - [WATCHER]: Subscribed to changes within: /home/protocol/IdeaProjects/ble/ble-front (native)
+[NX v20.8.4 Daemon Server] - 2026-09-22T12:24:31.999Z - Established a connection. Number of open connections: 1
+[NX v20.8.4 Daemon Server] - 2026-09-22T12:24:32.000Z - Established a connection. Number of open connections: 2
+[NX v20.8.4 Daemon Server] - 2026-09-22T12:24:32.002Z - Closed a connection. Number of open connections: 1
+[NX v20.8.4 Daemon Server] - 2026-09-22T12:24:32.003Z - [REQUEST]: Responding to the client. Shutdown initiated
+[NX v20.8.4 Daemon Server] - 2026-09-22T12:24:32.003Z - Done responding to the client Shutdown initiated
+[NX v20.8.4 Daemon Server] - 2026-09-22T12:24:32.003Z - Handled FORCE_SHUTDOWN. Handling time: 0. Response time: 0.
+[NX v20.8.4 Daemon Server] - 2026-09-22T12:24:32.004Z - [WATCHER]: Stopping the watcher for /home/protocol/IdeaProjects/ble/ble-front (sources)
+[NX v20.8.4 Daemon Server] - 2026-09-22T12:24:32.004Z - Closed a connection. Number of open connections: 0
+[NX v20.8.4 Daemon Server] - 2026-09-22T12:24:32.004Z - [WATCHER]: Stopping the watcher for /home/protocol/IdeaProjects/ble/ble-front (outputs)
+[NX v20.8.4 Daemon Server] - 2026-09-22T12:24:32.004Z - Server stopped because: "Request to shutdown"

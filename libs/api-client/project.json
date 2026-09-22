@@ -1,0 +1,5 @@
+{
+  "name": "api-client",
+  "rootPath": "libs/api-client",
+  "tags": ["scope:shared", "type:library"]
+}

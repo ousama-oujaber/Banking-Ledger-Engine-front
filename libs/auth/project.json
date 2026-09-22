@@ -1,0 +1,5 @@
+{
+  "name": "auth",
+  "rootPath": "libs/auth",
+  "tags": ["scope:shared", "type:library"]
+}

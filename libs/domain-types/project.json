@@ -1,0 +1,5 @@
+{
+  "name": "domain-types",
+  "rootPath": "libs/domain-types",
+  "tags": ["scope:shared", "type:library"]
+}

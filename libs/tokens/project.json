@@ -1,0 +1,5 @@
+{
+  "name": "tokens",
+  "rootPath": "libs/tokens",
+  "tags": ["scope:shared", "type:ui"]
+}

@@ -1,0 +1,9 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "../../dist/apps/admin-console",
+    "types": ["vitest/globals", "@types/node"]
+  },
+  "include": ["src/**/*.ts", "src/**/*.html", "angular.json", "proxy.conf.json"],
+  "exclude": ["node_modules", "tmp"]
+}

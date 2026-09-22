@@ -1,0 +1,68 @@
+name: Frontend E2E
+
+on:
+  pull_request:
+    branches: [develop, main]
+    paths:
+      - 'banking-ledger-frontend/**'
+  push:
+    branches: [develop, main]
+    paths:
+      - 'banking-ledger-frontend/**'
+
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: banking-ledger-frontend
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: ble_user
+          POSTGRES_PASSWORD: ble_pass
+          POSTGRES_DB: ble_dev
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 9
+
+      - name: Setup pnpm cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pnpm
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+
+      - name: Install Dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build and Start Backend
+        run: |
+          docker build -t ble-api -f ../ble-api/Dockerfile ../ble-api
+          docker run -d -p 8080:8080 --network host ble-api
+
+      - name: Nx E2E — Playwright
+        uses: microsoft/playwright-github-action@v1
+        with:
+          version: 1.48
+        run: |
+          pnpm nx run-many --target=e2e --all

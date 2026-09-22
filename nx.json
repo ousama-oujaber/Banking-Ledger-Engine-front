@@ -1,0 +1,16 @@
+{
+  "$schema": "./node_modules/nx/schemas/nx-schema.json",
+  "installation": {
+    "version": "20.8.4"
+  },
+  "usesAzurePipelines": false,
+  "npmScope": "ble-frontend",
+  "namedInputs": {
+    "default": ["derivedDefault", "^production"],
+    "production": ["ci"]
+  },
+  "targetDefault": {
+    "parallel": "9",
+    "cache": true
+  }
+}

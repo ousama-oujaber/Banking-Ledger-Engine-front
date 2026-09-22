@@ -1,0 +1,30 @@
+# Dependencies
+node_modules
+.pnpm
+.pnpm-store
+
+# Build outputs
+dist
+dist-*
+build
+
+# Nx cache
+.nx/cache
+.nx/workspace-cache
+.nx/project-graph
+.nx/daemon
+
+# IDE
+.idea
+.vscode
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Env
+.env
+.env.local
+.env.*.local

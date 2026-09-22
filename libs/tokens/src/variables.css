@@ -1,0 +1,28 @@
+:root {
+  /* Brand / Semantic Color Slots */
+  --ble-color-primary: initial;
+  --ble-color-primary-hover: initial;
+  --ble-color-surface: initial;
+  --ble-color-background: initial;
+  --ble-color-text-primary: initial;
+  --ble-color-text-secondary: initial;
+
+  /* Status Semantics */
+  --ble-color-status-active: initial;
+  --ble-color-status-frozen: initial;
+  --ble-color-status-closed: initial;
+
+  /* Spacing Slots */
+  --ble-spacing-xs: 0.25rem;
+  --ble-spacing-sm: 0.5rem;
+  --ble-spacing-md: 1rem;
+  --ble-spacing-lg: 1.5rem;
+  --ble-spacing-xl: 2rem;
+
+  /* Typography Slots */
+  --ble-font-family: inherit;
+  --ble-font-size-base: 1rem;
+  --ble-font-size-sm: 0.875rem;
+  --ble-font-size-lg: 1.125rem;
+  --ble-font-size-xl: 1.25rem;
+}

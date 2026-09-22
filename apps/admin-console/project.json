@@ -1,0 +1,37 @@
+{
+  "name": "admin-console",
+  "rootPath": "apps/admin-console",
+  "sourceRoot": "apps/admin-console/src",
+  "tags": ["scope:admin", "type:app"],
+  "targets": {
+    "serve": {
+      "executor": "@nx/angular:module Federation",
+      "options": {
+        "port": 4200,
+        "proxyConfig": "apps/admin-console/proxy.conf.json"
+      }
+    },
+    "build": {
+      "executor": "@nx/angular:webpack-browser",
+      "options": {
+        "browser": "apps/admin-console/index.html",
+        "outputPath": "dist/apps/admin-console"
+      },
+      "configurations": {
+        "production": {
+          "fileReplacements": [],
+          "optimization": true
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "executor": "@nx/jest:jest"
+    },
+    "typecheck": {
+      "executor": "nx:typescript"
+    }
+  }
+}

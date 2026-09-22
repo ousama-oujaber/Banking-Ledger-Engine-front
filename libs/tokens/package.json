@@ -1,0 +1,5 @@
+{
+  "name": "@ble-frontend/tokens",
+  "version": "0.0.0",
+  "description": "Headless CSS variable definitions (semantic tokens, unopinionated)"
+}

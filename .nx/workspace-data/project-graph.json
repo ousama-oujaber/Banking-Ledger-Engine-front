@@ -1,0 +1,333 @@
+{
+  "nodes": {
+    "customer-portal": {
+      "name": "customer-portal",
+      "type": "lib",
+      "data": {
+        "root": "apps/customer-portal",
+        "name": "customer-portal",
+        "tags": [
+          "npm:private",
+          "scope:cust",
+          "type:app"
+        ],
+        "metadata": {
+          "targetGroups": {},
+          "js": {
+            "packageName": "customer-portal",
+            "isInPackageManagerWorkspaces": true
+          }
+        },
+        "targets": {
+          "serve": {
+            "executor": "@nx/vite:dev",
+            "options": {
+              "config": "apps/customer-portal/vite.config.ts"
+            },
+            "configurations": {},
+            "parallelism": true
+          },
+          "build": {
+            "executor": "@nx/vite:build",
+            "options": {
+              "config": "apps/customer-portal/vite.config.ts"
+            },
+            "configurations": {
+              "production": {
+                "configFile": "apps/customer-portal/vite.config.ts"
+              }
+            },
+            "parallelism": true
+          },
+          "lint": {
+            "executor": "@nx/eslint:lint",
+            "configurations": {},
+            "options": {},
+            "parallelism": true
+          },
+          "test": {
+            "executor": "@nx/vitest:test",
+            "options": {
+              "config": "apps/customer-portal/vitest.config.ts"
+            },
+            "configurations": {},
+            "parallelism": true
+          },
+          "typecheck": {
+            "executor": "nx:typescript",
+            "configurations": {},
+            "options": {},
+            "parallelism": true
+          }
+        },
+        "rootPath": "apps/customer-portal",
+        "sourceRoot": "apps/customer-portal/src",
+        "implicitDependencies": []
+      }
+    },
+    "admin-console": {
+      "name": "admin-console",
+      "type": "lib",
+      "data": {
+        "root": "apps/admin-console",
+        "name": "admin-console",
+        "tags": [
+          "npm:private",
+          "scope:admin",
+          "type:app"
+        ],
+        "metadata": {
+          "targetGroups": {
+            "NPM Scripts": [
+              "ng",
+              "start"
+            ]
+          },
+          "js": {
+            "packageName": "admin-console",
+            "isInPackageManagerWorkspaces": true
+          }
+        },
+        "targets": {
+          "ng": {
+            "executor": "nx:run-script",
+            "options": {
+              "script": "ng"
+            },
+            "metadata": {
+              "scriptContent": "ng",
+              "runCommand": "npm run ng"
+            },
+            "configurations": {},
+            "parallelism": true
+          },
+          "start": {
+            "executor": "nx:run-script",
+            "options": {
+              "script": "start"
+            },
+            "metadata": {
+              "scriptContent": "nx serve admin-console",
+              "runCommand": "npm run start"
+            },
+            "configurations": {},
+            "parallelism": true
+          },
+          "serve": {
+            "executor": "@nx/angular:module Federation",
+            "options": {
+              "port": 4200,
+              "proxyConfig": "apps/admin-console/proxy.conf.json"
+            },
+            "configurations": {},
+            "parallelism": true
+          },
+          "build": {
+            "executor": "@nx/angular:webpack-browser",
+            "options": {
+              "browser": "apps/admin-console/index.html",
+              "outputPath": "dist/apps/admin-console"
+            },
+            "configurations": {
+              "production": {
+                "fileReplacements": [],
+                "optimization": true
+              }
+            },
+            "parallelism": true
+          },
+          "lint": {
+            "executor": "@nx/eslint:lint",
+            "configurations": {},
+            "options": {},
+            "parallelism": true
+          },
+          "test": {
+            "executor": "@nx/jest:jest",
+            "configurations": {},
+            "options": {},
+            "parallelism": true
+          },
+          "typecheck": {
+            "executor": "nx:typescript",
+            "configurations": {},
+            "options": {},
+            "parallelism": true
+          }
+        },
+        "rootPath": "apps/admin-console",
+        "sourceRoot": "apps/admin-console/src",
+        "implicitDependencies": []
+      }
+    },
+    "domain-types": {
+      "name": "domain-types",
+      "type": "lib",
+      "data": {
+        "root": "libs/domain-types",
+        "name": "domain-types",
+        "tags": [
+          "npm:public",
+          "scope:shared",
+          "type:library"
+        ],
+        "metadata": {
+          "targetGroups": {},
+          "description": "Pure TypeScript financial models (Money, Enums, ErrorResponse)",
+          "js": {
+            "packageName": "@ble-frontend/domain-types",
+            "isInPackageManagerWorkspaces": true
+          }
+        },
+        "targets": {
+          "nx-release-publish": {
+            "executor": "@nx/js:release-publish",
+            "dependsOn": [
+              "^nx-release-publish"
+            ],
+            "options": {},
+            "configurations": {},
+            "parallelism": true
+          }
+        },
+        "rootPath": "libs/domain-types",
+        "implicitDependencies": []
+      }
+    },
+    "api-client": {
+      "name": "api-client",
+      "type": "lib",
+      "data": {
+        "root": "libs/api-client",
+        "name": "api-client",
+        "tags": [
+          "npm:public",
+          "scope:shared",
+          "type:library"
+        ],
+        "metadata": {
+          "targetGroups": {},
+          "description": "Auto-generated OpenAPI TypeScript client with idempotency and trace interceptors",
+          "js": {
+            "packageName": "@ble-frontend/api-client",
+            "isInPackageManagerWorkspaces": true
+          }
+        },
+        "targets": {
+          "nx-release-publish": {
+            "executor": "@nx/js:release-publish",
+            "dependsOn": [
+              "^nx-release-publish"
+            ],
+            "options": {},
+            "configurations": {},
+            "parallelism": true
+          }
+        },
+        "rootPath": "libs/api-client",
+        "implicitDependencies": []
+      }
+    },
+    "tools/scripts": {
+      "name": "tools/scripts",
+      "type": "lib",
+      "data": {
+        "root": "tools/scripts",
+        "name": "tools/scripts",
+        "tags": [
+          "npm:private"
+        ],
+        "metadata": {
+          "targetGroups": {},
+          "js": {
+            "packageName": "tools/scripts",
+            "isInPackageManagerWorkspaces": true
+          }
+        },
+        "targets": {},
+        "implicitDependencies": []
+      }
+    },
+    "tokens": {
+      "name": "tokens",
+      "type": "lib",
+      "data": {
+        "root": "libs/tokens",
+        "name": "tokens",
+        "tags": [
+          "npm:public",
+          "scope:shared",
+          "type:ui"
+        ],
+        "metadata": {
+          "targetGroups": {},
+          "description": "Headless CSS variable definitions (semantic tokens, unopinionated)",
+          "js": {
+            "packageName": "@ble-frontend/tokens",
+            "isInPackageManagerWorkspaces": true
+          }
+        },
+        "targets": {
+          "nx-release-publish": {
+            "executor": "@nx/js:release-publish",
+            "dependsOn": [
+              "^nx-release-publish"
+            ],
+            "options": {},
+            "configurations": {},
+            "parallelism": true
+          }
+        },
+        "rootPath": "libs/tokens",
+        "implicitDependencies": []
+      }
+    },
+    "auth": {
+      "name": "auth",
+      "type": "lib",
+      "data": {
+        "root": "libs/auth",
+        "name": "auth",
+        "tags": [
+          "npm:public",
+          "scope:shared",
+          "type:library"
+        ],
+        "metadata": {
+          "targetGroups": {},
+          "description": "Shared authentication, JWT decoding, session storage, and RBAC guards",
+          "js": {
+            "packageName": "@ble-frontend/auth",
+            "isInPackageManagerWorkspaces": true
+          }
+        },
+        "targets": {
+          "nx-release-publish": {
+            "executor": "@nx/js:release-publish",
+            "dependsOn": [
+              "^nx-release-publish"
+            ],
+            "options": {},
+            "configurations": {},
+            "parallelism": true
+          }
+        },
+        "rootPath": "libs/auth",
+        "implicitDependencies": []
+      }
+    }
+  },
+  "externalNodes": {},
+  "dependencies": {
+    "customer-portal": [],
+    "admin-console": [],
+    "domain-types": [],
+    "api-client": [],
+    "tools/scripts": [],
+    "tokens": [],
+    "auth": []
+  },
+  "version": "6.0",
+  "errors": [],
+  "computedAt": 1790079872236
+}

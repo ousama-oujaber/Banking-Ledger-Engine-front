@@ -1,0 +1,8 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "../../dist/libs/tokens"
+  },
+  "include": ["src/**/*.css"],
+  "exclude": ["node_modules", "tmp"]
+}

@@ -1,0 +1,53 @@
+{
+  "name": "banking-ledger-frontend",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Banking Ledger Engine Frontend Monorepo",
+  "scripts": {
+    "nx": "nx",
+    "start": "nx serve",
+    "build": "nx build",
+    "serve": "nx run-many --target=serve --projects=customer-portal,admin-console",
+    "test": "nx test",
+    "test:ci": "nx run-many --target=test --all --coverage=true",
+    "lint": "nx run-many --target=lint --all",
+    "typecheck": "nx run-many --target=typecheck --all",
+    "format": "nx format:write",
+    "affected:test": "nx affected --target=test --base=origin/develop --head=HEAD",
+    "affected:lint": "nx affected --target=lint --base=origin/develop --head=HEAD",
+    "affected:build": "nx affected --target=build --base=origin/develop --head=HEAD --configuration=production",
+    "api:generate": "ts-node tools/scripts/generate-api-client.ts",
+    "graph": "nx graph",
+    "reset": "nx reset"
+  },
+  "devDependencies": {
+    "@angular/cdk": "19",
+    "@angular/cli": "19",
+    "@angular/compiler": "19",
+    "@angular/core": "19",
+    "@angular/platform-browser": "19",
+    "@testing-library/jest-dom": "^7.0.1",
+    "@testing-library/react": "^16.3.3",
+    "@vitejs/plugin-react": "^6.1.1",
+    "@vitest/coverage-v8": "^5.0.1",
+    "jsdom": "^30.1.1",
+    "nx": "^20.8.4",
+    "pnpm": "9.15.9",
+    "react": "19",
+    "react-dom": "19",
+    "rxjs": "7.8",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.6.3",
+    "vitest": "^5.0.1"
+  },
+  "engines": {
+    "node": ">=22.0.0",
+    "pnpm": ">=9.0.0"
+  },
+  "dependencies": {
+    "@hey-api/openapi-ts": "^0.99.0",
+    "decimal.js": "^10.6.0",
+    "react-router-dom": "^7.18.4",
+    "uuid": "^14.0.2"
+  }
+}
