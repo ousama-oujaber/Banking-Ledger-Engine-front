@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { renderHook, waitFor } from '@testing-library/react';
+import { renderHook, waitFor, act } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactNode } from 'react';
 import * as apiClientModule from '@ble-frontend/api-client';
@@ -100,5 +100,67 @@ describe('useTransactions hook', () => {
 
     expect(result.current.isError).toBe(true);
     expect(result.current.transactions).toEqual([]);
+  });
+
+  it('handles loadMore pagination and hasMore status', async () => {
+    const mockList: apiClientModule.TransactionResponse[] = Array.from({ length: 15 }, (_, i) => ({
+      id: `tx-${i + 1}`,
+      type: 'TRANSFER',
+      amount: { amount: 10 * (i + 1), currency: 'EUR' },
+      reference: `REF-${i + 1}`,
+      description: `Tx ${i + 1}`,
+      state: 'SETTLED',
+      createdAt: '2026-09-22T00:00:00Z',
+    }));
+
+    vi.spyOn(apiClientModule.apiClient, 'get').mockResolvedValue(mockList);
+
+    const { result } = renderHook(() => useTransactions({ pageSize: 10 }), {
+      wrapper: createWrapper(),
+    });
+
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+    await waitFor(() => expect(result.current.isFetching).toBe(false));
+
+    expect(result.current.page).toBe(1);
+    expect(result.current.hasMore).toBe(true);
+
+    act(() => {
+      result.current.loadMore();
+    });
+    expect(result.current.page).toBe(2);
+
+    act(() => {
+      result.current.resetPagination();
+    });
+    expect(result.current.page).toBe(1);
+  });
+
+  it('uses fallback endpoint when account-specific endpoint rejects', async () => {
+    const mockFallbackList: apiClientModule.TransactionResponse[] = [
+      {
+        id: 'tx-fallback',
+        type: 'TRANSFER',
+        amount: { amount: 75, currency: 'EUR' },
+        reference: 'REF-FB',
+        description: 'Fallback tx',
+        state: 'SETTLED',
+        createdAt: '2026-09-22T00:00:00Z',
+      },
+    ];
+
+    vi.spyOn(apiClientModule, 'getAccountTransactions').mockRejectedValue(
+      new Error('Primary failed'),
+    );
+    vi.spyOn(apiClientModule.apiClient, 'get').mockResolvedValue(mockFallbackList);
+
+    const { result } = renderHook(() => useTransactions({ accountId: 'acc-fallback-1' }), {
+      wrapper: createWrapper(),
+    });
+
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+
+    expect(result.current.transactions).toHaveLength(1);
+    expect(result.current.transactions[0].id).toBe('tx-fallback');
   });
 });

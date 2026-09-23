@@ -88,4 +88,37 @@ describe('PointInTimeDialog Component', () => {
     expect(screen.getByTestId('pit-error')).toBeInTheDocument();
     expect(screen.getByText(/Account did not exist at specified date/)).toBeInTheDocument();
   });
+
+  it('renders calculated historical balance when query succeeds', async () => {
+    const user = userEvent.setup();
+
+    vi.spyOn(pitHookModule, 'usePointInTimeBalance').mockReturnValue({
+      balance: Money.from('4250.75', Currency.EUR),
+      asOf: '2026-09-20T10:00:00.000Z',
+      isLoading: false,
+      isError: false,
+      error: null,
+      refetch: vi.fn(),
+    });
+
+    render(<PointInTimeDialog account={mockAccount} isOpen={true} onClose={vi.fn()} />);
+
+    const submitBtn = screen.getByTestId('pit-submit-btn');
+    await user.click(submitBtn);
+
+    expect(screen.getByTestId('pit-result')).toBeInTheDocument();
+    expect(screen.getByTestId('pit-amount')).toHaveTextContent('€4,250.75');
+  });
+
+  it('calls onClose when backdrop is clicked', async () => {
+    const user = userEvent.setup();
+    const onClose = vi.fn();
+
+    render(<PointInTimeDialog account={mockAccount} isOpen={true} onClose={onClose} />);
+
+    const backdrop = screen.getByRole('presentation');
+    await user.click(backdrop);
+
+    expect(onClose).toHaveBeenCalledTimes(1);
+  });
 });

@@ -84,6 +84,7 @@ export function TransactionItem({
           className="tx-item__detail-btn"
           onClick={() => onViewDetails(transaction)}
           data-testid="tx-item-detail-btn"
+          data-tx-id={transaction.id}
         >
           View Breakdown
         </button>

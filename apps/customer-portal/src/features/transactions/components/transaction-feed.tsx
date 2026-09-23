@@ -22,10 +22,30 @@ export function TransactionFeed({ initialAccountId, accounts = [] }: Transaction
   const [selectedState, setSelectedState] = useState<string | undefined>(undefined);
   const [inspectingTx, setInspectingTx] = useState<Transaction | null>(null);
 
-  const { transactions, isLoading, isError, error, refetch, isFetching } = useTransactions({
+  const {
+    transactions,
+    isLoading,
+    isError,
+    error,
+    refetch,
+    isFetching,
+    hasMore,
+    loadMore,
+    resetPagination,
+  } = useTransactions({
     accountId: selectedAccountId || undefined,
     state: selectedState || undefined,
   });
+
+  const handleAccountChange = (newAccId?: string) => {
+    setSelectedAccountId(newAccId);
+    resetPagination();
+  };
+
+  const handleStateChange = (newState?: string) => {
+    setSelectedState(newState);
+    resetPagination();
+  };
 
   return (
     <section className="tx-feed" aria-label="Transaction Activity Feed">
@@ -48,7 +68,7 @@ export function TransactionFeed({ initialAccountId, accounts = [] }: Transaction
                 id="tx-account-filter"
                 className="tx-feed__select"
                 value={selectedAccountId || ''}
-                onChange={(e) => setSelectedAccountId(e.target.value || undefined)}
+                onChange={(e) => handleAccountChange(e.target.value || undefined)}
                 data-testid="tx-account-filter"
               >
                 <option value="">All Accounts</option>
@@ -69,7 +89,7 @@ export function TransactionFeed({ initialAccountId, accounts = [] }: Transaction
               id="tx-state-filter"
               className="tx-feed__select"
               value={selectedState || ''}
-              onChange={(e) => setSelectedState(e.target.value || undefined)}
+              onChange={(e) => handleStateChange(e.target.value || undefined)}
               data-testid="tx-state-filter"
             >
               <option value="">All Statuses</option>
@@ -114,16 +134,32 @@ export function TransactionFeed({ initialAccountId, accounts = [] }: Transaction
         )}
 
         {!isLoading && !isError && transactions.length > 0 && (
-          <div className="tx-feed__list" data-testid="tx-list">
-            {transactions.map((tx) => (
-              <TransactionItem
-                key={tx.id}
-                transaction={tx}
-                activeAccountId={selectedAccountId}
-                onViewDetails={(selected) => setInspectingTx(selected)}
-              />
-            ))}
-          </div>
+          <>
+            <div className="tx-feed__list" data-testid="tx-list">
+              {transactions.map((tx) => (
+                <TransactionItem
+                  key={tx.id}
+                  transaction={tx}
+                  activeAccountId={selectedAccountId}
+                  onViewDetails={(selected) => setInspectingTx(selected)}
+                />
+              ))}
+            </div>
+
+            {hasMore && (
+              <div className="tx-feed__pagination" data-testid="tx-pagination">
+                <button
+                  type="button"
+                  className="tx-feed__load-more-btn"
+                  onClick={loadMore}
+                  disabled={isFetching}
+                  data-testid="tx-load-more-btn"
+                >
+                  {isFetching ? 'Loading more transactions...' : 'Load More Transactions'}
+                </button>
+              </div>
+            )}
+          </>
         )}
       </div>
 

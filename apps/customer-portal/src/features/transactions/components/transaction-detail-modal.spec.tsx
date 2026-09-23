@@ -80,4 +80,67 @@ describe('TransactionDetailModal Component', () => {
     await user.click(screen.getByTestId('tx-modal-close-btn'));
     expect(onClose).toHaveBeenCalledTimes(1);
   });
+
+  it('displays atomic entry balanced badge when debits equal credits', () => {
+    render(<TransactionDetailModal transaction={mockTx} isOpen={true} onClose={vi.fn()} />);
+
+    expect(screen.getByTestId('tx-modal-balance-check')).toBeInTheDocument();
+    expect(screen.getByTestId('tx-balanced-badge')).toHaveTextContent(
+      '✓ Atomic Entry Balanced: Debits equal Credits (Net Zero)',
+    );
+  });
+
+  it('displays warning badge when postings do not balance', () => {
+    const unbalancedTx: Transaction = {
+      ...mockTx,
+      entries: [
+        {
+          id: 'entry-1',
+          accountId: 'acc-source',
+          type: EntryType.DEBIT,
+          amount: Money.from('100.00', Currency.EUR),
+        },
+        {
+          id: 'entry-2',
+          accountId: 'acc-dest',
+          type: EntryType.CREDIT,
+          amount: Money.from('80.00', Currency.EUR),
+        },
+      ],
+    };
+
+    render(<TransactionDetailModal transaction={unbalancedTx} isOpen={true} onClose={vi.fn()} />);
+
+    expect(screen.getByTestId('tx-unbalanced-badge')).toHaveTextContent(
+      '⚠ Warning: Ledger postings do not sum to net zero',
+    );
+  });
+
+  it('renders fallback message when transaction has no entries', () => {
+    const noEntriesTx: Transaction = {
+      ...mockTx,
+      entries: [],
+    };
+
+    render(<TransactionDetailModal transaction={noEntriesTx} isOpen={true} onClose={vi.fn()} />);
+
+    expect(screen.getByTestId('tx-modal-no-entries')).toBeInTheDocument();
+  });
+
+  it('calls onClose when backdrop or footer dismiss button is clicked', async () => {
+    const user = userEvent.setup();
+    const onClose = vi.fn();
+
+    render(<TransactionDetailModal transaction={mockTx} isOpen={true} onClose={onClose} />);
+
+    // Click footer dismiss button
+    const dismissBtn = screen.getByText('Close');
+    await user.click(dismissBtn);
+    expect(onClose).toHaveBeenCalledTimes(1);
+
+    // Click backdrop
+    const backdrop = screen.getByRole('presentation');
+    await user.click(backdrop);
+    expect(onClose).toHaveBeenCalledTimes(2);
+  });
 });
