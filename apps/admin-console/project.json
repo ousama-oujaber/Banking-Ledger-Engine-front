@@ -25,7 +25,7 @@
     "test": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "echo 'No tests yet for admin-console (scaffolded in S1-T7)'"
+        "command": "vitest run --config apps/admin-console/vitest.config.ts"
       }
     },
     "typecheck": {
