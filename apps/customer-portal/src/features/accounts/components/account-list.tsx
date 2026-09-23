@@ -1,7 +1,8 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { Money, Currency } from '@ble-frontend/domain-types';
 import { useAccounts } from '../hooks/use-accounts';
 import { AccountCard } from './account-card';
+import { PointInTimeDialog } from './point-in-time-dialog';
 import type { Account } from '../types';
 
 export interface AccountListProps {
@@ -38,8 +39,17 @@ export function AccountList({
   onBalanceAtClick,
 }: AccountListProps) {
   const { accounts, isLoading, isError, error, refetch, isFetching } = useAccounts(customerId);
+  const [inspectingAccount, setInspectingAccount] = useState<Account | null>(null);
 
   const currencyTotals = useMemo(() => computeCurrencyTotals(accounts), [accounts]);
+
+  const handleBalanceAt = (acc: Account) => {
+    if (onBalanceAtClick) {
+      onBalanceAtClick(acc);
+    } else {
+      setInspectingAccount(acc);
+    }
+  };
 
   if (isLoading) {
     return (
@@ -102,10 +112,19 @@ export function AccountList({
             account={acc}
             onTransferClick={onTransferClick}
             onStatementClick={onStatementClick}
-            onBalanceAtClick={onBalanceAtClick}
+            onBalanceAtClick={handleBalanceAt}
           />
         ))}
       </div>
+
+      {/* Historical Point-in-Time Balance Dialog */}
+      {inspectingAccount && (
+        <PointInTimeDialog
+          account={inspectingAccount}
+          isOpen={Boolean(inspectingAccount)}
+          onClose={() => setInspectingAccount(null)}
+        />
+      )}
     </section>
   );
 }

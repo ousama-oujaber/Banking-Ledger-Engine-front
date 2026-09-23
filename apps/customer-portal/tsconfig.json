@@ -20,6 +20,12 @@
       "@ble-frontend/tokens": ["libs/tokens/src/index.ts"]
     }
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx", "vite.config.ts", "vitest.config.ts", "vitest.setup.ts"],
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "vite.config.ts",
+    "vitest.config.ts",
+    "vitest.setup.ts"
+  ],
   "exclude": ["node_modules", "tmp"]
 }
