@@ -1,8 +1,16 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, act, waitFor } from '@testing-library/react';
+import { render, screen, act, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import { AuthService, MemoryStorage } from '@ble-frontend/auth';
-import { AuthProvider, useAuth, BruteForceError, InvalidCredentialsError } from './providers';
+import {
+  AuthProvider,
+  AppProviders,
+  useAuth,
+  BruteForceError,
+  InvalidCredentialsError,
+  createQueryClient,
+} from './providers';
 
 function createMockToken(payload: Record<string, unknown>): string {
   const header = btoa(JSON.stringify({ alg: 'HS256', typ: 'JWT' }));
@@ -10,7 +18,7 @@ function createMockToken(payload: Record<string, unknown>): string {
   return `${header}.${payloadStr}.fake_sig`;
 }
 
-// Helper component to inspect context values
+// Helper component to inspect auth context values
 function AuthConsumer({ onRender }: { onRender: (ctx: ReturnType<typeof useAuth>) => void }) {
   const ctx = useAuth();
   onRender(ctx);
@@ -23,7 +31,18 @@ function AuthConsumer({ onRender }: { onRender: (ctx: ReturnType<typeof useAuth>
   );
 }
 
-describe('AuthProvider', () => {
+// Helper component executing a query inside AppProviders
+function QueryConsumer() {
+  const { data, isLoading } = useQuery({
+    queryKey: ['test-balance'],
+    queryFn: async () => ({ balance: '1500.00 USD' }),
+  });
+
+  if (isLoading) return <div>Loading query...</div>;
+  return <div data-testid="query-result">{data?.balance}</div>;
+}
+
+describe('AuthProvider & AppProviders (TanStack Query v5)', () => {
   beforeEach(() => {
     AuthService.setStorageAdapter(new MemoryStorage());
     AuthService.clear();
@@ -235,5 +254,53 @@ describe('AuthProvider', () => {
     expect(captured?.isAuthenticated).toBe(false);
     expect(captured?.user).toBeNull();
     expect(AuthService.getToken()).toBeNull();
+  });
+
+  it('should render children within AppProviders and execute queries', async () => {
+    const testQueryClient = createQueryClient();
+
+    render(
+      <MemoryRouter>
+        <AppProviders queryClient={testQueryClient}>
+          <QueryConsumer />
+        </AppProviders>
+      </MemoryRouter>,
+    );
+
+    await waitFor(() => {
+      expect(screen.getByTestId('query-result').textContent).toBe('1500.00 USD');
+    });
+  });
+
+  it('should purge queryClient cache on logout to prevent data leaks', async () => {
+    const testQueryClient = createQueryClient();
+    testQueryClient.setQueryData(['sensitive-account-data'], {
+      accountNumber: 'ACC-12345',
+      balance: 99999,
+    });
+
+    let captured: ReturnType<typeof useAuth> | undefined;
+
+    render(
+      <MemoryRouter>
+        <AppProviders queryClient={testQueryClient}>
+          <AuthConsumer
+            onRender={(ctx) => {
+              captured = ctx;
+            }}
+          />
+        </AppProviders>
+      </MemoryRouter>,
+    );
+
+    // Verify data exists prior to logout
+    expect(testQueryClient.getQueryData(['sensitive-account-data'])).toBeDefined();
+
+    act(() => {
+      captured!.logout();
+    });
+
+    // Query cache must be completely cleared
+    expect(testQueryClient.getQueryData(['sensitive-account-data'])).toBeUndefined();
   });
 });

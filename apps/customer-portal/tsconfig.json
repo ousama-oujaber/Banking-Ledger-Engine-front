@@ -6,7 +6,7 @@
     "module": "esnext",
     "moduleResolution": "bundler",
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
-    "types": ["vitest/globals", "@types/node"],
+    "types": ["vitest/globals", "@types/node", "@testing-library/jest-dom"],
     "outDir": "../../dist/apps/customer-portal",
     "strict": true,
     "esModuleInterop": true,
@@ -20,6 +20,12 @@
       "@ble-frontend/tokens": ["libs/tokens/src/index.ts"]
     }
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx", "vite.config.ts", "vitest.config.ts"],
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "vite.config.ts",
+    "vitest.config.ts",
+    "vitest.setup.ts"
+  ],
   "exclude": ["node_modules", "tmp"]
 }

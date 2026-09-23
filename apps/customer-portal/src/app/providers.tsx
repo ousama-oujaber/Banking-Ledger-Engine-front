@@ -1,6 +1,11 @@
 import { createContext, useContext, useEffect, useState, useCallback, ReactNode } from 'react';
 import { AuthService, AuthUser } from '@ble-frontend/auth';
 import { useNavigate } from 'react-router-dom';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { queryClient as defaultQueryClient } from './query-client';
+
+export * from './query-client';
+export * from './query-keys';
 
 // ── Typed Login Errors ──────────────────────────────────────────────────────
 
@@ -48,7 +53,13 @@ export const useAuth = (): AuthContextType => {
 
 // ── Auth Provider ───────────────────────────────────────────────────────────
 
-export function AuthProvider({ children }: { children: ReactNode }) {
+export interface AuthProviderProps {
+  children: ReactNode;
+  /** Optional custom QueryClient for testing or isolation */
+  queryClient?: QueryClient;
+}
+
+export function AuthProvider({ children, queryClient = defaultQueryClient }: AuthProviderProps) {
   const navigate = useNavigate();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -131,14 +142,33 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = useCallback(() => {
     AuthService.clear();
+    // Security: purge all cached queries so financial data never leaks between sessions
+    queryClient.cancelQueries();
+    queryClient.clear();
     setIsAuthenticated(false);
     setUser(null);
     navigate('/login');
-  }, [navigate]);
+  }, [navigate, queryClient]);
 
   return (
     <AuthContext.Provider value={{ isAuthenticated, isLoading, user, login, logout }}>
       {children}
     </AuthContext.Provider>
+  );
+}
+
+// ── App Providers (Combines QueryClientProvider & AuthProvider) ──────────────
+
+export interface AppProvidersProps {
+  children: ReactNode;
+  /** Optional custom QueryClient for isolated tests */
+  queryClient?: QueryClient;
+}
+
+export function AppProviders({ children, queryClient = defaultQueryClient }: AppProvidersProps) {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider queryClient={queryClient}>{children}</AuthProvider>
+    </QueryClientProvider>
   );
 }
