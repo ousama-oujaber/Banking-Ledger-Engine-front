@@ -1,4 +1,5 @@
-import { useId } from 'react';
+import { useId, useMemo } from 'react';
+import { Money } from '@ble-frontend/domain-types';
 import { TransactionStatusBadge } from './transaction-status-badge';
 import type { Transaction } from '../types';
 
@@ -17,6 +18,29 @@ export function TransactionDetailModal({
   onClose,
 }: TransactionDetailModalProps) {
   const titleId = useId();
+
+  const balanceCheck = useMemo(() => {
+    if (!transaction || transaction.entries.length === 0) {
+      return null;
+    }
+    const curr = (transaction.currency || transaction.amount.currency).toString();
+    let debits = Money.zero(curr);
+    let credits = Money.zero(curr);
+
+    for (const entry of transaction.entries) {
+      if (entry.type === 'DEBIT') {
+        debits = debits.add(entry.amount);
+      } else {
+        credits = credits.add(entry.amount);
+      }
+    }
+
+    return {
+      totalDebits: debits,
+      totalCredits: credits,
+      isBalanced: debits.equals(credits),
+    };
+  }, [transaction]);
 
   if (!isOpen || !transaction) return null;
 
@@ -162,6 +186,34 @@ export function TransactionDetailModal({
                   ))}
                 </tbody>
               </table>
+            )}
+
+            {balanceCheck && (
+              <div
+                className={`transaction-detail-modal__balance-check ${
+                  balanceCheck.isBalanced ? 'tx-balance--valid' : 'tx-balance--invalid'
+                }`}
+                data-testid="tx-modal-balance-check"
+              >
+                <div className="tx-balance__totals">
+                  <span>
+                    Total Debits: <strong>{balanceCheck.totalDebits.format()}</strong>
+                  </span>
+                  {' | '}
+                  <span>
+                    Total Credits: <strong>{balanceCheck.totalCredits.format()}</strong>
+                  </span>
+                </div>
+                {balanceCheck.isBalanced ? (
+                  <span className="tx-balance__status-valid" data-testid="tx-balanced-badge">
+                    ✓ Atomic Entry Balanced: Debits equal Credits (Net Zero)
+                  </span>
+                ) : (
+                  <span className="tx-balance__status-invalid" data-testid="tx-unbalanced-badge">
+                    ⚠ Warning: Ledger postings do not sum to net zero
+                  </span>
+                )}
+              </div>
             )}
           </section>
         </div>

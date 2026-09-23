@@ -9,3 +9,5 @@ build/
 libs/api-client/src/generated/
 project-doc/
 pnpm-lock.yaml
+coverage/
+**/coverage/

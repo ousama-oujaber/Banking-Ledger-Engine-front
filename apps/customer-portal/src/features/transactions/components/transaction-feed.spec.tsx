@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Currency, TransactionState, TransactionType, Money } from '@ble-frontend/domain-types';
@@ -32,14 +32,28 @@ describe('TransactionFeed Component', () => {
     },
   ];
 
+  const defaultMockResult: txHookModule.UseTransactionsResult = {
+    transactions: [],
+    isLoading: false,
+    isError: false,
+    error: null,
+    refetch: vi.fn(),
+    isFetching: false,
+    page: 1,
+    hasMore: false,
+    loadMore: vi.fn(),
+    resetPagination: vi.fn(),
+  };
+
+  beforeEach(() => {
+    vi.restoreAllMocks();
+    vi.spyOn(txHookModule, 'useTransactions').mockReturnValue({ ...defaultMockResult });
+  });
+
   it('renders loading state when isLoading is true', () => {
     vi.spyOn(txHookModule, 'useTransactions').mockReturnValue({
-      transactions: [],
+      ...defaultMockResult,
       isLoading: true,
-      isError: false,
-      error: null,
-      refetch: vi.fn(),
-      isFetching: false,
     });
 
     render(<TransactionFeed />);
@@ -51,12 +65,10 @@ describe('TransactionFeed Component', () => {
     const refetch = vi.fn();
 
     vi.spyOn(txHookModule, 'useTransactions').mockReturnValue({
-      transactions: [],
-      isLoading: false,
+      ...defaultMockResult,
       isError: true,
       error: new Error('Network timeout'),
       refetch,
-      isFetching: false,
     });
 
     render(<TransactionFeed />);
@@ -70,12 +82,8 @@ describe('TransactionFeed Component', () => {
 
   it('renders empty state when transactions list is empty', () => {
     vi.spyOn(txHookModule, 'useTransactions').mockReturnValue({
+      ...defaultMockResult,
       transactions: [],
-      isLoading: false,
-      isError: false,
-      error: null,
-      refetch: vi.fn(),
-      isFetching: false,
     });
 
     render(<TransactionFeed />);
@@ -86,12 +94,8 @@ describe('TransactionFeed Component', () => {
 
   it('renders transactions list and updates count badge', () => {
     vi.spyOn(txHookModule, 'useTransactions').mockReturnValue({
+      ...defaultMockResult,
       transactions: mockTransactions,
-      isLoading: false,
-      isError: false,
-      error: null,
-      refetch: vi.fn(),
-      isFetching: false,
     });
 
     render(<TransactionFeed />);
@@ -105,12 +109,8 @@ describe('TransactionFeed Component', () => {
     const user = userEvent.setup();
 
     vi.spyOn(txHookModule, 'useTransactions').mockReturnValue({
+      ...defaultMockResult,
       transactions: mockTransactions,
-      isLoading: false,
-      isError: false,
-      error: null,
-      refetch: vi.fn(),
-      isFetching: false,
     });
 
     const accounts = [
@@ -125,5 +125,67 @@ describe('TransactionFeed Component', () => {
 
     await user.selectOptions(accountSelect, 'acc-1');
     expect(accountSelect).toHaveValue('acc-1');
+  });
+
+  it('renders status filter and allows status selection', async () => {
+    const user = userEvent.setup();
+
+    vi.spyOn(txHookModule, 'useTransactions').mockReturnValue({
+      ...defaultMockResult,
+      transactions: mockTransactions,
+    });
+
+    render(<TransactionFeed />);
+
+    const stateSelect = screen.getByTestId('tx-state-filter');
+    expect(stateSelect).toBeInTheDocument();
+
+    await user.selectOptions(stateSelect, 'SETTLED');
+    expect(stateSelect).toHaveValue('SETTLED');
+  });
+
+  it('renders load more button when hasMore is true and triggers loadMore', async () => {
+    const user = userEvent.setup();
+    const loadMore = vi.fn();
+
+    vi.spyOn(txHookModule, 'useTransactions').mockReturnValue({
+      ...defaultMockResult,
+      transactions: mockTransactions,
+      hasMore: true,
+      loadMore,
+    });
+
+    render(<TransactionFeed />);
+
+    const loadMoreBtn = screen.getByTestId('tx-load-more-btn');
+    expect(loadMoreBtn).toBeInTheDocument();
+    expect(loadMoreBtn).toHaveTextContent('Load More Transactions');
+
+    await user.click(loadMoreBtn);
+    expect(loadMore).toHaveBeenCalledTimes(1);
+  });
+
+  it('opens TransactionDetailModal when clicking View Details on a transaction', async () => {
+    const user = userEvent.setup();
+
+    vi.spyOn(txHookModule, 'useTransactions').mockReturnValue({
+      ...defaultMockResult,
+      transactions: mockTransactions,
+    });
+
+    render(<TransactionFeed />);
+
+    // Click view breakdown button on first tx
+    const viewBtn = screen.getAllByTestId('tx-item-detail-btn')[0];
+    await user.click(viewBtn);
+
+    // Modal should be open
+    expect(screen.getByTestId('tx-detail-modal')).toBeInTheDocument();
+    expect(screen.getByTestId('tx-modal-id')).toHaveTextContent('tx-1');
+
+    // Close modal
+    const closeBtn = screen.getByTestId('tx-modal-close-btn');
+    await user.click(closeBtn);
+    expect(screen.queryByTestId('tx-detail-modal')).not.toBeInTheDocument();
   });
 });
