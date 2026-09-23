@@ -1,44 +1,80 @@
-import { Component } from '@angular/core';
-import { RouterOutlet, Router } from '@angular/router';
+import { Component, signal } from '@angular/core';
+import { RouterOutlet, RouterLink, RouterLinkActive, Router } from '@angular/router';
+import { AuthService, AuthUser } from '@ble-frontend/auth';
 
 @Component({
   selector: 'ble-layout',
   standalone: true,
-  imports: [RouterOutlet],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive],
   template: `
     <div class="admin-layout">
-      <nav class="sidebar">
-        <h2>BLE Admin</h2>
-        <button (click)="navigate('accounts')">Accounts</button>
-        <button (click)="navigate('audit')">Audit Trail</button>
-        <button (click)="navigate('hold')">Holds</button>
-        <button (click)="navigate('recon')">Reconciliation</button>
-        <button (click)="navigate('dlq')">DLQ</button>
-        <button (click)="navigate('rules')">Rules</button>
-        <button (click)="logout()">Logout</button>
+      <nav class="admin-layout__sidebar">
+        <div class="admin-layout__brand">
+          <h2 class="admin-layout__title">BLE Admin</h2>
+          @if (user()) {
+            <div class="admin-layout__user">
+              <span class="admin-layout__username">{{ user()?.name || user()?.username }}</span>
+              <span class="admin-layout__roles">{{ userRolesString() }}</span>
+            </div>
+          }
+        </div>
+
+        <ul class="admin-layout__nav-list">
+          <li class="admin-layout__nav-item">
+            <a routerLink="/accounts" routerLinkActive="active" class="admin-layout__nav-link"
+              >Accounts</a
+            >
+          </li>
+          <li class="admin-layout__nav-item">
+            <a routerLink="/audit" routerLinkActive="active" class="admin-layout__nav-link"
+              >Audit Trail</a
+            >
+          </li>
+          <li class="admin-layout__nav-item">
+            <a routerLink="/holds" routerLinkActive="active" class="admin-layout__nav-link"
+              >Holds</a
+            >
+          </li>
+          <li class="admin-layout__nav-item">
+            <a routerLink="/recon" routerLinkActive="active" class="admin-layout__nav-link"
+              >Reconciliation</a
+            >
+          </li>
+          <li class="admin-layout__nav-item">
+            <a routerLink="/dlq" routerLinkActive="active" class="admin-layout__nav-link"
+              >DLQ Ops</a
+            >
+          </li>
+          <li class="admin-layout__nav-item">
+            <a routerLink="/rules" routerLinkActive="active" class="admin-layout__nav-link"
+              >Rules Matrix</a
+            >
+          </li>
+        </ul>
+
+        <div class="admin-layout__footer">
+          <button (click)="logout()" type="button" class="admin-layout__logout-btn">Logout</button>
+        </div>
       </nav>
-      <main class="content">
+
+      <main class="admin-layout__content">
         <router-outlet />
       </main>
     </div>
   `,
-  styles: [`
-    .admin-layout { display: flex; height: 100vh; }
-    .sidebar { width: 240px; background: #1a1a2e; color: #eee; padding: 1rem; }
-    .content { flex: 1; padding: 1rem; overflow: auto; }
-    button { display: block; width: 100%; margin: 0.25rem 0; padding: 0.5rem; border: none; background: #16213e; color: #eee; cursor: pointer; }
-    button:hover { background: #0f3460; }
-  `]
 })
 export class LayoutComponent {
+  user = signal<AuthUser | null>(AuthService.getUser());
+
   constructor(private router: Router) {}
 
-  navigate(path: string): void {
-    this.router.navigate([path]);
+  userRolesString(): string {
+    const roles = this.user()?.roles;
+    return roles && roles.length > 0 ? roles.join(', ') : 'Operator';
   }
 
   logout(): void {
-    localStorage.removeItem('ble_auth_token');
+    AuthService.clear();
     this.router.navigate(['/login']);
   }
 }

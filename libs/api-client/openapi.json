@@ -1,0 +1,4572 @@
+{
+  "openapi": "3.1.0",
+  "info": { "title": "OpenAPI definition", "version": "v0" },
+  "servers": [{ "url": "http://localhost:8080", "description": "Generated server url" }],
+  "tags": [
+    {
+      "name": "Administration & Operations",
+      "description": "Endpoints for reconciliation, snapshots, and outbox operations"
+    },
+    {
+      "name": "Business Date & Calendar",
+      "description": "Management of official banking dates, cut-offs, and end-of-day rollovers"
+    },
+    { "name": "Authentication", "description": "Endpoints for token issuing and authentication" },
+    {
+      "name": "Audit & Compliance",
+      "description": "Endpoints for immutable regulatory audit trail and accountability"
+    }
+  ],
+  "paths": {
+    "/api/v1/accounts/{accountId}/notifications/{preferenceId}": {
+      "put": {
+        "tags": ["notification-controller"],
+        "operationId": "updatePreference",
+        "parameters": [
+          {
+            "name": "accountId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          },
+          {
+            "name": "preferenceId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UpdateNotificationPreferenceRequest" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": { "schema": { "$ref": "#/components/schemas/NotificationPreferenceResponse" } }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["notification-controller"],
+        "operationId": "deletePreference",
+        "parameters": [
+          {
+            "name": "accountId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          },
+          {
+            "name": "preferenceId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "responses": { "200": { "description": "OK" } }
+      }
+    },
+    "/api/v1/transfers": {
+      "post": {
+        "tags": ["transfer-controller"],
+        "operationId": "transfer",
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": false,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": { "schema": { "$ref": "#/components/schemas/TransferRequest" } }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": { "schema": { "$ref": "#/components/schemas/TransactionResponse" } }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/transactions/{id}/settle": {
+      "post": {
+        "tags": ["transaction-controller"],
+        "operationId": "settleTransaction",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": false,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/SettleTransactionRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": { "schema": { "$ref": "#/components/schemas/TransactionResponse" } }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/transactions/{id}/reverse": {
+      "post": {
+        "tags": ["transaction-controller"],
+        "operationId": "reverseTransaction",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": false,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ReverseTransactionRequest" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": { "schema": { "$ref": "#/components/schemas/TransactionResponse" } }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/transactions/{id}/reversals": {
+      "post": {
+        "tags": ["transaction-controller"],
+        "operationId": "reverseTransaction_1",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": false,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ReverseTransactionRequest" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": { "schema": { "$ref": "#/components/schemas/TransactionResponse" } }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/transactions/{id}/post": {
+      "post": {
+        "tags": ["transaction-controller"],
+        "operationId": "postTransaction",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": false,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": { "schema": { "$ref": "#/components/schemas/TransactionResponse" } }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/transactions/{id}/fail": {
+      "post": {
+        "tags": ["transaction-controller"],
+        "operationId": "failTransaction",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": false,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/FailTransactionRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": { "schema": { "$ref": "#/components/schemas/TransactionResponse" } }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/transactions/{id}/cancel": {
+      "post": {
+        "tags": ["transaction-controller"],
+        "operationId": "cancelTransaction",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": false,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CancelTransactionRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": { "schema": { "$ref": "#/components/schemas/TransactionResponse" } }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/transactions/{id}/authorize": {
+      "post": {
+        "tags": ["transaction-controller"],
+        "operationId": "authorizeTransaction",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": false,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/AuthorizeTransactionRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": { "schema": { "$ref": "#/components/schemas/TransactionResponse" } }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/transactions/initiate": {
+      "post": {
+        "tags": ["transaction-controller"],
+        "operationId": "initiateTransaction",
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": false,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/InitiateTransactionRequest" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": { "schema": { "$ref": "#/components/schemas/TransactionResponse" } }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/settlements/records": {
+      "get": {
+        "tags": ["settlement-controller"],
+        "operationId": "listRecords",
+        "parameters": [
+          {
+            "name": "batchId",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string", "format": "uuid" }
+          },
+          { "name": "status", "in": "query", "required": false, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/SettlementRecordResponse" }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["settlement-controller"],
+        "operationId": "enqueueRecord",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/EnqueueSettlementRecordRequest" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": { "schema": { "$ref": "#/components/schemas/SettlementRecordResponse" } }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/settlements/records/{recordId}/retry": {
+      "post": {
+        "tags": ["settlement-controller"],
+        "operationId": "retryRecord",
+        "parameters": [
+          {
+            "name": "recordId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": { "schema": { "$ref": "#/components/schemas/SettlementRecordResponse" } }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/settlements/batches": {
+      "get": {
+        "tags": ["settlement-controller"],
+        "operationId": "listBatches",
+        "parameters": [
+          { "name": "rail", "in": "query", "required": false, "schema": { "type": "string" } },
+          { "name": "status", "in": "query", "required": false, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/SettlementBatchResponse" }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["settlement-controller"],
+        "operationId": "createBatch",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CreateSettlementBatchRequest" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": { "schema": { "$ref": "#/components/schemas/SettlementBatchResponse" } }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/settlements/batches/{batchId}/settle": {
+      "post": {
+        "tags": ["settlement-controller"],
+        "operationId": "settleBatch",
+        "parameters": [
+          {
+            "name": "batchId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/SettleSettlementBatchRequest" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": { "schema": { "$ref": "#/components/schemas/SettlementBatchResponse" } }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/settlements/batches/{batchId}/fail": {
+      "post": {
+        "tags": ["settlement-controller"],
+        "operationId": "failBatch",
+        "parameters": [
+          {
+            "name": "batchId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/FailSettlementBatchRequest" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": { "schema": { "$ref": "#/components/schemas/SettlementBatchResponse" } }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/settlements/batches/{batchId}/close": {
+      "post": {
+        "tags": ["settlement-controller"],
+        "operationId": "closeBatch",
+        "parameters": [
+          {
+            "name": "batchId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": { "schema": { "$ref": "#/components/schemas/SettlementBatchResponse" } }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/scheduled-transactions": {
+      "get": {
+        "tags": ["scheduled-transaction-controller"],
+        "operationId": "list",
+        "parameters": [
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "SCHEDULED",
+                "DUE",
+                "EXECUTING",
+                "COMPLETED",
+                "PAUSED",
+                "CANCELLED",
+                "FAILED"
+              ]
+            }
+          },
+          {
+            "name": "scheduleType",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string", "enum": ["ONE_TIME", "DAILY", "WEEKLY", "MONTHLY"] }
+          },
+          {
+            "name": "sourceAccountId",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/ScheduledTransactionResponse" }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["scheduled-transaction-controller"],
+        "operationId": "create",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CreateScheduledTransactionRequest" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": { "schema": { "$ref": "#/components/schemas/ScheduledTransactionResponse" } }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/scheduled-transactions/{id}/retry": {
+      "post": {
+        "tags": ["scheduled-transaction-controller"],
+        "operationId": "retry",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": { "schema": { "$ref": "#/components/schemas/ScheduledTransactionResponse" } }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/scheduled-transactions/{id}/resume": {
+      "post": {
+        "tags": ["scheduled-transaction-controller"],
+        "operationId": "resume",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": { "schema": { "$ref": "#/components/schemas/ScheduledTransactionResponse" } }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/scheduled-transactions/{id}/pause": {
+      "post": {
+        "tags": ["scheduled-transaction-controller"],
+        "operationId": "pause",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": { "schema": { "$ref": "#/components/schemas/ScheduledTransactionResponse" } }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/scheduled-transactions/{id}/cancel": {
+      "post": {
+        "tags": ["scheduled-transaction-controller"],
+        "operationId": "cancel",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CancelScheduledTransactionRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": { "schema": { "$ref": "#/components/schemas/ScheduledTransactionResponse" } }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/scheduled-transactions/execute-due": {
+      "post": {
+        "tags": ["scheduled-transaction-controller"],
+        "operationId": "executeDue",
+        "parameters": [
+          {
+            "name": "asOfDate",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string", "format": "date" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": { "schema": { "$ref": "#/components/schemas/ExecuteDueTransactionsResponse" } }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/reconciliation/external/jobs": {
+      "get": {
+        "tags": ["external-reconciliation-controller"],
+        "operationId": "listJobs",
+        "parameters": [
+          { "name": "source", "in": "query", "required": false, "schema": { "type": "string" } },
+          { "name": "status", "in": "query", "required": false, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/ReconciliationJobResponse" }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["external-reconciliation-controller"],
+        "operationId": "runJob",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/RunReconciliationJobRequest" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": { "schema": { "$ref": "#/components/schemas/ReconciliationJobResponse" } }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/reconciliation/external/import": {
+      "post": {
+        "tags": ["external-reconciliation-controller"],
+        "operationId": "importRecords",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ImportExternalRecordsRequest" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": { "schema": { "$ref": "#/components/schemas/ImportExternalRecordsResponse" } }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/reconciliation/cases/{id}/resolve": {
+      "post": {
+        "tags": ["external-reconciliation-controller"],
+        "operationId": "resolveCase",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ResolveReconciliationCaseRequest" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": { "schema": { "$ref": "#/components/schemas/ReconciliationCaseResponse" } }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/reconciliation/cases/{id}/escalate": {
+      "post": {
+        "tags": ["external-reconciliation-controller"],
+        "operationId": "escalateCase",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/EscalateReconciliationCaseRequest" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": { "schema": { "$ref": "#/components/schemas/ReconciliationCaseResponse" } }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/reconciliation/cases/{id}/assign": {
+      "post": {
+        "tags": ["external-reconciliation-controller"],
+        "operationId": "assignCase",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/AssignReconciliationCaseRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": { "schema": { "$ref": "#/components/schemas/ReconciliationCaseResponse" } }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/products": {
+      "get": {
+        "tags": ["account-product-controller"],
+        "operationId": "listProducts",
+        "parameters": [
+          {
+            "name": "activeOnly",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "boolean", "default": true }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/AccountProductResponse" }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["account-product-controller"],
+        "operationId": "createProduct",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CreateProductRequest" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": { "schema": { "$ref": "#/components/schemas/AccountProductResponse" } }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/limits": {
+      "get": {
+        "tags": ["limit-rule-controller"],
+        "operationId": "list_1",
+        "parameters": [
+          {
+            "name": "scope",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string", "enum": ["GLOBAL", "CUSTOMER", "ACCOUNT", "BENEFICIARY"] }
+          },
+          {
+            "name": "activeOnly",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "boolean", "default": false }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/LimitRuleResponse" }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["limit-rule-controller"],
+        "operationId": "create_1",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CreateLimitRuleRequest" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": { "*/*": { "schema": { "$ref": "#/components/schemas/LimitRuleResponse" } } }
+          }
+        }
+      }
+    },
+    "/api/v1/limits/{id}/disable": {
+      "post": {
+        "tags": ["limit-rule-controller"],
+        "operationId": "disable",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": { "*/*": { "schema": { "$ref": "#/components/schemas/LimitRuleResponse" } } }
+          }
+        }
+      }
+    },
+    "/api/v1/interest/preview": {
+      "post": {
+        "tags": ["interest-controller"],
+        "operationId": "previewInterest",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/PreviewInterestRequest" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": { "schema": { "$ref": "#/components/schemas/InterestPreviewResponse" } }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/interest/post": {
+      "post": {
+        "tags": ["interest-controller"],
+        "operationId": "postInterest",
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": false,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": { "schema": { "$ref": "#/components/schemas/PostInterestRequest" } }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": { "schema": { "$ref": "#/components/schemas/InterestPostingResponse" } }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/interest/accrue": {
+      "post": {
+        "tags": ["interest-controller"],
+        "operationId": "accrueInterest",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/AccrueInterestRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": { "schema": { "$ref": "#/components/schemas/AccrueInterestResponse" } }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/interest-rules": {
+      "get": {
+        "tags": ["interest-rule-controller"],
+        "operationId": "listRules",
+        "parameters": [
+          {
+            "name": "productCode",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "activeOnly",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "boolean", "default": false }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/InterestRuleResponse" }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["interest-rule-controller"],
+        "operationId": "createRule",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CreateInterestRuleRequest" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": { "schema": { "$ref": "#/components/schemas/InterestRuleResponse" } }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/holds/{id}/release": {
+      "post": {
+        "tags": ["hold-controller"],
+        "operationId": "releaseHold",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": false,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": { "schema": { "$ref": "#/components/schemas/ReleaseHoldRequest" } }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": { "*/*": { "schema": { "$ref": "#/components/schemas/HoldResponse" } } }
+          }
+        }
+      }
+    },
+    "/api/v1/holds/{id}/capture": {
+      "post": {
+        "tags": ["hold-controller"],
+        "operationId": "captureHold",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": false,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": { "schema": { "$ref": "#/components/schemas/CaptureHoldRequest" } }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": { "*/*": { "schema": { "$ref": "#/components/schemas/HoldResponse" } } }
+          }
+        }
+      }
+    },
+    "/api/v1/fx/transfers": {
+      "post": {
+        "tags": ["fx-controller"],
+        "operationId": "executeTransfer",
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": false,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ExecuteFxTransferRequest" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": { "schema": { "$ref": "#/components/schemas/TransactionResponse" } }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/fx/rates": {
+      "get": {
+        "tags": ["fx-controller"],
+        "operationId": "listActiveRates",
+        "parameters": [
+          {
+            "name": "sourceCurrency",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "targetCurrency",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/FxRateResponse" }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["fx-controller"],
+        "operationId": "createRate",
+        "requestBody": {
+          "content": {
+            "application/json": { "schema": { "$ref": "#/components/schemas/CreateFxRateRequest" } }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": { "*/*": { "schema": { "$ref": "#/components/schemas/FxRateResponse" } } }
+          }
+        }
+      }
+    },
+    "/api/v1/fx/quotes": {
+      "post": {
+        "tags": ["fx-controller"],
+        "operationId": "requestQuote",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/RequestFxQuoteRequest" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": { "*/*": { "schema": { "$ref": "#/components/schemas/FxQuoteResponse" } } }
+          }
+        }
+      }
+    },
+    "/api/v1/fee-rules": {
+      "get": {
+        "tags": ["fee-rule-controller"],
+        "operationId": "listFeeRules",
+        "parameters": [
+          {
+            "name": "activeOnly",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "boolean", "default": true }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/FeeRuleResponse" }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["fee-rule-controller"],
+        "operationId": "createFeeRule",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CreateFeeRuleRequest" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": { "*/*": { "schema": { "$ref": "#/components/schemas/FeeRuleResponse" } } }
+          }
+        }
+      }
+    },
+    "/api/v1/fee-rules/preview": {
+      "post": {
+        "tags": ["fee-rule-controller"],
+        "operationId": "previewFee",
+        "requestBody": {
+          "content": {
+            "application/json": { "schema": { "$ref": "#/components/schemas/PreviewFeeRequest" } }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": { "schema": { "$ref": "#/components/schemas/FeePreviewResponse" } }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/customers": {
+      "post": {
+        "tags": ["customer-controller"],
+        "operationId": "createCustomer",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CreateCustomerRequest" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": { "*/*": { "schema": { "$ref": "#/components/schemas/CustomerResponse" } } }
+          }
+        }
+      }
+    },
+    "/api/v1/customers/{id}/status": {
+      "post": {
+        "tags": ["customer-controller"],
+        "operationId": "updateCustomerStatus",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CustomerStatusUpdateRequest" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": { "*/*": { "schema": { "$ref": "#/components/schemas/CustomerResponse" } } }
+          }
+        }
+      }
+    },
+    "/api/v1/business-date/roll": {
+      "post": {
+        "tags": ["Business Date & Calendar"],
+        "summary": "Roll business date",
+        "description": "Advances the business date to the next business day or specified target date (Requires ADMIN or SYSTEM role)",
+        "operationId": "rollBusinessDate",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/RollBusinessDateRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": { "schema": { "$ref": "#/components/schemas/BusinessDateResponse" } }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/beneficiaries": {
+      "get": {
+        "tags": ["beneficiary-controller"],
+        "operationId": "list_2",
+        "parameters": [
+          {
+            "name": "ownerId",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string", "format": "uuid" }
+          },
+          {
+            "name": "includeRemoved",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "boolean", "default": false }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/BeneficiaryResponse" }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["beneficiary-controller"],
+        "operationId": "create_2",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CreateBeneficiaryRequest" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": { "schema": { "$ref": "#/components/schemas/BeneficiaryResponse" } }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/beneficiaries/{id}/block": {
+      "post": {
+        "tags": ["beneficiary-controller"],
+        "operationId": "block",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/BlockBeneficiaryRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": { "schema": { "$ref": "#/components/schemas/BeneficiaryResponse" } }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/beneficiaries/{id}/activate": {
+      "post": {
+        "tags": ["beneficiary-controller"],
+        "operationId": "activate",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": { "schema": { "$ref": "#/components/schemas/BeneficiaryResponse" } }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/token": {
+      "post": {
+        "tags": ["Authentication"],
+        "summary": "Generate authentication token",
+        "description": "Mints a signed JWT token with assigned role, actor type, and principal claims.",
+        "operationId": "createToken",
+        "requestBody": {
+          "content": {
+            "application/json": { "schema": { "$ref": "#/components/schemas/TokenRequest" } }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": { "*/*": { "schema": { "$ref": "#/components/schemas/TokenResponse" } } }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/webhooks/deliveries/{deliveryId}/retry": {
+      "post": {
+        "tags": ["webhook-admin-controller"],
+        "operationId": "retryDelivery",
+        "parameters": [
+          {
+            "name": "deliveryId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": { "schema": { "$ref": "#/components/schemas/WebhookDeliveryResponse" } }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/webhooks/deliveries/dispatch": {
+      "post": {
+        "tags": ["webhook-admin-controller"],
+        "operationId": "dispatchBatch",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "integer", "format": "int32", "default": 50 }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": { "schema": { "$ref": "#/components/schemas/DispatchWebhookBatchResponse" } }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/snapshots/{accountId}": {
+      "post": {
+        "tags": ["Administration & Operations"],
+        "summary": "Create balance snapshot for an account",
+        "description": "Generates a non-authoritative balance snapshot to accelerate reads.",
+        "operationId": "createSnapshot",
+        "parameters": [
+          {
+            "name": "accountId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": { "type": "object", "additionalProperties": { "type": "object" } }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/reconciliation": {
+      "get": {
+        "tags": ["Administration & Operations"],
+        "summary": "Get current reconciliation report",
+        "description": "Verifies double-entry zero-sum invariants and returns current status.",
+        "operationId": "getReconciliationReport",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": { "schema": { "$ref": "#/components/schemas/ReconciliationReportResponse" } }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Administration & Operations"],
+        "summary": "Trigger on-demand reconciliation",
+        "description": "Executes zero-sum verification across all committed entries.",
+        "operationId": "triggerReconciliation",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": { "schema": { "$ref": "#/components/schemas/ReconciliationReportResponse" } }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/outbox/drain": {
+      "post": {
+        "tags": ["Administration & Operations"],
+        "summary": "Trigger outbox drain pass",
+        "description": "Drains unpublished outbox events across all batches and dispatches them to the event publisher.",
+        "operationId": "drainOutbox",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": { "schema": { "$ref": "#/components/schemas/OutboxDrainResponse" } }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/holds/expire": {
+      "post": {
+        "tags": ["hold-controller"],
+        "operationId": "expireHolds",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": { "type": "object", "additionalProperties": { "type": "object" } }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/dead-letter-events/{id}/retry": {
+      "post": {
+        "tags": ["dead-letter-admin-controller"],
+        "operationId": "replayDeadLetterEvent",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": { "schema": { "$ref": "#/components/schemas/DeadLetterEventResponse" } }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/accounts": {
+      "post": {
+        "tags": ["account-controller"],
+        "operationId": "openAccount",
+        "requestBody": {
+          "content": {
+            "application/json": { "schema": { "$ref": "#/components/schemas/OpenAccountRequest" } }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": { "*/*": { "schema": { "$ref": "#/components/schemas/AccountResponse" } } }
+          }
+        }
+      }
+    },
+    "/api/v1/accounts/{id}/withdrawals": {
+      "post": {
+        "tags": ["withdrawal-controller"],
+        "operationId": "withdraw",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": false,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": { "schema": { "$ref": "#/components/schemas/WithdrawalRequest" } }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": { "schema": { "$ref": "#/components/schemas/TransactionResponse" } }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/accounts/{id}/unfreeze": {
+      "post": {
+        "tags": ["account-controller"],
+        "operationId": "unfreezeAccount",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UnfreezeAccountRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": { "*/*": { "schema": { "$ref": "#/components/schemas/AccountResponse" } } }
+          }
+        }
+      }
+    },
+    "/api/v1/accounts/{id}/holds": {
+      "get": {
+        "tags": ["hold-controller"],
+        "operationId": "listAccountHolds",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          },
+          {
+            "name": "activeOnly",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "boolean", "default": false }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/HoldResponse" }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["hold-controller"],
+        "operationId": "createHold",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": false,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": { "schema": { "$ref": "#/components/schemas/CreateHoldRequest" } }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": { "*/*": { "schema": { "$ref": "#/components/schemas/HoldResponse" } } }
+          }
+        }
+      }
+    },
+    "/api/v1/accounts/{id}/freeze": {
+      "post": {
+        "tags": ["account-controller"],
+        "operationId": "freezeAccount",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/FreezeAccountRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": { "*/*": { "schema": { "$ref": "#/components/schemas/AccountResponse" } } }
+          }
+        }
+      }
+    },
+    "/api/v1/accounts/{id}/deposits": {
+      "post": {
+        "tags": ["deposit-controller"],
+        "operationId": "deposit",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": false,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": { "schema": { "$ref": "#/components/schemas/DepositRequest" } }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": { "schema": { "$ref": "#/components/schemas/TransactionResponse" } }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/accounts/{id}/close": {
+      "post": {
+        "tags": ["account-controller"],
+        "operationId": "closeAccount",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "responses": { "200": { "description": "OK" } }
+      }
+    },
+    "/api/v1/accounts/{accountId}/statements/generate": {
+      "post": {
+        "tags": ["statement-controller"],
+        "operationId": "generateStatement",
+        "parameters": [
+          {
+            "name": "accountId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/GenerateStatementRequest" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": { "schema": { "$ref": "#/components/schemas/AccountStatementResponse" } }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/accounts/{accountId}/notifications": {
+      "get": {
+        "tags": ["notification-controller"],
+        "operationId": "getPreferences",
+        "parameters": [
+          {
+            "name": "accountId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string", "enum": ["ACTIVE", "PAUSED", "DISABLED", "INACTIVE"] }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/NotificationPreferenceResponse" }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["notification-controller"],
+        "operationId": "createPreference",
+        "parameters": [
+          {
+            "name": "accountId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CreateNotificationPreferenceRequest" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": { "schema": { "$ref": "#/components/schemas/NotificationPreferenceResponse" } }
+            }
+          }
+        }
+      }
+    },
+    "/health": {
+      "get": {
+        "tags": ["root-controller"],
+        "operationId": "root",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": { "type": "object", "additionalProperties": { "type": "object" } }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/": {
+      "get": {
+        "tags": ["root-controller"],
+        "operationId": "root_1",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": { "type": "object", "additionalProperties": { "type": "object" } }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/transactions/{id}": {
+      "get": {
+        "tags": ["transaction-controller"],
+        "operationId": "getTransaction",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": { "schema": { "$ref": "#/components/schemas/TransactionResponse" } }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/settlements/records/{recordId}": {
+      "get": {
+        "tags": ["settlement-controller"],
+        "operationId": "getRecordById",
+        "parameters": [
+          {
+            "name": "recordId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": { "schema": { "$ref": "#/components/schemas/SettlementRecordResponse" } }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/settlements/batches/{batchId}": {
+      "get": {
+        "tags": ["settlement-controller"],
+        "operationId": "getBatch",
+        "parameters": [
+          {
+            "name": "batchId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": { "schema": { "$ref": "#/components/schemas/SettlementBatchResponse" } }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/settlements/batches/{batchId}/records": {
+      "get": {
+        "tags": ["settlement-controller"],
+        "operationId": "listBatchRecords",
+        "parameters": [
+          {
+            "name": "batchId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/SettlementRecordResponse" }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/scheduled-transactions/{id}": {
+      "get": {
+        "tags": ["scheduled-transaction-controller"],
+        "operationId": "getById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": { "schema": { "$ref": "#/components/schemas/ScheduledTransactionResponse" } }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/scheduled-transactions/{id}/executions": {
+      "get": {
+        "tags": ["scheduled-transaction-controller"],
+        "operationId": "getExecutions",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/ScheduledTransactionExecutionResponse" }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/reconciliation/external/jobs/{id}": {
+      "get": {
+        "tags": ["external-reconciliation-controller"],
+        "operationId": "getJobById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": { "schema": { "$ref": "#/components/schemas/ReconciliationJobResponse" } }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/reconciliation/external/jobs/{id}/items": {
+      "get": {
+        "tags": ["external-reconciliation-controller"],
+        "operationId": "getJobItems",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          },
+          {
+            "name": "matchStatus",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/ReconciliationItemResponse" }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/reconciliation/cases": {
+      "get": {
+        "tags": ["external-reconciliation-controller"],
+        "operationId": "listCases",
+        "parameters": [
+          {
+            "name": "jobId",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string", "format": "uuid" }
+          },
+          { "name": "status", "in": "query", "required": false, "schema": { "type": "string" } },
+          {
+            "name": "discrepancyType",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string" }
+          },
+          { "name": "assignedTo", "in": "query", "required": false, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/ReconciliationCaseResponse" }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/reconciliation/cases/{id}": {
+      "get": {
+        "tags": ["external-reconciliation-controller"],
+        "operationId": "getCaseById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": { "schema": { "$ref": "#/components/schemas/ReconciliationCaseResponse" } }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/products/{code}": {
+      "get": {
+        "tags": ["account-product-controller"],
+        "operationId": "getProductByCode",
+        "parameters": [
+          { "name": "code", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": { "schema": { "$ref": "#/components/schemas/AccountProductResponse" } }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/interest/accruals/{accountId}": {
+      "get": {
+        "tags": ["interest-controller"],
+        "operationId": "listAccruals",
+        "parameters": [
+          {
+            "name": "accountId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string", "enum": ["ACCRUED", "POSTED", "VOIDED"] }
+          },
+          {
+            "name": "asOfDate",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string", "format": "date" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/DailyInterestAccrualResponse" }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/interest-rules/{code}": {
+      "get": {
+        "tags": ["interest-rule-controller"],
+        "operationId": "getRuleByCode",
+        "parameters": [
+          { "name": "code", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": { "schema": { "$ref": "#/components/schemas/InterestRuleResponse" } }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/holds/{id}": {
+      "get": {
+        "tags": ["hold-controller"],
+        "operationId": "getHold",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": { "*/*": { "schema": { "$ref": "#/components/schemas/HoldResponse" } } }
+          }
+        }
+      }
+    },
+    "/api/v1/fx/quotes/{id}": {
+      "get": {
+        "tags": ["fx-controller"],
+        "operationId": "getQuote",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": { "*/*": { "schema": { "$ref": "#/components/schemas/FxQuoteResponse" } } }
+          }
+        }
+      }
+    },
+    "/api/v1/fee-rules/{code}": {
+      "get": {
+        "tags": ["fee-rule-controller"],
+        "operationId": "getFeeRuleByCode",
+        "parameters": [
+          { "name": "code", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": { "*/*": { "schema": { "$ref": "#/components/schemas/FeeRuleResponse" } } }
+          }
+        }
+      }
+    },
+    "/api/v1/fee-rules/{code}/versions/{version}": {
+      "get": {
+        "tags": ["fee-rule-controller"],
+        "operationId": "getFeeRuleByCodeAndVersion",
+        "parameters": [
+          { "name": "code", "in": "path", "required": true, "schema": { "type": "string" } },
+          {
+            "name": "version",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": { "*/*": { "schema": { "$ref": "#/components/schemas/FeeRuleResponse" } } }
+          }
+        }
+      }
+    },
+    "/api/v1/customers/{id}": {
+      "get": {
+        "tags": ["customer-controller"],
+        "operationId": "getCustomerById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": { "*/*": { "schema": { "$ref": "#/components/schemas/CustomerResponse" } } }
+          }
+        }
+      }
+    },
+    "/api/v1/customers/{id}/accounts": {
+      "get": {
+        "tags": ["customer-controller"],
+        "operationId": "listCustomerAccounts",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/AccountResponse" }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/business-date": {
+      "get": {
+        "tags": ["Business Date & Calendar"],
+        "summary": "Get current business date",
+        "description": "Retrieves the current active business date and status for the given or default calendar",
+        "operationId": "getBusinessDate",
+        "parameters": [
+          {
+            "name": "calendarId",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string", "default": "GLOBAL" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": { "schema": { "$ref": "#/components/schemas/BusinessDateResponse" } }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/beneficiaries/{id}": {
+      "get": {
+        "tags": ["beneficiary-controller"],
+        "operationId": "getById_1",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": { "schema": { "$ref": "#/components/schemas/BeneficiaryResponse" } }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["beneficiary-controller"],
+        "operationId": "remove",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "responses": { "200": { "description": "OK" } }
+      }
+    },
+    "/api/v1/audit/events": {
+      "get": {
+        "tags": ["Audit & Compliance"],
+        "summary": "Query audit trail events",
+        "description": "Queries immutable audit records filtered by account, actor, category, action, and date range. Requires AUDIT_READ permission.",
+        "operationId": "getAuditEvents",
+        "parameters": [
+          {
+            "name": "accountId",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string", "format": "uuid" }
+          },
+          { "name": "actorId", "in": "query", "required": false, "schema": { "type": "string" } },
+          {
+            "name": "category",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": ["FINANCIAL", "ACCOUNT_LIFECYCLE", "SECURITY", "OPERATIONAL"]
+            }
+          },
+          { "name": "action", "in": "query", "required": false, "schema": { "type": "string" } },
+          {
+            "name": "from",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string", "format": "date-time" }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string", "format": "date-time" }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string", "format": "uuid" }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "integer", "format": "int32", "default": 50 }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": { "schema": { "$ref": "#/components/schemas/AuditEventsResponse" } }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/webhooks/deliveries": {
+      "get": {
+        "tags": ["webhook-admin-controller"],
+        "operationId": "getDeliveries",
+        "parameters": [
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": ["PENDING", "DELIVERED", "FAILED", "RETRYING", "DEAD_LETTER"]
+            }
+          },
+          {
+            "name": "eventId",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string", "format": "uuid" }
+          },
+          {
+            "name": "preferenceId",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string", "format": "uuid" }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "integer", "format": "int32", "default": 50 }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/WebhookDeliveryResponse" }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/observability/stats": {
+      "get": {
+        "tags": ["observability-admin-controller"],
+        "operationId": "getObservabilityStats",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": { "schema": { "$ref": "#/components/schemas/ObservabilityStatsResponse" } }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/dead-letter-events": {
+      "get": {
+        "tags": ["dead-letter-admin-controller"],
+        "operationId": "getDeadLetterEvents",
+        "parameters": [
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string", "enum": ["PENDING", "REPLAYED", "DISCARDED"] }
+          },
+          {
+            "name": "topic",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "ACCOUNT_EVENTS",
+                "TRANSACTION_EVENTS",
+                "HOLD_EVENTS",
+                "SETTLEMENT_EVENTS",
+                "RECONCILIATION_EVENTS",
+                "NOTIFICATION_EVENTS",
+                "DEAD_LETTER_EVENTS"
+              ]
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "integer", "format": "int32", "default": 50 }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/DeadLetterEventResponse" }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/accounts/{id}": {
+      "get": {
+        "tags": ["account-controller"],
+        "operationId": "getAccount",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          },
+          {
+            "name": "asOf",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string", "format": "date-time" }
+          },
+          {
+            "name": "valueDate",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string", "format": "date" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": { "*/*": { "schema": { "$ref": "#/components/schemas/AccountResponse" } } }
+          }
+        }
+      }
+    },
+    "/api/v1/accounts/{id}/transactions": {
+      "get": {
+        "tags": ["transaction-controller"],
+        "operationId": "getAccountTransactions",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          },
+          {
+            "name": "state",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "INITIATED",
+                "PENDING",
+                "AUTHORIZED",
+                "POSTED",
+                "SETTLED",
+                "FAILED",
+                "CANCELLED",
+                "EXPIRED",
+                "REVERSED"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/TransactionResponse" }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/accounts/{id}/events": {
+      "get": {
+        "tags": ["account-controller"],
+        "operationId": "getAccountEvents",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          },
+          { "name": "cursor", "in": "query", "required": false, "schema": { "type": "string" } },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "integer", "format": "int32", "default": 20 }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": { "schema": { "$ref": "#/components/schemas/AccountEventsResponse" } }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/accounts/{id}/balance": {
+      "get": {
+        "tags": ["account-controller"],
+        "operationId": "getBalance",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          },
+          {
+            "name": "asOf",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string", "format": "date-time" }
+          },
+          {
+            "name": "valueDate",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string", "format": "date" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": { "*/*": { "schema": { "$ref": "#/components/schemas/AccountResponse" } } }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/dead-letter-events/{id}": {
+      "delete": {
+        "tags": ["dead-letter-admin-controller"],
+        "operationId": "discardDeadLetterEvent",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": { "schema": { "$ref": "#/components/schemas/DeadLetterEventResponse" } }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "UpdateNotificationPreferenceRequest": {
+        "type": "object",
+        "properties": {
+          "channel": { "type": "string", "enum": ["WEBHOOK", "EMAIL", "IN_APP"] },
+          "eventTypes": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "ALL",
+                "DEPOSIT",
+                "WITHDRAWAL",
+                "TRANSFER",
+                "HOLD_CREATED",
+                "HOLD_CAPTURED",
+                "HOLD_EXPIRED",
+                "SCHEDULED_EXECUTED",
+                "SCHEDULED_FAILED",
+                "ACCOUNT_FROZEN",
+                "ACCOUNT_UNFROZEN",
+                "ACCOUNT_CLOSED",
+                "LOW_BALANCE",
+                "LIMIT_APPROACHING"
+              ]
+            },
+            "uniqueItems": true
+          },
+          "callbackUrl": { "type": "string" },
+          "secretKey": { "type": "string" },
+          "status": { "type": "string", "enum": ["ACTIVE", "PAUSED", "DISABLED", "INACTIVE"] }
+        }
+      },
+      "NotificationPreferenceResponse": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "accountId": { "type": "string", "format": "uuid" },
+          "channel": { "type": "string", "enum": ["WEBHOOK", "EMAIL", "IN_APP"] },
+          "eventTypes": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "ALL",
+                "DEPOSIT",
+                "WITHDRAWAL",
+                "TRANSFER",
+                "HOLD_CREATED",
+                "HOLD_CAPTURED",
+                "HOLD_EXPIRED",
+                "SCHEDULED_EXECUTED",
+                "SCHEDULED_FAILED",
+                "ACCOUNT_FROZEN",
+                "ACCOUNT_UNFROZEN",
+                "ACCOUNT_CLOSED",
+                "LOW_BALANCE",
+                "LIMIT_APPROACHING"
+              ]
+            },
+            "uniqueItems": true
+          },
+          "callbackUrl": { "type": "string" },
+          "status": { "type": "string", "enum": ["ACTIVE", "PAUSED", "DISABLED", "INACTIVE"] },
+          "createdAt": { "type": "string", "format": "date-time" },
+          "updatedAt": { "type": "string", "format": "date-time" },
+          "version": { "type": "integer", "format": "int64" }
+        }
+      },
+      "MoneyDto": {
+        "type": "object",
+        "properties": {
+          "amount": { "type": "number" },
+          "currency": { "type": "string", "enum": ["EUR", "USD", "MAD", "GBP", "JPY"] },
+          "available": { "type": "number" }
+        },
+        "required": ["amount", "currency"]
+      },
+      "TransferRequest": {
+        "type": "object",
+        "properties": {
+          "fromAccountId": { "type": "string", "format": "uuid" },
+          "toAccountId": { "type": "string", "format": "uuid" },
+          "amount": { "$ref": "#/components/schemas/MoneyDto" },
+          "reference": { "type": "string", "maxLength": 255, "minLength": 0 },
+          "description": { "type": "string", "maxLength": 255, "minLength": 0 },
+          "feeRuleCode": { "type": "string", "maxLength": 64, "minLength": 0 },
+          "beneficiaryId": { "type": "string", "format": "uuid" }
+        },
+        "required": ["amount", "fromAccountId", "reference", "toAccountId"]
+      },
+      "EntryResponse": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "accountId": { "type": "string", "format": "uuid" },
+          "type": { "type": "string", "enum": ["DEBIT", "CREDIT"] },
+          "amount": { "$ref": "#/components/schemas/MoneyDto" },
+          "createdAt": { "type": "string", "format": "date-time" },
+          "debit": { "type": "number" },
+          "credit": { "type": "number" },
+          "entryType": { "type": "string" },
+          "direction": { "type": "string" },
+          "holdCaptured": { "type": "boolean" }
+        }
+      },
+      "TransactionResponse": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "type": {
+            "type": "string",
+            "enum": [
+              "DEPOSIT",
+              "WITHDRAWAL",
+              "TRANSFER",
+              "DEPOSIT_REVERSAL",
+              "WITHDRAWAL_REVERSAL",
+              "TRANSFER_REVERSAL",
+              "HOLD_CAPTURE",
+              "HOLD_CAPTURE_REVERSAL",
+              "FX_TRANSFER",
+              "FX_TRANSFER_REVERSAL",
+              "INTEREST_CREDIT",
+              "INTEREST_CREDIT_REVERSAL",
+              "INTEREST_DEBIT",
+              "INTEREST_DEBIT_REVERSAL"
+            ]
+          },
+          "amount": { "$ref": "#/components/schemas/MoneyDto" },
+          "reference": { "type": "string" },
+          "description": { "type": "string" },
+          "createdAt": { "type": "string", "format": "date-time" },
+          "reversesTransactionId": { "type": "string", "format": "uuid" },
+          "reversedByTransactionId": { "type": "string", "format": "uuid" },
+          "entries": { "type": "array", "items": { "$ref": "#/components/schemas/EntryResponse" } },
+          "state": {
+            "type": "string",
+            "enum": [
+              "INITIATED",
+              "PENDING",
+              "AUTHORIZED",
+              "POSTED",
+              "SETTLED",
+              "FAILED",
+              "CANCELLED",
+              "EXPIRED",
+              "REVERSED"
+            ]
+          },
+          "sourceAccountId": { "type": "string", "format": "uuid" },
+          "destinationAccountId": { "type": "string", "format": "uuid" },
+          "holdId": { "type": "string", "format": "uuid" },
+          "sourceChannel": { "type": "string" },
+          "externalReference": { "type": "string" },
+          "settlementReference": { "type": "string" },
+          "failureReason": { "type": "string" },
+          "initiatedAt": { "type": "string", "format": "date-time" },
+          "authorizedAt": { "type": "string", "format": "date-time" },
+          "postedAt": { "type": "string", "format": "date-time" },
+          "settledAt": { "type": "string", "format": "date-time" },
+          "failedAt": { "type": "string", "format": "date-time" },
+          "cancelledAt": { "type": "string", "format": "date-time" },
+          "feeRuleId": { "type": "string", "format": "uuid" },
+          "feeRuleVersion": { "type": "integer", "format": "int32" },
+          "feeAmount": { "$ref": "#/components/schemas/MoneyDto" },
+          "taxAmount": { "$ref": "#/components/schemas/MoneyDto" },
+          "grossAmount": { "$ref": "#/components/schemas/MoneyDto" },
+          "feeIncomeAccountId": { "type": "string", "format": "uuid" },
+          "taxPayableAccountId": { "type": "string", "format": "uuid" },
+          "sourceCurrency": { "type": "string" },
+          "targetCurrency": { "type": "string" },
+          "targetAmount": { "$ref": "#/components/schemas/MoneyDto" },
+          "exchangeRate": { "type": "number" },
+          "fxSpread": { "type": "number" },
+          "fxProvider": { "type": "string" },
+          "fxRateTimestamp": { "type": "string", "format": "date-time" },
+          "fxQuoteId": { "type": "string", "format": "uuid" },
+          "beneficiaryId": { "type": "string", "format": "uuid" },
+          "status": { "type": "string" },
+          "fromAccountId": { "type": "string", "format": "uuid" },
+          "toAccountId": { "type": "string", "format": "uuid" },
+          "holdCaptured": { "type": "boolean" },
+          "reversals": { "type": "array", "items": { "type": "string", "format": "uuid" } },
+          "relatedTransactions": {
+            "type": "array",
+            "items": { "type": "string", "format": "uuid" }
+          },
+          "ledgerEntries": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/EntryResponse" }
+          }
+        }
+      },
+      "SettleTransactionRequest": {
+        "type": "object",
+        "properties": { "settlementReference": { "type": "string" } }
+      },
+      "ReverseTransactionRequest": {
+        "type": "object",
+        "description": "Request body to reverse a transaction",
+        "properties": {
+          "reference": {
+            "type": "string",
+            "description": "Reversal transaction reference",
+            "example": "REV-DEP-001"
+          },
+          "reason": {
+            "type": "string",
+            "description": "Reason for reversal",
+            "example": "Customer dispute resolved"
+          }
+        },
+        "required": ["reason", "reference"]
+      },
+      "FailTransactionRequest": {
+        "type": "object",
+        "properties": { "reason": { "type": "string" } }
+      },
+      "CancelTransactionRequest": {
+        "type": "object",
+        "properties": { "reason": { "type": "string" } }
+      },
+      "AuthorizeTransactionRequest": {
+        "type": "object",
+        "properties": { "holdDurationSeconds": { "type": "integer", "format": "int64" } }
+      },
+      "InitiateTransactionRequest": {
+        "type": "object",
+        "properties": {
+          "sourceAccountId": { "type": "string", "format": "uuid" },
+          "destinationAccountId": { "type": "string", "format": "uuid" },
+          "type": {
+            "type": "string",
+            "enum": [
+              "DEPOSIT",
+              "WITHDRAWAL",
+              "TRANSFER",
+              "DEPOSIT_REVERSAL",
+              "WITHDRAWAL_REVERSAL",
+              "TRANSFER_REVERSAL",
+              "HOLD_CAPTURE",
+              "HOLD_CAPTURE_REVERSAL",
+              "FX_TRANSFER",
+              "FX_TRANSFER_REVERSAL",
+              "INTEREST_CREDIT",
+              "INTEREST_CREDIT_REVERSAL",
+              "INTEREST_DEBIT",
+              "INTEREST_DEBIT_REVERSAL"
+            ]
+          },
+          "amount": { "type": "number", "minimum": 0.0 },
+          "currency": { "type": "string", "enum": ["EUR", "USD", "MAD", "GBP", "JPY"] },
+          "reference": { "type": "string", "maxLength": 255, "minLength": 0 },
+          "description": { "type": "string", "maxLength": 255, "minLength": 0 },
+          "sourceChannel": { "type": "string", "maxLength": 50, "minLength": 0 },
+          "externalReference": { "type": "string", "maxLength": 255, "minLength": 0 },
+          "feeRuleCode": { "type": "string", "maxLength": 64, "minLength": 0 }
+        },
+        "required": ["amount", "currency", "reference", "sourceAccountId", "sourceChannel", "type"]
+      },
+      "EnqueueSettlementRecordRequest": {
+        "type": "object",
+        "properties": {
+          "transactionId": { "type": "string", "format": "uuid" },
+          "rail": { "type": "string" },
+          "amount": { "$ref": "#/components/schemas/MoneyDto" },
+          "expectedSettlementDate": { "type": "string", "format": "date" },
+          "batchId": { "type": "string", "format": "uuid" }
+        },
+        "required": ["amount", "expectedSettlementDate", "rail", "transactionId"]
+      },
+      "SettlementRecordResponse": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "batchId": { "type": "string", "format": "uuid" },
+          "transactionId": { "type": "string", "format": "uuid" },
+          "rail": { "type": "string" },
+          "amount": { "$ref": "#/components/schemas/MoneyDto" },
+          "expectedSettlementDate": { "type": "string", "format": "date" },
+          "actualSettlementDate": { "type": "string", "format": "date-time" },
+          "status": { "type": "string" },
+          "failureReason": { "type": "string" },
+          "retryCount": { "type": "integer", "format": "int32" },
+          "externalReference": { "type": "string" },
+          "createdAt": { "type": "string", "format": "date-time" },
+          "updatedAt": { "type": "string", "format": "date-time" },
+          "version": { "type": "integer", "format": "int64" }
+        }
+      },
+      "CreateSettlementBatchRequest": {
+        "type": "object",
+        "properties": {
+          "rail": { "type": "string" },
+          "currency": { "type": "string" },
+          "businessDate": { "type": "string", "format": "date" }
+        },
+        "required": ["businessDate", "currency", "rail"]
+      },
+      "SettlementBatchResponse": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "rail": { "type": "string" },
+          "businessDate": { "type": "string", "format": "date" },
+          "currency": { "type": "string" },
+          "totalAmount": { "$ref": "#/components/schemas/MoneyDto" },
+          "recordCount": { "type": "integer", "format": "int32" },
+          "status": { "type": "string" },
+          "externalBatchReference": { "type": "string" },
+          "records": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/SettlementRecordResponse" }
+          },
+          "createdAt": { "type": "string", "format": "date-time" },
+          "settledAt": { "type": "string", "format": "date-time" },
+          "version": { "type": "integer", "format": "int64" }
+        }
+      },
+      "SettleSettlementBatchRequest": {
+        "type": "object",
+        "properties": {
+          "externalBatchReference": { "type": "string" },
+          "settledAt": { "type": "string", "format": "date-time" }
+        },
+        "required": ["externalBatchReference"]
+      },
+      "FailSettlementBatchRequest": {
+        "type": "object",
+        "properties": { "reason": { "type": "string" } },
+        "required": ["reason"]
+      },
+      "CreateScheduledTransactionRequest": {
+        "type": "object",
+        "properties": {
+          "sourceAccountId": { "type": "string", "format": "uuid" },
+          "destinationAccountId": { "type": "string", "format": "uuid" },
+          "amount": { "$ref": "#/components/schemas/MoneyDto" },
+          "reference": { "type": "string", "maxLength": 128, "minLength": 0 },
+          "description": { "type": "string", "maxLength": 500, "minLength": 0 },
+          "feeRuleCode": { "type": "string", "maxLength": 64, "minLength": 0 },
+          "scheduleType": { "type": "string", "enum": ["ONE_TIME", "DAILY", "WEEKLY", "MONTHLY"] },
+          "startDate": { "type": "string", "format": "date" },
+          "endDate": { "type": "string", "format": "date" },
+          "retryPolicy": {
+            "type": "string",
+            "enum": ["NO_RETRY", "FIXED_RETRY_COUNT", "RETRY_UNTIL_DATE"]
+          },
+          "maxRetries": { "type": "integer", "format": "int32" }
+        },
+        "required": [
+          "amount",
+          "destinationAccountId",
+          "scheduleType",
+          "sourceAccountId",
+          "startDate"
+        ]
+      },
+      "ScheduledTransactionResponse": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "sourceAccountId": { "type": "string", "format": "uuid" },
+          "destinationAccountId": { "type": "string", "format": "uuid" },
+          "amount": { "type": "number" },
+          "currency": { "type": "string", "enum": ["EUR", "USD", "MAD", "GBP", "JPY"] },
+          "reference": { "type": "string" },
+          "description": { "type": "string" },
+          "feeRuleCode": { "type": "string" },
+          "scheduleType": { "type": "string", "enum": ["ONE_TIME", "DAILY", "WEEKLY", "MONTHLY"] },
+          "startDate": { "type": "string", "format": "date" },
+          "endDate": { "type": "string", "format": "date" },
+          "nextExecutionDate": { "type": "string", "format": "date" },
+          "lastExecutionDate": { "type": "string", "format": "date" },
+          "status": {
+            "type": "string",
+            "enum": ["SCHEDULED", "DUE", "EXECUTING", "COMPLETED", "PAUSED", "CANCELLED", "FAILED"]
+          },
+          "retryPolicy": {
+            "type": "string",
+            "enum": ["NO_RETRY", "FIXED_RETRY_COUNT", "RETRY_UNTIL_DATE"]
+          },
+          "maxRetries": { "type": "integer", "format": "int32" },
+          "currentRetryCount": { "type": "integer", "format": "int32" },
+          "executionCount": { "type": "integer", "format": "int32" },
+          "createdAt": { "type": "string", "format": "date-time" },
+          "updatedAt": { "type": "string", "format": "date-time" },
+          "version": { "type": "integer", "format": "int64" },
+          "cancellationReason": { "type": "string" }
+        }
+      },
+      "CancelScheduledTransactionRequest": {
+        "type": "object",
+        "properties": { "reason": { "type": "string", "maxLength": 500, "minLength": 0 } }
+      },
+      "ExecuteDueTransactionsResponse": {
+        "type": "object",
+        "properties": {
+          "asOfDate": { "type": "string", "format": "date" },
+          "totalEvaluated": { "type": "integer", "format": "int32" },
+          "successfulExecutions": { "type": "integer", "format": "int32" },
+          "failedExecutions": { "type": "integer", "format": "int32" },
+          "executions": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/ScheduledTransactionExecutionResponse" }
+          }
+        }
+      },
+      "ScheduledTransactionExecutionResponse": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "scheduleId": { "type": "string", "format": "uuid" },
+          "executionDate": { "type": "string", "format": "date" },
+          "attemptNumber": { "type": "integer", "format": "int32" },
+          "status": { "type": "string", "enum": ["SUCCESS", "FAILED"] },
+          "transactionId": { "type": "string", "format": "uuid" },
+          "failureReason": { "type": "string" },
+          "idempotencyKey": { "type": "string" },
+          "executedAt": { "type": "string", "format": "date-time" }
+        }
+      },
+      "RunReconciliationJobRequest": {
+        "type": "object",
+        "properties": {
+          "source": { "type": "string" },
+          "statementReference": { "type": "string" },
+          "businessDate": { "type": "string", "format": "date" },
+          "currency": { "type": "string" }
+        },
+        "required": ["businessDate", "source", "statementReference"]
+      },
+      "ReconciliationJobResponse": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "source": { "type": "string" },
+          "statementReference": { "type": "string" },
+          "businessDate": { "type": "string", "format": "date" },
+          "currency": { "type": "string" },
+          "status": { "type": "string" },
+          "totalExternalRecords": { "type": "integer", "format": "int32" },
+          "matchedCount": { "type": "integer", "format": "int32" },
+          "discrepancyCount": { "type": "integer", "format": "int32" },
+          "totalExternalAmount": { "type": "number" },
+          "totalMatchedAmount": { "type": "number" },
+          "totalDiscrepancyAmount": { "type": "number" },
+          "startedAt": { "type": "string", "format": "date-time" },
+          "completedAt": { "type": "string", "format": "date-time" },
+          "failureReason": { "type": "string" }
+        }
+      },
+      "ExternalRecordItemRequest": {
+        "type": "object",
+        "properties": {
+          "externalTransactionId": { "type": "string" },
+          "internalReference": { "type": "string" },
+          "amount": { "type": "number" },
+          "currency": { "type": "string" },
+          "transactionDate": { "type": "string", "format": "date" },
+          "description": { "type": "string" },
+          "counterparty": { "type": "string" },
+          "externalStatus": { "type": "string" }
+        },
+        "required": ["amount", "externalTransactionId"]
+      },
+      "ImportExternalRecordsRequest": {
+        "type": "object",
+        "properties": {
+          "source": { "type": "string" },
+          "records": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/ExternalRecordItemRequest" }
+          }
+        },
+        "required": ["records", "source"]
+      },
+      "ImportExternalRecordsResponse": {
+        "type": "object",
+        "properties": {
+          "importedCount": { "type": "integer", "format": "int32" },
+          "recordIds": { "type": "array", "items": { "type": "string", "format": "uuid" } },
+          "message": { "type": "string" }
+        }
+      },
+      "ResolveReconciliationCaseRequest": {
+        "type": "object",
+        "properties": {
+          "resolutionAction": { "type": "string" },
+          "notes": { "type": "string" },
+          "compensatingTransactionId": { "type": "string", "format": "uuid" },
+          "operator": { "type": "string" }
+        },
+        "required": ["resolutionAction"]
+      },
+      "ReconciliationCaseHistoryResponse": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "fromStatus": { "type": "string" },
+          "toStatus": { "type": "string" },
+          "action": { "type": "string" },
+          "changedBy": { "type": "string" },
+          "notes": { "type": "string" },
+          "timestamp": { "type": "string", "format": "date-time" }
+        }
+      },
+      "ReconciliationCaseResponse": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "jobId": { "type": "string", "format": "uuid" },
+          "itemId": { "type": "string", "format": "uuid" },
+          "discrepancyType": { "type": "string" },
+          "status": { "type": "string" },
+          "externalTransactionId": { "type": "string" },
+          "internalTransactionId": { "type": "string", "format": "uuid" },
+          "discrepancyAmount": { "type": "number" },
+          "currency": { "type": "string" },
+          "assignedTo": { "type": "string" },
+          "notes": { "type": "string" },
+          "resolutionAction": { "type": "string" },
+          "compensatingTransactionId": { "type": "string", "format": "uuid" },
+          "createdAt": { "type": "string", "format": "date-time" },
+          "updatedAt": { "type": "string", "format": "date-time" },
+          "resolvedAt": { "type": "string", "format": "date-time" },
+          "history": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/ReconciliationCaseHistoryResponse" }
+          },
+          "auditHistory": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/ReconciliationCaseHistoryResponse" }
+          }
+        }
+      },
+      "EscalateReconciliationCaseRequest": {
+        "type": "object",
+        "properties": { "operator": { "type": "string" }, "reason": { "type": "string" } },
+        "required": ["reason"]
+      },
+      "AssignReconciliationCaseRequest": {
+        "type": "object",
+        "properties": {
+          "assignedTo": { "type": "string" },
+          "operator": { "type": "string" },
+          "notes": { "type": "string" }
+        }
+      },
+      "CreateProductRequest": {
+        "type": "object",
+        "properties": {
+          "code": { "type": "string", "maxLength": 50, "minLength": 0 },
+          "name": { "type": "string", "maxLength": 255, "minLength": 0 },
+          "version": { "type": "integer", "format": "int32" },
+          "allowedCurrencies": {
+            "type": "array",
+            "items": { "type": "string", "enum": ["EUR", "USD", "MAD", "GBP", "JPY"] },
+            "uniqueItems": true
+          },
+          "allowOverdraft": { "type": "boolean" },
+          "defaultOverdraftLimit": { "$ref": "#/components/schemas/MoneyDto" },
+          "defaultDailyTransferLimit": { "$ref": "#/components/schemas/MoneyDto" },
+          "applicableFeeRuleCode": { "type": "string" },
+          "holdAllowed": { "type": "boolean" }
+        },
+        "required": ["allowedCurrencies", "code", "name"]
+      },
+      "AccountProductResponse": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "code": { "type": "string" },
+          "name": { "type": "string" },
+          "version": { "type": "integer", "format": "int32" },
+          "status": { "type": "string", "enum": ["ACTIVE", "DEPRECATED", "RETIRED"] },
+          "allowedCurrencies": {
+            "type": "array",
+            "items": { "type": "string", "enum": ["EUR", "USD", "MAD", "GBP", "JPY"] },
+            "uniqueItems": true
+          },
+          "allowOverdraft": { "type": "boolean" },
+          "defaultOverdraftLimit": { "$ref": "#/components/schemas/MoneyDto" },
+          "defaultDailyTransferLimit": { "$ref": "#/components/schemas/MoneyDto" },
+          "applicableFeeRuleCode": { "type": "string" },
+          "holdAllowed": { "type": "boolean" },
+          "aggregateVersion": { "type": "integer", "format": "int64" },
+          "createdAt": { "type": "string", "format": "date-time" },
+          "updatedAt": { "type": "string", "format": "date-time" }
+        }
+      },
+      "CreateLimitRuleRequest": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string", "maxLength": 255, "minLength": 0 },
+          "description": { "type": "string", "maxLength": 255, "minLength": 0 },
+          "scope": { "type": "string", "enum": ["GLOBAL", "CUSTOMER", "ACCOUNT", "BENEFICIARY"] },
+          "scopeId": { "type": "string", "maxLength": 64, "minLength": 0 },
+          "operationType": {
+            "type": "string",
+            "enum": [
+              "DEPOSIT",
+              "WITHDRAWAL",
+              "TRANSFER",
+              "DEPOSIT_REVERSAL",
+              "WITHDRAWAL_REVERSAL",
+              "TRANSFER_REVERSAL",
+              "HOLD_CAPTURE",
+              "HOLD_CAPTURE_REVERSAL",
+              "FX_TRANSFER",
+              "FX_TRANSFER_REVERSAL",
+              "INTEREST_CREDIT",
+              "INTEREST_CREDIT_REVERSAL",
+              "INTEREST_DEBIT",
+              "INTEREST_DEBIT_REVERSAL"
+            ]
+          },
+          "window": {
+            "type": "string",
+            "enum": ["PER_TRANSACTION", "HOURLY", "DAILY", "WEEKLY", "MONTHLY"]
+          },
+          "maxAmount": { "$ref": "#/components/schemas/MoneyDto" },
+          "maxCount": { "type": "integer", "format": "int32" },
+          "effectiveFrom": { "type": "string", "format": "date-time" },
+          "effectiveTo": { "type": "string", "format": "date-time" }
+        },
+        "required": ["maxAmount", "name", "scope", "window"]
+      },
+      "LimitRuleResponse": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "name": { "type": "string" },
+          "description": { "type": "string" },
+          "scope": { "type": "string", "enum": ["GLOBAL", "CUSTOMER", "ACCOUNT", "BENEFICIARY"] },
+          "scopeId": { "type": "string" },
+          "operationType": {
+            "type": "string",
+            "enum": [
+              "DEPOSIT",
+              "WITHDRAWAL",
+              "TRANSFER",
+              "DEPOSIT_REVERSAL",
+              "WITHDRAWAL_REVERSAL",
+              "TRANSFER_REVERSAL",
+              "HOLD_CAPTURE",
+              "HOLD_CAPTURE_REVERSAL",
+              "FX_TRANSFER",
+              "FX_TRANSFER_REVERSAL",
+              "INTEREST_CREDIT",
+              "INTEREST_CREDIT_REVERSAL",
+              "INTEREST_DEBIT",
+              "INTEREST_DEBIT_REVERSAL"
+            ]
+          },
+          "window": {
+            "type": "string",
+            "enum": ["PER_TRANSACTION", "HOURLY", "DAILY", "WEEKLY", "MONTHLY"]
+          },
+          "maxAmount": { "$ref": "#/components/schemas/MoneyDto" },
+          "maxCount": { "type": "integer", "format": "int32" },
+          "status": { "type": "string", "enum": ["ACTIVE", "DISABLED"] },
+          "effectiveFrom": { "type": "string", "format": "date-time" },
+          "effectiveTo": { "type": "string", "format": "date-time" },
+          "createdAt": { "type": "string", "format": "date-time" }
+        }
+      },
+      "PreviewInterestRequest": {
+        "type": "object",
+        "properties": {
+          "accountId": { "type": "string", "format": "uuid" },
+          "fromDate": { "type": "string", "format": "date" },
+          "toDate": { "type": "string", "format": "date" }
+        },
+        "required": ["accountId"]
+      },
+      "DailyInterestAccrualResponse": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "accountId": { "type": "string", "format": "uuid" },
+          "productCode": { "type": "string" },
+          "interestRuleId": { "type": "string", "format": "uuid" },
+          "interestRuleCode": { "type": "string" },
+          "interestType": { "type": "string", "enum": ["CREDIT", "DEBIT"] },
+          "businessDate": { "type": "string", "format": "date" },
+          "eligibleBalance": { "$ref": "#/components/schemas/MoneyDto" },
+          "annualRate": { "type": "number" },
+          "dailyRate": { "type": "number" },
+          "accruedAmount": { "$ref": "#/components/schemas/MoneyDto" },
+          "status": { "type": "string", "enum": ["ACCRUED", "POSTED", "VOIDED"] },
+          "postingTransactionId": { "type": "string", "format": "uuid" },
+          "accruedAt": { "type": "string", "format": "date-time" },
+          "postedAt": { "type": "string", "format": "date-time" }
+        }
+      },
+      "InterestPreviewResponse": {
+        "type": "object",
+        "properties": {
+          "accountId": { "type": "string", "format": "uuid" },
+          "ruleCode": { "type": "string" },
+          "fromDate": { "type": "string", "format": "date" },
+          "toDate": { "type": "string", "format": "date" },
+          "totalEstimatedInterest": { "$ref": "#/components/schemas/MoneyDto" },
+          "dailyAccruals": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/DailyInterestAccrualResponse" }
+          }
+        }
+      },
+      "PostInterestRequest": {
+        "type": "object",
+        "properties": {
+          "accountId": { "type": "string", "format": "uuid" },
+          "asOfDate": { "type": "string", "format": "date" },
+          "reference": { "type": "string" }
+        },
+        "required": ["accountId"]
+      },
+      "InterestPostingResponse": {
+        "type": "object",
+        "properties": {
+          "transactionId": { "type": "string", "format": "uuid" },
+          "accountId": { "type": "string", "format": "uuid" },
+          "asOfDate": { "type": "string", "format": "date" },
+          "postedAmount": { "$ref": "#/components/schemas/MoneyDto" },
+          "interestType": { "type": "string", "enum": ["CREDIT", "DEBIT"] },
+          "accrualCount": { "type": "integer", "format": "int32" },
+          "postedAt": { "type": "string", "format": "date-time" }
+        }
+      },
+      "AccrueInterestRequest": {
+        "type": "object",
+        "properties": {
+          "businessDate": { "type": "string", "format": "date" },
+          "productCode": { "type": "string" },
+          "accountId": { "type": "string", "format": "uuid" }
+        }
+      },
+      "AccrueInterestResponse": {
+        "type": "object",
+        "properties": {
+          "businessDate": { "type": "string", "format": "date" },
+          "accrualCount": { "type": "integer", "format": "int32" },
+          "accruals": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/DailyInterestAccrualResponse" }
+          }
+        }
+      },
+      "CreateInterestRuleRequest": {
+        "type": "object",
+        "properties": {
+          "code": { "type": "string", "maxLength": 50, "minLength": 0 },
+          "productCode": { "type": "string", "maxLength": 50, "minLength": 0 },
+          "interestType": { "type": "string", "enum": ["CREDIT", "DEBIT"] },
+          "annualRate": { "type": "number", "maximum": 1.0, "minimum": 0.0 },
+          "accrualBasis": {
+            "type": "string",
+            "enum": ["ACT_365", "ACT_360", "THIRTY_360", "ACT_ACT"]
+          },
+          "balanceBasis": { "type": "string", "enum": ["LEDGER_BALANCE", "AVAILABLE_BALANCE"] },
+          "minEligibleBalance": { "$ref": "#/components/schemas/MoneyDto" },
+          "interestAccountId": { "type": "string", "format": "uuid" },
+          "validFrom": { "type": "string", "format": "date" },
+          "validTo": { "type": "string", "format": "date" }
+        },
+        "required": [
+          "accrualBasis",
+          "annualRate",
+          "balanceBasis",
+          "code",
+          "interestType",
+          "productCode"
+        ]
+      },
+      "InterestRuleResponse": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "code": { "type": "string" },
+          "productCode": { "type": "string" },
+          "interestType": { "type": "string", "enum": ["CREDIT", "DEBIT"] },
+          "annualRate": { "type": "number" },
+          "accrualBasis": {
+            "type": "string",
+            "enum": ["ACT_365", "ACT_360", "THIRTY_360", "ACT_ACT"]
+          },
+          "balanceBasis": { "type": "string", "enum": ["LEDGER_BALANCE", "AVAILABLE_BALANCE"] },
+          "minEligibleBalance": { "$ref": "#/components/schemas/MoneyDto" },
+          "interestAccountId": { "type": "string", "format": "uuid" },
+          "validFrom": { "type": "string", "format": "date" },
+          "validTo": { "type": "string", "format": "date" },
+          "active": { "type": "boolean" },
+          "version": { "type": "integer", "format": "int32" },
+          "createdAt": { "type": "string", "format": "date-time" },
+          "updatedAt": { "type": "string", "format": "date-time" }
+        }
+      },
+      "ReleaseHoldRequest": {
+        "type": "object",
+        "properties": { "releaseReason": { "type": "string" } }
+      },
+      "HoldResponse": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "accountId": { "type": "string", "format": "uuid" },
+          "amount": { "$ref": "#/components/schemas/MoneyDto" },
+          "status": { "type": "string" },
+          "reference": { "type": "string" },
+          "reason": { "type": "string" },
+          "createdAt": { "type": "string", "format": "date-time" },
+          "updatedAt": { "type": "string", "format": "date-time" },
+          "expiresAt": { "type": "string", "format": "date-time" },
+          "capturedAmount": { "$ref": "#/components/schemas/MoneyDto" },
+          "releasedAmount": { "$ref": "#/components/schemas/MoneyDto" },
+          "sourceTransactionId": { "type": "string", "format": "uuid" },
+          "captureTransactionId": { "type": "string", "format": "uuid" },
+          "version": { "type": "integer", "format": "int64" },
+          "state": { "type": "string" },
+          "captureAmount": { "$ref": "#/components/schemas/MoneyDto" }
+        }
+      },
+      "CaptureHoldRequest": {
+        "type": "object",
+        "properties": {
+          "amount": { "$ref": "#/components/schemas/MoneyDto" },
+          "reference": { "type": "string", "maxLength": 255, "minLength": 0 },
+          "description": { "type": "string", "maxLength": 255, "minLength": 0 }
+        },
+        "required": ["amount", "reference"]
+      },
+      "ExecuteFxTransferRequest": {
+        "type": "object",
+        "properties": {
+          "quoteReference": { "type": "string" },
+          "sourceAccountId": { "type": "string", "format": "uuid" },
+          "destinationAccountId": { "type": "string", "format": "uuid" },
+          "reference": { "type": "string" },
+          "description": { "type": "string" }
+        },
+        "required": ["destinationAccountId", "quoteReference", "reference", "sourceAccountId"]
+      },
+      "CreateFxRateRequest": {
+        "type": "object",
+        "properties": {
+          "sourceCurrency": { "type": "string" },
+          "targetCurrency": { "type": "string" },
+          "rate": { "type": "number", "minimum": 0.00000001 },
+          "spread": { "type": "number" },
+          "provider": { "type": "string" },
+          "expiresAt": { "type": "string", "format": "date-time" }
+        },
+        "required": ["rate", "sourceCurrency", "targetCurrency"]
+      },
+      "FxRateResponse": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "sourceCurrency": { "type": "string" },
+          "targetCurrency": { "type": "string" },
+          "rate": { "type": "number" },
+          "spread": { "type": "number" },
+          "effectiveRate": { "type": "number" },
+          "provider": { "type": "string" },
+          "timestamp": { "type": "string", "format": "date-time" },
+          "expiresAt": { "type": "string", "format": "date-time" },
+          "active": { "type": "boolean" },
+          "createdAt": { "type": "string", "format": "date-time" }
+        }
+      },
+      "RequestFxQuoteRequest": {
+        "type": "object",
+        "properties": {
+          "sourceCurrency": { "type": "string" },
+          "targetCurrency": { "type": "string" },
+          "sourceAmount": { "type": "number", "minimum": 0.01 }
+        },
+        "required": ["sourceAmount", "sourceCurrency", "targetCurrency"]
+      },
+      "FxQuoteResponse": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "quoteReference": { "type": "string" },
+          "sourceCurrency": { "type": "string" },
+          "targetCurrency": { "type": "string" },
+          "sourceAmount": { "$ref": "#/components/schemas/MoneyDto" },
+          "targetAmount": { "$ref": "#/components/schemas/MoneyDto" },
+          "exchangeRate": { "type": "number" },
+          "spread": { "type": "number" },
+          "provider": { "type": "string" },
+          "status": { "type": "string" },
+          "expiresAt": { "type": "string", "format": "date-time" },
+          "createdAt": { "type": "string", "format": "date-time" },
+          "executedAt": { "type": "string", "format": "date-time" }
+        }
+      },
+      "CreateFeeRuleRequest": {
+        "type": "object",
+        "properties": {
+          "code": { "type": "string", "maxLength": 64, "minLength": 0 },
+          "name": { "type": "string", "maxLength": 255, "minLength": 0 },
+          "transactionType": {
+            "type": "string",
+            "enum": [
+              "DEPOSIT",
+              "WITHDRAWAL",
+              "TRANSFER",
+              "DEPOSIT_REVERSAL",
+              "WITHDRAWAL_REVERSAL",
+              "TRANSFER_REVERSAL",
+              "HOLD_CAPTURE",
+              "HOLD_CAPTURE_REVERSAL",
+              "FX_TRANSFER",
+              "FX_TRANSFER_REVERSAL",
+              "INTEREST_CREDIT",
+              "INTEREST_CREDIT_REVERSAL",
+              "INTEREST_DEBIT",
+              "INTEREST_DEBIT_REVERSAL"
+            ]
+          },
+          "currency": { "type": "string", "enum": ["EUR", "USD", "MAD", "GBP", "JPY"] },
+          "calculationType": { "type": "string", "enum": ["FIXED", "PERCENTAGE", "TIERED"] },
+          "fixedAmount": { "type": "number", "minimum": 0.0 },
+          "percentageRate": { "type": "number", "minimum": 0.0 },
+          "tiers": { "type": "array", "items": { "$ref": "#/components/schemas/FeeTierDto" } },
+          "minFee": { "type": "number", "minimum": 0.0 },
+          "maxFee": { "type": "number", "minimum": 0.0 },
+          "taxRate": { "type": "number", "minimum": 0.0 },
+          "feeIncomeAccountId": { "type": "string", "format": "uuid" },
+          "taxPayableAccountId": { "type": "string", "format": "uuid" },
+          "effectiveFrom": { "type": "string", "format": "date-time" },
+          "effectiveTo": { "type": "string", "format": "date-time" }
+        },
+        "required": [
+          "calculationType",
+          "code",
+          "currency",
+          "feeIncomeAccountId",
+          "name",
+          "transactionType"
+        ]
+      },
+      "FeeTierDto": {
+        "type": "object",
+        "properties": {
+          "minAmount": { "type": "number", "minimum": 0.0 },
+          "maxAmount": { "type": "number" },
+          "feeValue": { "type": "number", "minimum": 0.0 },
+          "isPercentage": { "type": "boolean" }
+        },
+        "required": ["feeValue", "minAmount"]
+      },
+      "FeeRuleResponse": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "code": { "type": "string" },
+          "name": { "type": "string" },
+          "version": { "type": "integer", "format": "int32" },
+          "transactionType": {
+            "type": "string",
+            "enum": [
+              "DEPOSIT",
+              "WITHDRAWAL",
+              "TRANSFER",
+              "DEPOSIT_REVERSAL",
+              "WITHDRAWAL_REVERSAL",
+              "TRANSFER_REVERSAL",
+              "HOLD_CAPTURE",
+              "HOLD_CAPTURE_REVERSAL",
+              "FX_TRANSFER",
+              "FX_TRANSFER_REVERSAL",
+              "INTEREST_CREDIT",
+              "INTEREST_CREDIT_REVERSAL",
+              "INTEREST_DEBIT",
+              "INTEREST_DEBIT_REVERSAL"
+            ]
+          },
+          "currency": { "type": "string", "enum": ["EUR", "USD", "MAD", "GBP", "JPY"] },
+          "calculationType": { "type": "string", "enum": ["FIXED", "PERCENTAGE", "TIERED"] },
+          "fixedAmount": { "type": "number" },
+          "percentageRate": { "type": "number" },
+          "tiers": { "type": "array", "items": { "$ref": "#/components/schemas/FeeTierDto" } },
+          "minFee": { "type": "number" },
+          "maxFee": { "type": "number" },
+          "taxRate": { "type": "number" },
+          "feeIncomeAccountId": { "type": "string", "format": "uuid" },
+          "taxPayableAccountId": { "type": "string", "format": "uuid" },
+          "active": { "type": "boolean" },
+          "effectiveFrom": { "type": "string", "format": "date-time" },
+          "effectiveTo": { "type": "string", "format": "date-time" },
+          "createdAt": { "type": "string", "format": "date-time" }
+        }
+      },
+      "PreviewFeeRequest": {
+        "type": "object",
+        "properties": {
+          "transactionType": {
+            "type": "string",
+            "enum": [
+              "DEPOSIT",
+              "WITHDRAWAL",
+              "TRANSFER",
+              "DEPOSIT_REVERSAL",
+              "WITHDRAWAL_REVERSAL",
+              "TRANSFER_REVERSAL",
+              "HOLD_CAPTURE",
+              "HOLD_CAPTURE_REVERSAL",
+              "FX_TRANSFER",
+              "FX_TRANSFER_REVERSAL",
+              "INTEREST_CREDIT",
+              "INTEREST_CREDIT_REVERSAL",
+              "INTEREST_DEBIT",
+              "INTEREST_DEBIT_REVERSAL"
+            ]
+          },
+          "amount": { "type": "number", "minimum": 0.0 },
+          "currency": { "type": "string", "enum": ["EUR", "USD", "MAD", "GBP", "JPY"] },
+          "feeRuleCode": { "type": "string", "maxLength": 64, "minLength": 0 }
+        },
+        "required": ["amount", "currency", "transactionType"]
+      },
+      "FeePreviewResponse": {
+        "type": "object",
+        "properties": {
+          "ruleId": { "type": "string", "format": "uuid" },
+          "ruleVersion": { "type": "integer", "format": "int32" },
+          "ruleCode": { "type": "string" },
+          "principalAmount": { "$ref": "#/components/schemas/MoneyDto" },
+          "feeAmount": { "$ref": "#/components/schemas/MoneyDto" },
+          "taxAmount": { "$ref": "#/components/schemas/MoneyDto" },
+          "grossAmount": { "$ref": "#/components/schemas/MoneyDto" },
+          "feeIncomeAccountId": { "type": "string", "format": "uuid" },
+          "taxPayableAccountId": { "type": "string", "format": "uuid" },
+          "fee": { "type": "number" },
+          "tax": { "type": "number" },
+          "gross": { "type": "number" }
+        }
+      },
+      "CreateCustomerRequest": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string", "maxLength": 255, "minLength": 0 },
+          "email": { "type": "string" },
+          "segment": { "type": "string", "enum": ["RETAIL", "SME", "CORPORATE", "WEALTH"] },
+          "riskRating": { "type": "string", "enum": ["LOW", "MEDIUM", "HIGH"] },
+          "taxId": { "type": "string" },
+          "address": { "type": "string" },
+          "phoneNumber": { "type": "string" },
+          "metadata": { "type": "object", "additionalProperties": { "type": "string" } }
+        },
+        "required": ["email", "name", "segment"]
+      },
+      "CustomerResponse": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "name": { "type": "string" },
+          "email": { "type": "string" },
+          "status": { "type": "string", "enum": ["ACTIVE", "RESTRICTED", "SUSPENDED", "CLOSED"] },
+          "segment": { "type": "string", "enum": ["RETAIL", "SME", "CORPORATE", "WEALTH"] },
+          "riskRating": { "type": "string", "enum": ["LOW", "MEDIUM", "HIGH"] },
+          "taxId": { "type": "string" },
+          "address": { "type": "string" },
+          "phoneNumber": { "type": "string" },
+          "metadata": { "type": "object", "additionalProperties": { "type": "string" } },
+          "version": { "type": "integer", "format": "int64" },
+          "createdAt": { "type": "string", "format": "date-time" },
+          "updatedAt": { "type": "string", "format": "date-time" }
+        }
+      },
+      "CustomerStatusUpdateRequest": {
+        "type": "object",
+        "properties": {
+          "status": { "type": "string", "enum": ["ACTIVE", "RESTRICTED", "SUSPENDED", "CLOSED"] },
+          "reason": { "type": "string" }
+        },
+        "required": ["status"]
+      },
+      "RollBusinessDateRequest": {
+        "type": "object",
+        "properties": {
+          "calendarId": { "type": "string" },
+          "targetDate": { "type": "string", "format": "date" }
+        }
+      },
+      "BusinessDateResponse": {
+        "type": "object",
+        "properties": {
+          "calendarId": { "type": "string" },
+          "currentDate": { "type": "string", "format": "date" },
+          "status": { "type": "string", "enum": ["OPEN", "CLOSED", "ROLLING"] },
+          "cutOffTime": { "$ref": "#/components/schemas/LocalTime" },
+          "weekendProcessingAllowed": { "type": "boolean" },
+          "updatedAt": { "type": "string", "format": "date-time" },
+          "updatedBy": { "type": "string" },
+          "isHoliday": { "type": "boolean" },
+          "cutoffTime": { "$ref": "#/components/schemas/LocalTime" },
+          "isOpen": { "type": "boolean" },
+          "businessDate": { "type": "string", "format": "date" }
+        }
+      },
+      "LocalTime": {
+        "type": "object",
+        "properties": {
+          "hour": { "type": "integer", "format": "int32" },
+          "minute": { "type": "integer", "format": "int32" },
+          "second": { "type": "integer", "format": "int32" },
+          "nano": { "type": "integer", "format": "int32" }
+        }
+      },
+      "CreateBeneficiaryRequest": {
+        "type": "object",
+        "properties": {
+          "ownerId": { "type": "string", "format": "uuid" },
+          "sourceAccountId": { "type": "string", "format": "uuid" },
+          "destinationAccountId": { "type": "string", "format": "uuid" },
+          "name": { "type": "string", "maxLength": 255, "minLength": 0 },
+          "currency": { "type": "string", "enum": ["EUR", "USD", "MAD", "GBP", "JPY"] },
+          "iban": { "type": "string", "maxLength": 64, "minLength": 0 },
+          "autoActivate": { "type": "boolean" }
+        },
+        "required": ["currency", "destinationAccountId", "name", "ownerId"]
+      },
+      "BeneficiaryResponse": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "ownerId": { "type": "string", "format": "uuid" },
+          "sourceAccountId": { "type": "string", "format": "uuid" },
+          "destinationAccountId": { "type": "string", "format": "uuid" },
+          "name": { "type": "string" },
+          "currency": { "type": "string", "enum": ["EUR", "USD", "MAD", "GBP", "JPY"] },
+          "iban": { "type": "string" },
+          "status": { "type": "string", "enum": ["PENDING", "ACTIVE", "BLOCKED", "REMOVED"] },
+          "blockReason": { "type": "string" },
+          "createdAt": { "type": "string", "format": "date-time" },
+          "updatedAt": { "type": "string", "format": "date-time" }
+        }
+      },
+      "BlockBeneficiaryRequest": {
+        "type": "object",
+        "properties": { "reason": { "type": "string", "maxLength": 255, "minLength": 0 } }
+      },
+      "TokenRequest": {
+        "type": "object",
+        "properties": {
+          "subject": { "type": "string" },
+          "username": { "type": "string" },
+          "password": { "type": "string" },
+          "actorType": { "type": "string", "enum": ["HUMAN", "SERVICE"] },
+          "actor": { "type": "string", "writeOnly": true },
+          "role": {
+            "type": "string",
+            "enum": ["CUSTOMER", "OPERATOR", "AUDITOR", "ADMIN", "SYSTEM"]
+          },
+          "customerId": { "type": "string", "format": "uuid" },
+          "serviceName": { "type": "string" },
+          "validitySeconds": { "type": "integer", "format": "int64" }
+        }
+      },
+      "TokenResponse": {
+        "type": "object",
+        "properties": {
+          "token": { "type": "string" },
+          "tokenType": { "type": "string" },
+          "expiresInSeconds": { "type": "integer", "format": "int64" },
+          "subject": { "type": "string" },
+          "role": { "type": "string" },
+          "actorType": { "type": "string" }
+        }
+      },
+      "WebhookDeliveryResponse": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "notificationPreferenceId": { "type": "string", "format": "uuid" },
+          "eventId": { "type": "string", "format": "uuid" },
+          "eventType": { "type": "string" },
+          "callbackUrl": { "type": "string" },
+          "payload": { "type": "string" },
+          "httpStatus": { "type": "integer", "format": "int32" },
+          "responseBody": { "type": "string" },
+          "attemptNumber": { "type": "integer", "format": "int32" },
+          "maxAttempts": { "type": "integer", "format": "int32" },
+          "nextRetryAt": { "type": "string", "format": "date-time" },
+          "status": {
+            "type": "string",
+            "enum": ["PENDING", "DELIVERED", "FAILED", "RETRYING", "DEAD_LETTER"]
+          },
+          "createdAt": { "type": "string", "format": "date-time" },
+          "deliveredAt": { "type": "string", "format": "date-time" }
+        }
+      },
+      "DispatchWebhookBatchResponse": {
+        "type": "object",
+        "properties": {
+          "totalProcessed": { "type": "integer", "format": "int32" },
+          "successful": { "type": "integer", "format": "int32" },
+          "failed": { "type": "integer", "format": "int32" },
+          "retrying": { "type": "integer", "format": "int32" },
+          "deliveries": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/WebhookDeliveryResponse" }
+          }
+        }
+      },
+      "ReconciliationReportResponse": {
+        "type": "object",
+        "properties": {
+          "valid": { "type": "boolean" },
+          "totalEntriesChecked": { "type": "integer", "format": "int32" },
+          "discrepancies": { "type": "object", "additionalProperties": { "type": "number" } },
+          "message": { "type": "string" },
+          "outboxLag": { "type": "integer", "format": "int64" },
+          "timestamp": { "type": "string", "format": "date-time" },
+          "zeroSum": { "type": "boolean" }
+        }
+      },
+      "OutboxDrainResponse": {
+        "type": "object",
+        "description": "Response payload after triggering an outbox drain pass",
+        "properties": {
+          "drained": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Total number of outbox events drained across all batches",
+            "example": 100
+          },
+          "remainingLag": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Count of remaining unpublished outbox events (lag)",
+            "example": 0
+          }
+        }
+      },
+      "DeadLetterEventResponse": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "originalEventId": { "type": "string", "format": "uuid" },
+          "topic": { "type": "string" },
+          "partitionKey": { "type": "string" },
+          "eventType": { "type": "string" },
+          "aggregateType": { "type": "string" },
+          "aggregateId": { "type": "string", "format": "uuid" },
+          "payload": { "type": "string" },
+          "headers": { "type": "object", "additionalProperties": { "type": "string" } },
+          "errorMessage": { "type": "string" },
+          "stackTrace": { "type": "string" },
+          "retryCount": { "type": "integer", "format": "int32" },
+          "maxRetries": { "type": "integer", "format": "int32" },
+          "status": { "type": "string", "enum": ["PENDING", "REPLAYED", "DISCARDED"] },
+          "createdAt": { "type": "string", "format": "date-time" },
+          "lastRetriedAt": { "type": "string", "format": "date-time" }
+        }
+      },
+      "OpenAccountRequest": {
+        "type": "object",
+        "properties": {
+          "ownerId": { "type": "string", "format": "uuid" },
+          "currency": { "type": "string", "enum": ["EUR", "USD", "MAD", "GBP", "JPY"] },
+          "label": { "type": "string", "maxLength": 120, "minLength": 1 },
+          "type": {
+            "type": "string",
+            "enum": [
+              "CLASSIC",
+              "SAVINGS",
+              "ESCROW",
+              "SETTLEMENT",
+              "CLEARING",
+              "FEE_INCOME",
+              "TAX_PAYABLE",
+              "FX_POSITION",
+              "INTEREST_EXPENSE",
+              "INTEREST_INCOME"
+            ]
+          },
+          "productCode": { "type": "string" },
+          "dailyTransferLimit": { "$ref": "#/components/schemas/MoneyDto" },
+          "allowOverdraft": { "type": "boolean" },
+          "overdraftLimit": { "$ref": "#/components/schemas/MoneyDto" }
+        },
+        "required": ["currency", "label", "ownerId", "type"]
+      },
+      "AccountResponse": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "ownerId": { "type": "string", "format": "uuid" },
+          "currency": { "type": "string", "enum": ["EUR", "USD", "MAD", "GBP", "JPY"] },
+          "label": { "type": "string" },
+          "type": {
+            "type": "string",
+            "enum": [
+              "CLASSIC",
+              "SAVINGS",
+              "ESCROW",
+              "SETTLEMENT",
+              "CLEARING",
+              "FEE_INCOME",
+              "TAX_PAYABLE",
+              "FX_POSITION",
+              "INTEREST_EXPENSE",
+              "INTEREST_INCOME"
+            ]
+          },
+          "status": { "type": "string", "enum": ["ACTIVE", "FROZEN", "CLOSED"] },
+          "dailyTransferLimit": { "$ref": "#/components/schemas/MoneyDto" },
+          "allowOverdraft": { "type": "boolean" },
+          "overdraftLimit": { "$ref": "#/components/schemas/MoneyDto" },
+          "version": { "type": "integer", "format": "int64" },
+          "createdAt": { "type": "string", "format": "date-time" },
+          "updatedAt": { "type": "string", "format": "date-time" },
+          "derivedBalance": { "$ref": "#/components/schemas/MoneyDto" },
+          "heldAmount": { "$ref": "#/components/schemas/MoneyDto" },
+          "availableBalance": { "$ref": "#/components/schemas/MoneyDto" },
+          "asOf": { "type": "string", "format": "date-time" },
+          "asOfValueDate": { "type": "string", "format": "date" },
+          "balanceBasis": { "type": "string" },
+          "productCode": { "type": "string" },
+          "productVersion": { "type": "integer", "format": "int32" },
+          "asOfDate": { "type": "string", "format": "date" },
+          "ledgerBalance": { "$ref": "#/components/schemas/MoneyDto" },
+          "state": { "type": "string" },
+          "frozen": { "type": "boolean" },
+          "balance": { "$ref": "#/components/schemas/MoneyDto" }
+        }
+      },
+      "WithdrawalRequest": {
+        "type": "object",
+        "properties": {
+          "amount": { "$ref": "#/components/schemas/MoneyDto" },
+          "reference": { "type": "string", "maxLength": 255, "minLength": 0 },
+          "description": { "type": "string", "maxLength": 255, "minLength": 0 }
+        },
+        "required": ["amount", "reference"]
+      },
+      "UnfreezeAccountRequest": {
+        "type": "object",
+        "description": "Request body to unfreeze an account",
+        "properties": {
+          "reason": {
+            "type": "string",
+            "description": "Reason for unfreezing account",
+            "example": "Verification completed and approved by compliance"
+          }
+        }
+      },
+      "CreateHoldRequest": {
+        "type": "object",
+        "properties": {
+          "amount": { "$ref": "#/components/schemas/MoneyDto" },
+          "reference": { "type": "string", "maxLength": 255, "minLength": 0 },
+          "reason": { "type": "string", "maxLength": 255, "minLength": 0 },
+          "expiresAt": { "type": "string", "format": "date-time" },
+          "sourceTransactionId": { "type": "string", "format": "uuid" }
+        },
+        "required": ["amount", "reference"]
+      },
+      "FreezeAccountRequest": {
+        "type": "object",
+        "description": "Request body to freeze an account",
+        "properties": {
+          "reason": {
+            "type": "string",
+            "description": "Reason for freezing account",
+            "example": "Suspicious activity detected"
+          }
+        }
+      },
+      "DepositRequest": {
+        "type": "object",
+        "properties": {
+          "amount": { "$ref": "#/components/schemas/MoneyDto" },
+          "reference": { "type": "string", "maxLength": 255, "minLength": 0 },
+          "description": { "type": "string", "maxLength": 255, "minLength": 0 }
+        },
+        "required": ["amount", "reference"]
+      },
+      "GenerateStatementRequest": {
+        "type": "object",
+        "properties": {
+          "fromDate": { "type": "string", "format": "date" },
+          "toDate": { "type": "string", "format": "date" }
+        },
+        "required": ["fromDate", "toDate"]
+      },
+      "AccountStatementResponse": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "accountId": { "type": "string", "format": "uuid" },
+          "fromDate": { "type": "string", "format": "date" },
+          "toDate": { "type": "string", "format": "date" },
+          "openingBalance": { "type": "number" },
+          "closingBalance": { "type": "number" },
+          "totalCredits": { "type": "number" },
+          "totalDebits": { "type": "number" },
+          "currency": { "type": "string" },
+          "entryCount": { "type": "integer", "format": "int32" },
+          "generatedAt": { "type": "string", "format": "date-time" },
+          "entries": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/StatementEntryResponse" }
+          }
+        }
+      },
+      "StatementEntryResponse": {
+        "type": "object",
+        "properties": {
+          "entryId": { "type": "string", "format": "uuid" },
+          "transactionId": { "type": "string", "format": "uuid" },
+          "entryDate": { "type": "string", "format": "date" },
+          "valueDate": { "type": "string", "format": "date" },
+          "description": { "type": "string" },
+          "reference": { "type": "string" },
+          "debitAmount": { "type": "number" },
+          "creditAmount": { "type": "number" },
+          "runningBalance": { "type": "number" }
+        }
+      },
+      "CreateNotificationPreferenceRequest": {
+        "type": "object",
+        "properties": {
+          "channel": { "type": "string", "enum": ["WEBHOOK", "EMAIL", "IN_APP"] },
+          "eventTypes": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "ALL",
+                "DEPOSIT",
+                "WITHDRAWAL",
+                "TRANSFER",
+                "HOLD_CREATED",
+                "HOLD_CAPTURED",
+                "HOLD_EXPIRED",
+                "SCHEDULED_EXECUTED",
+                "SCHEDULED_FAILED",
+                "ACCOUNT_FROZEN",
+                "ACCOUNT_UNFROZEN",
+                "ACCOUNT_CLOSED",
+                "LOW_BALANCE",
+                "LIMIT_APPROACHING"
+              ]
+            },
+            "uniqueItems": true
+          },
+          "callbackUrl": { "type": "string" },
+          "secretKey": { "type": "string" }
+        },
+        "required": ["channel", "eventTypes"]
+      },
+      "ReconciliationItemResponse": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "jobId": { "type": "string", "format": "uuid" },
+          "externalRecordId": { "type": "string", "format": "uuid" },
+          "internalTransactionId": { "type": "string", "format": "uuid" },
+          "externalTransactionId": { "type": "string" },
+          "externalReference": { "type": "string" },
+          "internalReference": { "type": "string" },
+          "reference": { "type": "string" },
+          "amount": { "$ref": "#/components/schemas/MoneyDto" },
+          "externalAmount": { "type": "number" },
+          "internalAmount": { "type": "number" },
+          "currency": { "type": "string" },
+          "matchStatus": { "type": "string" },
+          "differenceDetails": { "type": "string" },
+          "discrepancy": { "type": "object", "additionalProperties": { "type": "object" } },
+          "discrepancyDetails": { "type": "string" },
+          "caseId": { "type": "string", "format": "uuid" },
+          "reconciledAt": { "type": "string", "format": "date-time" }
+        }
+      },
+      "AuditEventResponse": {
+        "type": "object",
+        "description": "Audit event record representing an immutable regulatory and operational audit entry",
+        "properties": {
+          "eventId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Unique audit event identifier"
+          },
+          "category": {
+            "type": "string",
+            "description": "Category of event: FINANCIAL, ACCOUNT_LIFECYCLE, SECURITY, OPERATIONAL",
+            "example": "FINANCIAL"
+          },
+          "eventType": {
+            "type": "string",
+            "description": "Specific event type",
+            "example": "TRANSFER_COMMITTED"
+          },
+          "eventTime": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp when the event occurred"
+          },
+          "actorId": {
+            "type": "string",
+            "description": "Identifier of actor who initiated the event",
+            "example": "user-123"
+          },
+          "actorType": {
+            "type": "string",
+            "description": "Type of actor: HUMAN, SERVICE, SYSTEM",
+            "example": "HUMAN"
+          },
+          "principalId": {
+            "type": "string",
+            "description": "Principal identifier",
+            "example": "user-123"
+          },
+          "clientId": { "type": "string", "description": "Client or customer ID if applicable" },
+          "sourceChannel": {
+            "type": "string",
+            "description": "Source channel: API, BACKOFFICE, BATCH, SYSTEM_SCHEDULED",
+            "example": "API"
+          },
+          "accountIds": {
+            "type": "array",
+            "description": "Associated account IDs",
+            "items": { "type": "string", "format": "uuid" }
+          },
+          "transactionId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Associated transaction ID if applicable"
+          },
+          "requestId": { "type": "string", "description": "HTTP or workflow request ID" },
+          "correlationId": { "type": "string", "description": "Distributed correlation ID" },
+          "traceId": { "type": "string", "description": "Distributed trace ID" },
+          "reason": {
+            "type": "string",
+            "description": "Business or operational reason for the action"
+          },
+          "authorizationContext": {
+            "type": "string",
+            "description": "Authorization context / permissions evaluated"
+          },
+          "previousState": { "type": "string", "description": "Previous state before the event" },
+          "resultingState": { "type": "string", "description": "Resulting state after the event" },
+          "businessDate": {
+            "type": "string",
+            "format": "date",
+            "description": "Business date of the event"
+          },
+          "status": {
+            "type": "string",
+            "description": "Execution outcome: SUCCESS, FAILED, DENIED",
+            "example": "SUCCESS"
+          },
+          "details": { "type": "string", "description": "Additional context or payload details" },
+          "type": { "type": "string" },
+          "timestamp": { "type": "string", "format": "date-time" }
+        }
+      },
+      "AuditEventsResponse": {
+        "type": "object",
+        "description": "Paginated list response containing immutable audit events",
+        "properties": {
+          "events": {
+            "type": "array",
+            "description": "List of audit event items",
+            "items": { "$ref": "#/components/schemas/AuditEventResponse" }
+          },
+          "nextCursor": {
+            "type": "string",
+            "description": "Cursor for fetching the next page of results"
+          },
+          "totalCount": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Total number of matching audit events in the system",
+            "example": 42
+          }
+        }
+      },
+      "ObservabilityStatsResponse": {
+        "type": "object",
+        "properties": {
+          "outboxLag": { "type": "integer", "format": "int64" },
+          "totalDeadLetterCount": { "type": "integer", "format": "int64" },
+          "pendingDeadLetterCount": { "type": "integer", "format": "int64" },
+          "replayedDeadLetterCount": { "type": "integer", "format": "int64" },
+          "discardedDeadLetterCount": { "type": "integer", "format": "int64" },
+          "publishedCountByTopic": {
+            "type": "object",
+            "additionalProperties": { "type": "integer", "format": "int64" }
+          },
+          "consumerLagByTopic": {
+            "type": "object",
+            "additionalProperties": { "type": "integer", "format": "int64" }
+          },
+          "healthStatus": { "type": "string" },
+          "timestamp": { "type": "string", "format": "date-time" }
+        }
+      },
+      "AccountEventsResponse": {
+        "type": "object",
+        "description": "Ordered event stream for an account with cursor pagination",
+        "properties": {
+          "events": {
+            "type": "array",
+            "description": "List of events in chronological order",
+            "items": { "$ref": "#/components/schemas/EventResponse" }
+          },
+          "nextCursor": {
+            "type": "string",
+            "description": "Cursor to retrieve next page of events, or null if no further events exist",
+            "example": "MjAyNi0wOS0wN1QxMjowMDowMFo6..."
+          }
+        }
+      },
+      "EventResponse": {
+        "type": "object",
+        "description": "Audit event record in ledger event stream",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Unique event ID",
+            "example": "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11"
+          },
+          "aggregateType": {
+            "type": "string",
+            "description": "Aggregate type",
+            "example": "Account"
+          },
+          "aggregateId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Aggregate ID",
+            "example": "b1eebc99-9c0b-4ef8-bb6d-6bb9bd380a22"
+          },
+          "eventType": {
+            "type": "string",
+            "description": "Event type",
+            "example": "AccountOpened"
+          },
+          "payload": { "type": "string", "description": "Event payload JSON" },
+          "metadata": { "type": "string", "description": "Event metadata JSON" },
+          "occurredAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp when event occurred"
+          },
+          "version": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Aggregate version at event time",
+            "example": 0
+          }
+        }
+      }
+    }
+  }
+}

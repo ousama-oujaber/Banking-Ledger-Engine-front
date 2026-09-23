@@ -1,5 +1,6 @@
 {
   "name": "@ble-frontend/auth",
   "version": "0.0.0",
+  "type": "module",
   "description": "Shared authentication, JWT decoding, session storage, and RBAC guards"
 }

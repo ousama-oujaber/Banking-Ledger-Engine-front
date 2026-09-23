@@ -1,28 +1,90 @@
+/**
+ * @ble-frontend/tokens - variables.css
+ *
+ * Headless CSS Custom Property (Variable) Scaffolding.
+ * Strictly adheres to design autonomy guidelines: provides semantic slots
+ * without enforcing concrete color palettes, typography, or visual themes.
+ */
+
 :root {
-  /* Brand / Semantic Color Slots */
+  /* Brand & Surface Slots */
   --ble-color-primary: initial;
   --ble-color-primary-hover: initial;
+  --ble-color-primary-active: initial;
   --ble-color-surface: initial;
+  --ble-color-surface-subtle: initial;
+  --ble-color-surface-muted: initial;
   --ble-color-background: initial;
+  --ble-color-border: initial;
+  --ble-color-border-subtle: initial;
+
+  /* Text & Foreground Slots */
   --ble-color-text-primary: initial;
   --ble-color-text-secondary: initial;
+  --ble-color-text-muted: initial;
+  --ble-color-text-inverse: initial;
 
-  /* Status Semantics */
+  /* Domain Status Semantics (Matching Banking DDD Aggregates) */
   --ble-color-status-active: initial;
   --ble-color-status-frozen: initial;
   --ble-color-status-closed: initial;
+  --ble-color-status-pending: initial;
+  --ble-color-status-success: initial;
+  --ble-color-status-warning: initial;
+  --ble-color-status-danger: initial;
+  --ble-color-status-info: initial;
 
-  /* Spacing Slots */
+  /* Spacing Scale */
+  --ble-spacing-2xs: 0.125rem;
   --ble-spacing-xs: 0.25rem;
   --ble-spacing-sm: 0.5rem;
   --ble-spacing-md: 1rem;
   --ble-spacing-lg: 1.5rem;
   --ble-spacing-xl: 2rem;
+  --ble-spacing-2xl: 3rem;
 
   /* Typography Slots */
   --ble-font-family: inherit;
-  --ble-font-size-base: 1rem;
+  --ble-font-family-mono: inherit;
+  --ble-font-size-xs: 0.75rem;
   --ble-font-size-sm: 0.875rem;
+  --ble-font-size-base: 1rem;
   --ble-font-size-lg: 1.125rem;
   --ble-font-size-xl: 1.25rem;
+  --ble-font-size-2xl: 1.5rem;
+  --ble-line-height-base: 1.5;
+  --ble-line-height-tight: 1.25;
+  --ble-font-weight-normal: 400;
+  --ble-font-weight-medium: 500;
+  --ble-font-weight-bold: 700;
+
+  /* Border Radius Slots */
+  --ble-radius-sm: 0.25rem;
+  --ble-radius-md: 0.375rem;
+  --ble-radius-lg: 0.5rem;
+  --ble-radius-full: 9999px;
+
+  /* Shadow / Elevation Slots */
+  --ble-shadow-sm: initial;
+  --ble-shadow-md: initial;
+  --ble-shadow-lg: initial;
+
+  /* Z-Index Layering */
+  --ble-z-dropdown: 1000;
+  --ble-z-sticky: 1020;
+  --ble-z-modal: 1050;
+  --ble-z-toast: 1080;
+  --ble-z-tooltip: 1100;
+
+  /* Transition Durations */
+  --ble-transition-fast: 150ms ease;
+  --ble-transition-normal: 250ms ease;
+  --ble-transition-slow: 350ms ease;
+
+  /* Responsive Breakpoint Slots */
+  --ble-breakpoint-xs: 480px;
+  --ble-breakpoint-sm: 640px;
+  --ble-breakpoint-md: 768px;
+  --ble-breakpoint-lg: 1024px;
+  --ble-breakpoint-xl: 1280px;
 }

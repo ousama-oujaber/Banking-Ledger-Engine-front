@@ -1,83 +1,120 @@
 import { execSync } from 'child_process';
-import { writeFileSync, mkdirSync, existsSync, statSync, readFileSync } from 'fs';
-import { fileURLToPath } from 'url';
+import { existsSync, mkdirSync, readFileSync, statSync, writeFileSync } from 'fs';
+import { createRequire } from 'module';
 import { dirname, resolve } from 'path';
+import { fileURLToPath } from 'url';
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const BACKEND_URL = process.env.BACKEND_URL ?? 'http://localhost:8080';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+const require = createRequire(import.meta.url);
+
 const OUTPUT_DIR = resolve(__dirname, '../../libs/api-client/src/generated');
-const specUrl = `${BACKEND_URL}/v3/api-docs`;
+const CACHED_SPEC_PATH = resolve(__dirname, '../../libs/api-client/openapi.json');
 
-console.log(`[api:generate] Fetching OpenAPI spec from ${specUrl}...`);
+// Parse CLI flags or env variables
+const args = process.argv.slice(2);
+const cliUrlArg = args.find((a) => a.startsWith('--url='))?.split('=')[1];
+const cliFileArg = args.find((a) => a.startsWith('--file='))?.split('=')[1];
+const BACKEND_URL = cliUrlArg ?? process.env.BACKEND_URL ?? 'http://localhost:8080';
+const specUrl = `${BACKEND_URL.replace(/\/+$/, '')}/v3/api-docs`;
+
+let effectiveInput: string = specUrl;
 
 if (!existsSync(OUTPUT_DIR)) {
   mkdirSync(OUTPUT_DIR, { recursive: true });
 }
 
-// Keep config for reference (not used for generation - direct CLI is more reliable)
-const configContent = `export default {
-  input: '${specUrl}',
-  output: '${OUTPUT_DIR}',
-  client: 'fetch',
-  types: {
-    immutableTypes: true,
-  },
-};\n`;
+// 1. Determine input source (Live Backend or Cached Snapshot Fallback)
+if (cliFileArg) {
+  effectiveInput = resolve(process.cwd(), cliFileArg);
+  console.log(`[api:generate] Using explicit schema file: ${effectiveInput}`);
+} else {
+  console.log(`[api:generate] Probing backend OpenAPI spec at ${specUrl}...`);
+  try {
+    const curlOutput = execSync(`curl -s -f -m 4 ${specUrl}`, { encoding: 'utf-8' });
+    if (curlOutput && curlOutput.trim().startsWith('{')) {
+      writeFileSync(CACHED_SPEC_PATH, curlOutput);
+      console.log(`[api:generate] ✓ Live OpenAPI spec fetched and cached to ${CACHED_SPEC_PATH}`);
+      effectiveInput = specUrl;
+    }
+  } catch {
+    if (existsSync(CACHED_SPEC_PATH)) {
+      console.warn(
+        `[api:generate] ⚠️  Backend at ${specUrl} is unreachable. Falling back to cached schema: ${CACHED_SPEC_PATH}`,
+      );
+      effectiveInput = CACHED_SPEC_PATH;
+    } else {
+      console.error(
+        `[api:generate] ❌ Backend is unreachable and no cached openapi.json exists. Ensure backend is running.`,
+      );
+      process.exit(1);
+    }
+  }
+}
 
-writeFileSync(resolve(OUTPUT_DIR, 'openapi-ts.config.ts'), configContent);
-
-// Snapshot existing request.ts to restore if generator produces empty file (v0.50 bug)
-const requestPathPre = resolve(OUTPUT_DIR, 'core/request.ts');
+// 2. Snapshot existing request.ts to restore if generator produces empty file (v0.50 bug)
+const requestPath = resolve(OUTPUT_DIR, 'core/request.ts');
 let previousRequestContent: string | null = null;
 try {
-  if (existsSync(requestPathPre) && statSync(requestPathPre).size > 0) {
-    previousRequestContent = readFileSync(requestPathPre, 'utf-8');
+  if (existsSync(requestPath) && statSync(requestPath).size > 0) {
+    previousRequestContent = readFileSync(requestPath, 'utf-8');
   }
 } catch {}
 
+// 3. Resolve @hey-api/openapi-ts binary portably
+let binPath: string;
 try {
-  // Use direct CLI args instead of -c config (c12 loader flakes with "input not provided" on some pnpm setups)
-  // This was verified to generate correct request.ts + typed interceptors via:
-  //   npx @hey-api/openapi-ts --input http://localhost:8080/v3/api-docs --output <dir> --client fetch
-  const binPath = resolve(__dirname, '../../node_modules/.pnpm/@hey-api+openapi-ts@0.50.0_typescript@5.6.3/node_modules/@hey-api/openapi-ts/bin/index.cjs');
-  execSync(`node ${binPath} --input ${specUrl} --output ${OUTPUT_DIR} --client fetch`, {
+  const pkgJsonPath = require.resolve('@hey-api/openapi-ts/package.json');
+  binPath = resolve(dirname(pkgJsonPath), 'bin/index.cjs');
+} catch {
+  binPath = 'npx @hey-api/openapi-ts';
+}
+
+console.log(`[api:generate] Generating TypeScript SDK from ${effectiveInput}...`);
+
+try {
+  const cmd = binPath.startsWith('npx')
+    ? `${binPath} --input "${effectiveInput}" --output "${OUTPUT_DIR}" --client fetch`
+    : `node "${binPath}" --input "${effectiveInput}" --output "${OUTPUT_DIR}" --client fetch`;
+
+  execSync(cmd, {
     stdio: 'inherit',
     cwd: resolve(__dirname, '../../'),
   });
-  console.log('[api:generate] TypeScript client generated successfully.');
+  console.log('[api:generate] ✓ TypeScript client generated successfully.');
 } catch (error) {
-  console.error('[api:generate] Code generation failed. Ensure the backend is running on port 8080.');
+  console.error('[api:generate] ❌ Code generation command failed.');
   process.exit(1);
 }
 
-// Post-generation validation: @hey-api/openapi-ts@0.50.0 known to generate empty request.ts
-// with certain TypeScript/pnpm combos. Auto-detect and restore.
-const requestPath = resolve(OUTPUT_DIR, 'core/request.ts');
-const openApiPath = resolve(OUTPUT_DIR, 'core/OpenAPI.ts');
+// 4. Post-generation validation & auto-fix
 try {
   if (!existsSync(requestPath) || statSync(requestPath).size === 0) {
-    console.error('[api:generate] ⚠️  Generated core/request.ts is empty (known v0.50 incompatibility).');
+    console.warn('[api:generate] ⚠️  Generated core/request.ts is empty. Restoring from snapshot.');
     if (previousRequestContent) {
       writeFileSync(requestPath, previousRequestContent);
-      console.log('[api:generate] Restored previous request.ts from snapshot.');
-    } else {
-      console.error('[api:generate] No snapshot to restore. Build will fail until request.ts is manually fixed.');
-      console.error('[api:generate] Fix: pin @hey-api/openapi-ts to ^0.51 or use manual fetch runtime.');
+      console.log('[api:generate] ✓ Restored core/request.ts from snapshot.');
     }
   }
+
+  const openApiPath = resolve(OUTPUT_DIR, 'core/OpenAPI.ts');
   if (existsSync(openApiPath)) {
     const content = readFileSync(openApiPath, 'utf-8');
-    if (content.includes('interceptors: {\n\t};') || content.includes('interceptors: {}') || content.includes('interceptors: {\n};')) {
-      console.error('[api:generate] ⚠️  Generated OpenAPI.ts has empty interceptors type ({}). Expected request/response typed Interceptors.');
-      // Auto-fix interceptors type
+    if (
+      content.includes('interceptors: {\n\t};') ||
+      content.includes('interceptors: {}') ||
+      content.includes('interceptors: {\n};')
+    ) {
       const fixed = content.replace(
         /interceptors:\s*\{\s*\};/,
-        'interceptors: {\n\t\trequest: Interceptors<RequestInit>;\n\t\tresponse: Interceptors<Response>;\n\t};'
+        'interceptors: {\n\t\trequest: Interceptors<RequestInit>;\n\t\tresponse: Interceptors<Response>;\n\t};',
       );
       if (fixed !== content) {
         writeFileSync(openApiPath, fixed);
-        console.log('[api:generate] Auto-fixed OpenAPI.ts interceptors type.');
+        console.log('[api:generate] ✓ Auto-fixed OpenAPI.ts typed interceptors.');
       }
     }
   }
-} catch {}
+} catch (err) {
+  console.warn('[api:generate] Post-generation check encountered non-fatal warning:', err);
+}
