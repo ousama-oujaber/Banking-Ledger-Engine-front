@@ -1,19 +1,19 @@
 #!/usr/bin/env node
 /**
- * Customer Portal entry point (React 19 + Vite).
+ * Customer Portal entry point (React 19 + Vite + TanStack Query v5).
  */
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
-import { AuthProvider } from './app/providers';
+import { AppProviders } from './app/providers';
 import { AppRoutes } from './app/routes';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <BrowserRouter>
-      <AuthProvider>
+      <AppProviders>
         <AppRoutes />
-      </AuthProvider>
+      </AppProviders>
     </BrowserRouter>
   </React.StrictMode>,
 );
