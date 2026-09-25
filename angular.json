@@ -17,10 +17,7 @@
             "browser": "apps/admin-console/src/main.ts",
             "tsConfig": "apps/admin-console/tsconfig.json",
             "assets": [],
-            "styles": [
-              "libs/tokens/src/variables.css",
-              "apps/admin-console/src/styles.css"
-            ]
+            "styles": ["libs/tokens/src/variables.css", "apps/admin-console/src/styles.css"]
           },
           "configurations": {
             "production": {

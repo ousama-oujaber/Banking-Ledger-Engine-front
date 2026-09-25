@@ -261,7 +261,8 @@ export class AccountAdminService {
         }
       }
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to retrieve accounts from server.';
+      const message =
+        err instanceof Error ? err.message : 'Failed to retrieve accounts from server.';
       this.error.set(message);
     } finally {
       this.loading.set(false);
