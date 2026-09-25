@@ -6,6 +6,7 @@ import { useTransferMutation } from '../hooks/use-transfers';
 import { generateIdempotencyKey } from '../idempotency';
 import { validateTransferCommand, type TransferCommand, type TransferState } from '../types';
 import { TransferConfirmationModal } from './transfer-confirmation-modal';
+import { DomainErrorBanner } from '../../errors';
 
 export interface TransferFormProps {
   initialSourceAccountId?: string;
@@ -141,22 +142,18 @@ export function TransferForm({
 
         {/* Server Domain Error Banner */}
         {serverError && (
-          <div
-            className="transfer-form__alert transfer-form__alert--error"
-            role="alert"
-            data-testid="transfer-error-banner"
-          >
-            <strong>Transfer Failed:</strong> {serverError.message}
-            {serverError.traceId && serverError.traceId !== 'N/A' && (
-              <span className="transfer-form__trace-id">
-                (Trace ID: <code>{serverError.traceId}</code>)
-              </span>
-            )}
+          <div className="transfer-form__error-wrapper" data-testid="transfer-error-banner">
+            <DomainErrorBanner
+              error={serverError}
+              onDismiss={() => setServerError(null)}
+              onRetry={handleRetry}
+            />
             <button
               type="button"
               className="transfer-form__retry-btn"
               onClick={handleRetry}
               data-testid="transfer-retry-btn"
+              style={{ marginTop: '0.5rem' }}
             >
               Retry Transfer (Preserves Idempotency Key)
             </button>

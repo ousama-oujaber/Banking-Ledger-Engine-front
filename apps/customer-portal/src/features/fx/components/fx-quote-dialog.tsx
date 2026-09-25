@@ -1,7 +1,9 @@
 import { useState, useEffect, useId } from 'react';
 import type { TransactionResponse } from '@ble-frontend/api-client';
+import { parseBackendError, type AppError } from '@ble-frontend/domain-types';
 import { useExecuteFxTransferMutation } from '../hooks/use-fx';
 import type { FxQuote } from '../types';
+import { DomainErrorBanner } from '../../errors';
 
 export interface FxQuoteDialogProps {
   quote: FxQuote | null;
@@ -51,7 +53,7 @@ export function FxQuoteDialog({
     calculateRemainingSeconds(quote?.expiresAt),
   );
   const [confirmedTx, setConfirmedTx] = useState<TransactionResponse | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<AppError | string | null>(null);
 
   // Active countdown timer effect
   useEffect(() => {
@@ -94,7 +96,7 @@ export function FxQuoteDialog({
       setConfirmedTx(tx);
       onTransferSuccess?.(tx);
     } catch (err: any) {
-      setError(err?.data?.message || err?.message || 'Failed to execute cross-currency transfer');
+      setError(parseBackendError(err));
     }
   };
 
@@ -178,8 +180,8 @@ export function FxQuoteDialog({
             </div>
 
             {error && (
-              <div className="fx-quote-dialog__error" role="alert" data-testid="fx-execute-error">
-                {error}
+              <div className="fx-quote-dialog__error" data-testid="fx-execute-error">
+                <DomainErrorBanner error={error} onDismiss={() => setError(null)} />
               </div>
             )}
 

@@ -135,4 +135,29 @@ describe('DepositWithdrawModal Component (FR-CUST-TX-02)', () => {
     expect(onSuccess).toHaveBeenCalledTimes(1);
     expect(onClose).toHaveBeenCalledTimes(1);
   });
+
+  it('renders DomainErrorBanner when server operation fails', async () => {
+    const user = userEvent.setup();
+    depositMutateMock.mockRejectedValueOnce({
+      status: 422,
+      data: {
+        code: 'ACCOUNT_FROZEN',
+        message: 'Account is frozen',
+        traceId: 'trace-modal-fail',
+      },
+    });
+
+    render(
+      <DepositWithdrawModal account={mockAccount} mode="DEPOSIT" isOpen={true} onClose={vi.fn()} />,
+    );
+
+    const amountInput = screen.getByTestId('dw-amount-input');
+    await user.type(amountInput, '100.00');
+    await user.click(screen.getByTestId('dw-submit-btn'));
+
+    expect(await screen.findByTestId('dw-server-error')).toBeInTheDocument();
+    expect(screen.getByTestId('domain-error-banner')).toBeInTheDocument();
+    expect(screen.getByTestId('error-banner-code')).toHaveTextContent('Error ACCOUNT_FROZEN');
+    expect(screen.getByTestId('error-banner-trace')).toHaveTextContent('trace-modal-fail');
+  });
 });

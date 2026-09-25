@@ -130,4 +130,10 @@ describe('AppRoutes navigation integration', () => {
     renderRoute('/transfers', false);
     expect(screen.getByRole('button', { name: /login/i })).toBeInTheDocument();
   });
+
+  it('renders 404 page for unknown routes with back navigation', () => {
+    renderRoute('/unknown-invalid-route-123');
+    expect(screen.getByTestId('not-found-page')).toBeInTheDocument();
+    expect(screen.getByTestId('not-found-back-btn')).toBeInTheDocument();
+  });
 });
