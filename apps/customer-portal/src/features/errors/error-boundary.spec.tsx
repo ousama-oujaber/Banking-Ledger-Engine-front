@@ -85,4 +85,20 @@ describe('ErrorBoundary Component', () => {
       expect.anything(),
     );
   });
+
+  it('logs uncaught error structured details to console.error', () => {
+    const consoleSpy = vi.spyOn(console, 'error');
+    render(
+      <ErrorBoundary>
+        <ProblemChild shouldThrow={true} />
+      </ErrorBoundary>,
+    );
+
+    expect(consoleSpy).toHaveBeenCalledWith(
+      '[ErrorBoundary] Uncaught UI render error:',
+      expect.objectContaining({
+        message: 'Explosion in test component!',
+      }),
+    );
+  });
 });
