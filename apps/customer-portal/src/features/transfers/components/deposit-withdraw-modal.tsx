@@ -3,6 +3,7 @@ import { Money, parseBackendError, type AppError } from '@ble-frontend/domain-ty
 import type { Account } from '../../accounts/types';
 import { useDepositMutation, useWithdrawMutation } from '../hooks/use-transfers';
 import { generateIdempotencyKey } from '../idempotency';
+import { DomainErrorBanner } from '../../errors';
 
 export interface DepositWithdrawModalProps {
   account: Account | null;
@@ -136,8 +137,8 @@ export function DepositWithdrawModal({
         </div>
 
         {serverError && (
-          <div className="deposit-withdraw-modal__alert" role="alert" data-testid="dw-server-error">
-            <strong>Operation Failed:</strong> {serverError.message}
+          <div className="deposit-withdraw-modal__alert" data-testid="dw-server-error">
+            <DomainErrorBanner error={serverError} onDismiss={() => setServerError(null)} />
           </div>
         )}
 
