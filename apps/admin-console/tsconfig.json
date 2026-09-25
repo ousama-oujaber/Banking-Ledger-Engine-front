@@ -3,10 +3,10 @@
   "compilerOptions": {
     "baseUrl": "../..",
     "target": "ES2022",
-    "module": "es2020",
-    "moduleResolution": "node",
+    "module": "esnext",
+    "moduleResolution": "bundler",
     "lib": ["ES2022", "DOM"],
-    "types": ["@types/node"],
+    "types": ["@types/node", "vitest/globals", "@testing-library/jest-dom"],
     "outDir": "../../dist/apps/admin-console",
     "strict": true,
     "esModuleInterop": true,
@@ -21,6 +21,13 @@
       "@ble-frontend/tokens": ["libs/tokens/src/index.ts"]
     }
   },
-  "include": ["src/**/*.ts", "src/**/*.html", "angular.json", "proxy.conf.json"],
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.html",
+    "angular.json",
+    "proxy.conf.json",
+    "vitest.config.ts",
+    "vitest.setup.ts"
+  ],
   "exclude": ["node_modules", "tmp"]
 }

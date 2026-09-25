@@ -81,7 +81,10 @@ describe('AccountAdminService (S4-T2 State Management)', () => {
 
       service.setSearch('cust-100');
       expect(service.filteredAccounts().length).toBe(2);
-      expect(service.filteredAccounts().map((a) => a.id)).toEqual(['acc-001', 'acc-003']);
+      expect(service.filteredAccounts().map((a: AccountResponse) => a.id)).toEqual([
+        'acc-001',
+        'acc-003',
+      ]);
     });
 
     it('should filter accounts by status', () => {
