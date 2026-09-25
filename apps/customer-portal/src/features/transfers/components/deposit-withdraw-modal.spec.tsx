@@ -148,12 +148,7 @@ describe('DepositWithdrawModal Component (FR-CUST-TX-02)', () => {
     });
 
     render(
-      <DepositWithdrawModal
-        account={mockAccount}
-        mode="DEPOSIT"
-        isOpen={true}
-        onClose={vi.fn()}
-      />,
+      <DepositWithdrawModal account={mockAccount} mode="DEPOSIT" isOpen={true} onClose={vi.fn()} />,
     );
 
     const amountInput = screen.getByTestId('dw-amount-input');

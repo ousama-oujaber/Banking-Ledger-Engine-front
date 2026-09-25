@@ -111,7 +111,9 @@ describe('DomainErrorBanner Component', () => {
     };
 
     render(<DomainErrorBanner error={appError} />);
-    expect(screen.getByTestId('error-banner-countdown')).toHaveTextContent('Retry available in 30s');
+    expect(screen.getByTestId('error-banner-countdown')).toHaveTextContent(
+      'Retry available in 30s',
+    );
   });
 
   it('invokes onRetry callback when 409 retry button is clicked', () => {
@@ -148,7 +150,11 @@ describe('DomainErrorBanner Component', () => {
 
     render(<DomainErrorBanner error={appError} />);
     expect(screen.getByTestId('error-banner-field-errors')).toBeInTheDocument();
-    expect(screen.getByTestId('field-error-amount')).toHaveTextContent('amount: Must be greater than 0');
-    expect(screen.getByTestId('field-error-currency')).toHaveTextContent('currency: Invalid ISO code');
+    expect(screen.getByTestId('field-error-amount')).toHaveTextContent(
+      'amount: Must be greater than 0',
+    );
+    expect(screen.getByTestId('field-error-currency')).toHaveTextContent(
+      'currency: Invalid ISO code',
+    );
   });
 });
