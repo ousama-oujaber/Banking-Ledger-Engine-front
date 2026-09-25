@@ -5,6 +5,10 @@ import { LoginPage } from '../features/login/login-page';
 import { AuthenticatedShell } from '../features/shell/authenticated-shell';
 import { AccessDeniedPage } from '../features/shell/access-denied-page';
 import { DashboardPage } from '../features/dashboard/dashboard-page';
+import { TransfersPage } from '../features/transfers';
+import { FxPage } from '../features/fx';
+import { BeneficiariesPage } from '../features/beneficiaries';
+import { StatementsPage } from '../features/statements';
 
 export function AppRoutes() {
   const { isAuthenticated, isLoading } = useAuth();
@@ -26,7 +30,11 @@ export function AppRoutes() {
       <Route element={<ProtectedRoute requiredRoles={['CUSTOMER']} />}>
         <Route element={<AuthenticatedShell />}>
           <Route index element={<DashboardPage />} />
-          {/* Future Sprint 2+ routes will be nested here */}
+          <Route path="accounts" element={<Navigate to="/" replace />} />
+          <Route path="transfers" element={<TransfersPage />} />
+          <Route path="fx" element={<FxPage />} />
+          <Route path="beneficiaries" element={<BeneficiariesPage />} />
+          <Route path="statements" element={<StatementsPage />} />
         </Route>
       </Route>
 
