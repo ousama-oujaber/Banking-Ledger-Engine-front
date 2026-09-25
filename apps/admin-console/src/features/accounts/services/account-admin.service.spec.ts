@@ -196,4 +196,71 @@ describe('AccountAdminService (S4-T2 State Management)', () => {
       expect(service.isZeroBalance(mockAccounts[3])).toBe(true);
     });
   });
+
+  describe('Account Lifecycle Mutations (S4-T3)', () => {
+    it('should reject freeze if mandatory reason is missing or empty', async () => {
+      await expect(service.freezeAccount('acc-001', '')).rejects.toThrow(
+        /Mandatory reason required/i,
+      );
+      await expect(service.freezeAccount('acc-001', '   ')).rejects.toThrow(
+        /Mandatory reason required/i,
+      );
+    });
+
+    it('should successfully freeze an active account and update signal state', async () => {
+      const { apiClient } = await import('@ble-frontend/api-client');
+      vi.spyOn(apiClient, 'post').mockResolvedValueOnce({
+        ...mockAccounts[0],
+        status: 'FROZEN',
+      });
+
+      const updated = await service.freezeAccount('acc-001', 'Suspicious activity AML flag');
+      expect(updated.status).toBe('FROZEN');
+
+      const found = service.accounts().find((a) => a.id === 'acc-001');
+      expect(found?.status).toBe('FROZEN');
+    });
+
+    it('should successfully unfreeze a frozen account and update signal state', async () => {
+      const { apiClient } = await import('@ble-frontend/api-client');
+      vi.spyOn(apiClient, 'post').mockResolvedValueOnce({
+        ...mockAccounts[1],
+        status: 'ACTIVE',
+      });
+
+      const updated = await service.unfreezeAccount('acc-002', 'Verification completed');
+      expect(updated.status).toBe('ACTIVE');
+
+      const found = service.accounts().find((a) => a.id === 'acc-002');
+      expect(found?.status).toBe('ACTIVE');
+    });
+
+    it('should prevent closing an account with non-zero balance (BR-F05)', async () => {
+      // acc-001 balance is 15420.50
+      await expect(service.closeAccount('acc-001')).rejects.toThrow(
+        /Derived balance must be strictly zero/i,
+      );
+    });
+
+    it('should successfully close a zero-balance account and update status to CLOSED', async () => {
+      const { apiClient } = await import('@ble-frontend/api-client');
+      vi.spyOn(apiClient, 'post').mockResolvedValueOnce({});
+
+      // acc-002 has 0.00 balance
+      await service.closeAccount('acc-002');
+
+      const found = service.accounts().find((a) => a.id === 'acc-002');
+      expect(found?.status).toBe('CLOSED');
+    });
+
+    it('should record error signal when API call fails during lifecycle mutation', async () => {
+      const { apiClient } = await import('@ble-frontend/api-client');
+      vi.spyOn(apiClient, 'post').mockRejectedValueOnce(new Error('Server error 500'));
+
+      await expect(service.freezeAccount('acc-001', 'Reason test')).rejects.toThrow(
+        'Server error 500',
+      );
+      expect(service.error()).toBe('Server error 500');
+    });
+  });
 });

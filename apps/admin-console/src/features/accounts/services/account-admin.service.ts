@@ -269,6 +269,124 @@ export class AccountAdminService {
     }
   }
 
+  async freezeAccount(accountId: string, reason: string): Promise<AccountResponse> {
+    if (!reason || !reason.trim()) {
+      throw new Error('Mandatory reason required for administrative freeze (FR-OPS-ACC-01)');
+    }
+
+    this.loading.set(true);
+    this.error.set(null);
+
+    try {
+      const { apiClient, freezeAccount } = await import('@ble-frontend/api-client');
+      let updated: AccountResponse;
+
+      try {
+        updated = await freezeAccount({
+          id: accountId,
+          requestBody: { reason: reason.trim() },
+        });
+      } catch {
+        updated = await apiClient.post<AccountResponse>(`/api/v1/accounts/${accountId}/freeze`, {
+          reason: reason.trim(),
+        });
+      }
+
+      const existing = this.accounts().find((a) => a.id === accountId);
+      const finalAccount: AccountResponse = {
+        ...(existing || {}),
+        ...updated,
+        id: accountId,
+        status: 'FROZEN',
+      };
+
+      this.accounts.update((list) =>
+        list.map((acc) => (acc.id === accountId ? finalAccount : acc)),
+      );
+
+      return finalAccount;
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Failed to freeze account';
+      this.error.set(msg);
+      throw err;
+    } finally {
+      this.loading.set(false);
+    }
+  }
+
+  async unfreezeAccount(accountId: string, reason?: string): Promise<AccountResponse> {
+    this.loading.set(true);
+    this.error.set(null);
+
+    try {
+      const { apiClient, unfreezeAccount } = await import('@ble-frontend/api-client');
+      let updated: AccountResponse;
+
+      try {
+        updated = await unfreezeAccount({
+          id: accountId,
+          requestBody: reason?.trim() ? { reason: reason.trim() } : undefined,
+        });
+      } catch {
+        updated = await apiClient.post<AccountResponse>(`/api/v1/accounts/${accountId}/unfreeze`, {
+          reason: reason?.trim() || undefined,
+        });
+      }
+
+      const existing = this.accounts().find((a) => a.id === accountId);
+      const finalAccount: AccountResponse = {
+        ...(existing || {}),
+        ...updated,
+        id: accountId,
+        status: 'ACTIVE',
+      };
+
+      this.accounts.update((list) =>
+        list.map((acc) => (acc.id === accountId ? finalAccount : acc)),
+      );
+
+      return finalAccount;
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Failed to unfreeze account';
+      this.error.set(msg);
+      throw err;
+    } finally {
+      this.loading.set(false);
+    }
+  }
+
+  async closeAccount(accountId: string): Promise<void> {
+    const account = this.accounts().find((a) => a.id === accountId);
+    if (account && !this.isZeroBalance(account)) {
+      throw new Error(
+        `Cannot close account: Derived balance must be strictly zero (BR-F05). Current balance: ${this.formatBalance(account)}`,
+      );
+    }
+
+    this.loading.set(true);
+    this.error.set(null);
+
+    try {
+      const { apiClient, closeAccount } = await import('@ble-frontend/api-client');
+
+      try {
+        await closeAccount({ id: accountId });
+      } catch {
+        await apiClient.post(`/api/v1/accounts/${accountId}/close`);
+      }
+
+      this.accounts.update((list) =>
+        list.map((acc) => (acc.id === accountId ? { ...acc, status: 'CLOSED' } : acc)),
+      );
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Failed to close account';
+      this.error.set(msg);
+      throw err;
+    } finally {
+      this.loading.set(false);
+    }
+  }
+
   private ensureValidPage(): void {
     const max = this.totalPages();
     if (this.currentPage() > max) {
