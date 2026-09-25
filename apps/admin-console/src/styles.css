@@ -1,0 +1,145 @@
+/**
+ * BLE Admin Console - High-Density Global Stylesheet
+ * Incorporates @ble-frontend/tokens and provides concrete dark fintech theme values.
+ */
+
+:root {
+  /* Surface & Brand Palette (Fintech Dark Slate) */
+  --ble-color-primary: #3b82f6;
+  --ble-color-primary-hover: #2563eb;
+  --ble-color-primary-active: #1d4ed8;
+  --ble-color-surface: #1e293b;
+  --ble-color-surface-subtle: #334155;
+  --ble-color-surface-muted: #0f172a;
+  --ble-color-background: #0b1120;
+  --ble-color-border: #334155;
+  --ble-color-border-subtle: #1e293b;
+
+  /* Typography Colors */
+  --ble-color-text-primary: #f8fafc;
+  --ble-color-text-secondary: #94a3b8;
+  --ble-color-text-muted: #64748b;
+  --ble-color-text-inverse: #ffffff;
+
+  /* Domain Status Semantics */
+  --ble-color-status-active: #10b981;
+  --ble-color-status-frozen: #f59e0b;
+  --ble-color-status-closed: #ef4444;
+  --ble-color-status-pending: #6366f1;
+  --ble-color-status-success: #10b981;
+  --ble-color-status-warning: #f59e0b;
+  --ble-color-status-danger: #ef4444;
+  --ble-color-status-info: #0ea5e9;
+
+  /* Fonts */
+  --ble-font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --ble-font-family-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+
+  /* High-density Layout Variables */
+  --ble-sidebar-width: 250px;
+  --ble-sidebar-collapsed-width: 68px;
+  --ble-header-height: 54px;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background-color: var(--ble-color-background);
+  color: var(--ble-color-text-primary);
+  font-family: var(--ble-font-family);
+  font-size: 13px; /* High-density default font size */
+  line-height: 1.4;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Custom High-density Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--ble-color-surface-muted);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--ble-color-surface-subtle);
+  border-radius: var(--ble-radius-sm);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--ble-color-text-muted);
+}
+
+/* Generic Monospace Utility */
+.font-mono {
+  font-family: var(--ble-font-family-mono);
+}
+
+/* Domain Status Badges */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: var(--ble-radius-full);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+.status-badge::before {
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+.status-badge.active,
+.status-badge.status-active {
+  background: rgba(16, 185, 129, 0.15);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.status-badge.active::before,
+.status-badge.status-active::before {
+  background: #34d399;
+  box-shadow: 0 0 6px rgba(52, 211, 153, 0.6);
+}
+
+.status-badge.frozen,
+.status-badge.status-frozen {
+  background: rgba(245, 158, 11, 0.15);
+  color: #fbbf24;
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.status-badge.frozen::before,
+.status-badge.status-frozen::before {
+  background: #fbbf24;
+}
+
+.status-badge.closed,
+.status-badge.status-closed {
+  background: rgba(239, 68, 68, 0.15);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.status-badge.closed::before,
+.status-badge.status-closed::before {
+  background: #f87171;
+}
