@@ -99,4 +99,56 @@ describe('DomainErrorBanner Component', () => {
     expect(screen.getByTestId('error-banner-code')).toHaveTextContent('Error SERVER_ERROR');
     expect(screen.getByTestId('error-banner-message')).toHaveTextContent('Network dropped');
   });
+
+  it('displays live countdown for HTTP 429 with retryAfter', () => {
+    const appError: AppError = {
+      status: 429,
+      code: 'RATE_LIMIT_EXCEEDED',
+      message: 'Too many requests. Please slow down.',
+      traceId: 'trace-429-ticker',
+      timestamp: '2026-09-25T12:00:00Z',
+      retryAfter: 30,
+    };
+
+    render(<DomainErrorBanner error={appError} />);
+    expect(screen.getByTestId('error-banner-countdown')).toHaveTextContent('Retry available in 30s');
+  });
+
+  it('invokes onRetry callback when 409 retry button is clicked', () => {
+    const onRetry = vi.fn();
+    const appError: AppError = {
+      status: 409,
+      code: 'CONCURRENT_MODIFICATION',
+      message: 'Version collision',
+      traceId: 'trace-409',
+      timestamp: '2026-09-25T12:00:00Z',
+      isOptimisticLock: true,
+    };
+
+    render(<DomainErrorBanner error={appError} onRetry={onRetry} />);
+    const retryBtn = screen.getByTestId('error-banner-retry-btn');
+    expect(retryBtn).toHaveTextContent('Refresh & Retry');
+
+    fireEvent.click(retryBtn);
+    expect(onRetry).toHaveBeenCalledTimes(1);
+  });
+
+  it('renders field errors list when fieldErrors exist on AppError', () => {
+    const appError: AppError = {
+      status: 400,
+      code: 'VALIDATION_ERROR',
+      message: 'Input validation failed',
+      traceId: 'trace-400',
+      timestamp: '2026-09-25T12:00:00Z',
+      fieldErrors: {
+        amount: 'Must be greater than 0',
+        currency: 'Invalid ISO code',
+      },
+    };
+
+    render(<DomainErrorBanner error={appError} />);
+    expect(screen.getByTestId('error-banner-field-errors')).toBeInTheDocument();
+    expect(screen.getByTestId('field-error-amount')).toHaveTextContent('amount: Must be greater than 0');
+    expect(screen.getByTestId('field-error-currency')).toHaveTextContent('currency: Invalid ISO code');
+  });
 });
