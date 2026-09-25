@@ -6,6 +6,9 @@ export interface AppError {
   message: string;
   traceId: string;
   timestamp: string;
+  retryAfter?: number;
+  isOptimisticLock?: boolean;
+  fieldErrors?: Record<string, string>;
   details?: Record<string, unknown>;
 }
 
@@ -30,6 +33,8 @@ export function parseBackendError(error: unknown): AppError {
         code?: string;
         message?: string;
         traceId?: string;
+        retryAfter?: number;
+        fieldErrors?: Record<string, string>;
         details?: Record<string, unknown>;
       };
       headers?: Record<string, string>;
@@ -38,15 +43,26 @@ export function parseBackendError(error: unknown): AppError {
       code?: string;
       message?: string;
       traceId?: string;
+      retryAfter?: number;
+      fieldErrors?: Record<string, string>;
       details?: Record<string, unknown>;
     };
   };
 
   const status = apiErr.status ?? apiErr.response?.status ?? 500;
   const body = apiErr.body ?? apiErr.response?.data;
-  const headerTraceId = apiErr.response?.headers?.['x-trace-id'];
+  const headers = apiErr.response?.headers;
+  const headerTraceId = headers?.['x-trace-id'];
   const traceId = body?.traceId || headerTraceId || 'N/A';
   const rawCode = body?.code;
+
+  let retryAfter = body?.retryAfter;
+  if (retryAfter === undefined && headers?.['retry-after']) {
+    const parsedHeader = parseInt(headers['retry-after'], 10);
+    if (!isNaN(parsedHeader)) {
+      retryAfter = parsedHeader;
+    }
+  }
 
   let code = rawCode || 'SERVER_ERROR';
   let message =
@@ -73,12 +89,17 @@ export function parseBackendError(error: unknown): AppError {
     code = rawCode || 'UNAUTHORIZED';
   }
 
+  const isOptimisticLock = status === 409 || code === 'CONCURRENT_MODIFICATION';
+
   return {
     status,
     code,
     message,
     traceId,
     timestamp: now,
+    retryAfter,
+    isOptimisticLock: isOptimisticLock || undefined,
+    fieldErrors: body?.fieldErrors,
     details: body?.details,
   };
 }

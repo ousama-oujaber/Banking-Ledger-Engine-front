@@ -94,4 +94,68 @@ describe('parseBackendError', () => {
     expect(err.message).toBe('Client connection reset');
     expect(err.traceId).toBe('N/A');
   });
+
+  it('extracts retryAfter seconds for 429 Too Many Requests from headers or body', () => {
+    const axiosError = {
+      response: {
+        status: 429,
+        headers: { 'retry-after': '30' },
+        data: {
+          code: 'RATE_LIMIT_EXCEEDED',
+          message: 'Rate limit exceeded',
+          traceId: 'trace-429',
+        },
+      },
+    };
+    const parsed = parseBackendError(axiosError);
+    expect(parsed.status).toBe(429);
+    expect(parsed.retryAfter).toBe(30);
+
+    const bodyError = {
+      status: 429,
+      body: {
+        code: 'RATE_LIMIT_EXCEEDED',
+        retryAfter: 15,
+      },
+    };
+    const parsedBody = parseBackendError(bodyError);
+    expect(parsedBody.retryAfter).toBe(15);
+  });
+
+  it('flags concurrent modification as optimistic lock for HTTP 409', () => {
+    const axiosError = {
+      response: {
+        status: 409,
+        data: {
+          code: 'CONCURRENT_MODIFICATION',
+          message: 'Optimistic lock failure',
+          traceId: 'trace-409',
+        },
+      },
+    };
+    const parsed = parseBackendError(axiosError);
+    expect(parsed.status).toBe(409);
+    expect(parsed.isOptimisticLock).toBe(true);
+  });
+
+  it('extracts fieldErrors from backend validation response', () => {
+    const validationError = {
+      response: {
+        status: 400,
+        data: {
+          code: 'VALIDATION_ERROR',
+          message: 'Validation failed',
+          fieldErrors: {
+            amount: 'Amount must be positive',
+            toAccountId: 'Account not found',
+          },
+        },
+      },
+    };
+    const parsed = parseBackendError(validationError);
+    expect(parsed.fieldErrors).toEqual({
+      amount: 'Amount must be positive',
+      toAccountId: 'Account not found',
+    });
+  });
 });
