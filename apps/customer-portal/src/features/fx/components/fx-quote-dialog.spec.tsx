@@ -117,4 +117,34 @@ describe('FxQuoteDialog Component (FR-CUST-FX-01, FR-CUST-FX-02)', () => {
     expect(screen.getByText('Leg 1: Source Debit')).toBeInTheDocument();
     expect(screen.getByText('Leg 2: Destination Credit')).toBeInTheDocument();
   });
+
+  it('renders DomainErrorBanner when execution fails', async () => {
+    const user = userEvent.setup();
+    executeMutateMock.mockRejectedValueOnce({
+      status: 422,
+      data: {
+        code: 'INSUFFICIENT_FUNDS',
+        message: 'Insufficient balance to cover FX transfer',
+        traceId: 'trace-fx-fail',
+      },
+    });
+
+    render(
+      <FxQuoteDialog
+        quote={mockActiveQuote}
+        sourceAccountId="acc-eur-1"
+        destinationAccountId="acc-usd-2"
+        isOpen={true}
+        onClose={vi.fn()}
+      />,
+    );
+
+    const executeBtn = screen.getByTestId('fx-execute-btn');
+    await user.click(executeBtn);
+
+    expect(await screen.findByTestId('fx-execute-error')).toBeInTheDocument();
+    expect(screen.getByTestId('domain-error-banner')).toBeInTheDocument();
+    expect(screen.getByTestId('error-banner-code')).toHaveTextContent('Error INSUFFICIENT_FUNDS');
+    expect(screen.getByTestId('error-banner-trace')).toHaveTextContent('trace-fx-fail');
+  });
 });

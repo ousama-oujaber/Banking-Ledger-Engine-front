@@ -4,6 +4,7 @@ import { useAccounts } from '../../accounts';
 import { useRequestQuoteMutation } from '../hooks/use-fx';
 import { FxQuoteDialog } from './fx-quote-dialog';
 import type { FxQuote } from '../types';
+import { DomainErrorBanner } from '../../errors';
 
 export function FxTransferForm() {
   const { accounts } = useAccounts();
@@ -87,8 +88,8 @@ export function FxTransferForm() {
         </header>
 
         {error && (
-          <div className="fx-transfer-form__error" role="alert" data-testid="fx-form-error">
-            {error}
+          <div className="fx-transfer-form__error" data-testid="fx-form-error">
+            <DomainErrorBanner error={error} onDismiss={() => setError(null)} />
           </div>
         )}
 

@@ -25,6 +25,16 @@ export function parseBackendError(error: unknown): AppError {
     };
   }
 
+  if (typeof error === 'string') {
+    return {
+      status: 400,
+      code: 'VALIDATION_ERROR',
+      message: error,
+      traceId: 'N/A',
+      timestamp: now,
+    };
+  }
+
   // Handle openapi-typescript-codegen ApiError
   const apiErr = error as Partial<ApiError> & {
     response?: {

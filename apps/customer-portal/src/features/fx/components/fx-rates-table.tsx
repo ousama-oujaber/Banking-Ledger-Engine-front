@@ -1,4 +1,5 @@
 import { useFxRates } from '../hooks/use-fx';
+import { DomainErrorBanner } from '../../errors';
 
 export interface FxRatesTableProps {
   sourceCurrency?: string;
@@ -32,11 +33,8 @@ export function FxRatesTable({ sourceCurrency, targetCurrency, onSelectPair }: F
 
   if (isError) {
     return (
-      <div className="fx-rates-table__state fx-rates-table__state--error" role="alert">
-        <p>Failed to load exchange rates: {error?.message || 'Server error'}</p>
-        <button type="button" onClick={() => refetch()} className="fx-rates-table__retry-btn">
-          {isFetching ? 'Retrying...' : 'Retry'}
-        </button>
+      <div className="fx-rates-table__state fx-rates-table__state--error">
+        <DomainErrorBanner error={error} onRetry={() => refetch()} />
       </div>
     );
   }
