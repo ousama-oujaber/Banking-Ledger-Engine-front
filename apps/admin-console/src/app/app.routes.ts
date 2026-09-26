@@ -43,6 +43,11 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'settlements',
+        redirectTo: 'recon',
+        pathMatch: 'full',
+      },
+      {
         path: 'rules',
         loadComponent: () =>
           import('../features/rules/rules-matrix.component').then((m) => m.RulesMatrixComponent),
