@@ -12,11 +12,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RuleAdminService } from '../services/rule-admin.service';
 import { FeeTierBuilderComponent } from './fee-tier-builder.component';
-import type {
-  FeeRuleResponse,
-  CreateFeeRuleRequest,
-  FeeTierDto,
-} from '@ble-frontend/api-client';
+import type { FeeRuleResponse, CreateFeeRuleRequest, FeeTierDto } from '@ble-frontend/api-client';
 
 /**
  * FeeRuleFormComponent
@@ -48,7 +44,9 @@ import type {
             <span class="header-icon">⚙</span>
             <div class="header-texts">
               <h3 id="fee-rule-form-title" class="title-text">Create Fee Rule</h3>
-              <p class="subtitle-text">Configure dynamic transaction fees, tax deduction, and revenue clearing accounts</p>
+              <p class="subtitle-text">
+                Configure dynamic transaction fees, tax deduction, and revenue clearing accounts
+              </p>
             </div>
           </div>
           <button
@@ -341,7 +339,9 @@ import type {
         background: var(--ble-color-surface, #1e293b);
         border: 1px solid var(--ble-color-border, #334155);
         border-radius: 10px;
-        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.4);
+        box-shadow:
+          0 20px 25px -5px rgba(0, 0, 0, 0.5),
+          0 8px 10px -6px rgba(0, 0, 0, 0.4);
         width: 100%;
         max-width: 680px;
         max-height: 90vh;
@@ -724,10 +724,15 @@ export class FeeRuleFormComponent {
       percentageRate:
         this.calculationType() === 'PERCENTAGE' ? Number(this.percentageRate()) : undefined,
       tiers: this.calculationType() === 'TIERED' ? this.tiers() : undefined,
-      minFee: this.minFee() !== undefined && this.minFee() !== null ? Number(this.minFee()) : undefined,
-      maxFee: this.maxFee() !== undefined && this.maxFee() !== null ? Number(this.maxFee()) : undefined,
+      minFee:
+        this.minFee() !== undefined && this.minFee() !== null ? Number(this.minFee()) : undefined,
+      maxFee:
+        this.maxFee() !== undefined && this.maxFee() !== null ? Number(this.maxFee()) : undefined,
       feeIncomeAccountId: this.feeIncomeAccountId().trim(),
-      taxRate: this.taxRate() !== undefined && this.taxRate() !== null ? Number(this.taxRate()) : undefined,
+      taxRate:
+        this.taxRate() !== undefined && this.taxRate() !== null
+          ? Number(this.taxRate())
+          : undefined,
       taxPayableAccountId:
         this.taxPayableAccountId().trim().length > 0
           ? this.taxPayableAccountId().trim()

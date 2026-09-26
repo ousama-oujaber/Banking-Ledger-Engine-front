@@ -23,11 +23,11 @@ describe('FeeCalculationSimulatorComponent', () => {
 
   it('should run simulation and update result signal on success', async () => {
     const mockPreview: FeePreviewResponse = {
-      grossFee: { amount: 15.0, currency: 'EUR' },
+      feeAmount: { amount: 15.0, currency: 'EUR' },
       taxAmount: { amount: 3.0, currency: 'EUR' },
-      netFee: { amount: 18.0, currency: 'EUR' },
-      effectiveRate: 0.36,
-    } as any;
+      grossAmount: { amount: 18.0, currency: 'EUR' },
+      principalAmount: { amount: 5000, currency: 'EUR' },
+    };
 
     const simSpy = vi.spyOn(service, 'simulateFee').mockResolvedValue(mockPreview);
 
@@ -57,12 +57,13 @@ describe('FeeCalculationSimulatorComponent', () => {
   });
 
   it('should format effective percentage accurately', () => {
+    component.amount.set(5000);
     component.result.set({
-      grossFee: { amount: 15.0, currency: 'EUR' },
+      feeAmount: { amount: 18.0, currency: 'EUR' },
       taxAmount: { amount: 3.0, currency: 'EUR' },
-      netFee: { amount: 18.0, currency: 'EUR' },
-      effectiveRate: 0.0036,
-    } as any);
+      grossAmount: { amount: 21.0, currency: 'EUR' },
+      principalAmount: { amount: 5000, currency: 'EUR' },
+    });
 
     expect(component.formattedEffectiveRate()).toBe('0.36%');
   });

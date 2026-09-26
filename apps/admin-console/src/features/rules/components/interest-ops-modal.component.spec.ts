@@ -20,7 +20,7 @@ describe('InterestOpsModalComponent', () => {
 
   it('should trigger daily accrual sweep and emit success', async () => {
     const sweepSpy = vi.spyOn(service, 'triggerDailyAccrual').mockResolvedValue({
-      processedAccounts: 42,
+      accrualCount: 42,
       totalAccruedAmount: { amount: 1250, currency: 'EUR' },
     } as any);
 
@@ -32,7 +32,7 @@ describe('InterestOpsModalComponent', () => {
 
     expect(sweepSpy).toHaveBeenCalled();
     expect(successSpy).toHaveBeenCalledWith(
-      expect.objectContaining({ action: 'ACCRUE', count: 42 })
+      expect.objectContaining({ action: 'ACCRUE', count: 42 }),
     );
   });
 
@@ -52,8 +52,6 @@ describe('InterestOpsModalComponent', () => {
     await component.executeAction();
 
     expect(postSpy).toHaveBeenCalled();
-    expect(successSpy).toHaveBeenCalledWith(
-      expect.objectContaining({ action: 'POST', count: 30 })
-    );
+    expect(successSpy).toHaveBeenCalledWith(expect.objectContaining({ action: 'POST', count: 30 }));
   });
 });

@@ -281,7 +281,9 @@ describe('RuleAdminService (S5-T1 State Management)', () => {
     it('should trigger administrative daily accrual sweep', async () => {
       const accrueSpy = vi.spyOn(apiModule, 'accrueInterest').mockReturnValue({
         then: (resolve: (data: any) => void) => {
-          resolve({ processedAccounts: 42, totalAccruedAmount: { amount: 1250.0, currency: 'EUR' } });
+          resolve({
+            accrualCount: 42,
+          });
           return { catch: vi.fn() };
         },
       } as any);
@@ -289,24 +291,26 @@ describe('RuleAdminService (S5-T1 State Management)', () => {
       const res = await service.triggerDailyAccrual();
 
       expect(accrueSpy).toHaveBeenCalled();
-      expect(res.processedAccounts).toBe(42);
+      expect(res.accrualCount).toBe(42);
     });
 
     it('should trigger period interest posting run with idempotency key', async () => {
       const postSpy = vi.spyOn(apiModule, 'postInterest').mockReturnValue({
         then: (resolve: (data: any) => void) => {
-          resolve({ postedTransactions: 38, totalPostedAmount: { amount: 1100.0, currency: 'EUR' } });
+          resolve({
+            accrualCount: 38,
+            postedAmount: { amount: 1100.0, currency: 'EUR' },
+          });
           return { catch: vi.fn() };
         },
       } as any);
 
       const res = await service.triggerInterestPosting({
-        productCode: 'SAVINGS_CLASSIC',
-        periodEnd: '2026-09-30',
-      } as any);
+        accountId: 'acc-101',
+      });
 
       expect(postSpy).toHaveBeenCalled();
-      expect(res.postedTransactions).toBe(38);
+      expect(res.accrualCount).toBe(38);
     });
   });
 });

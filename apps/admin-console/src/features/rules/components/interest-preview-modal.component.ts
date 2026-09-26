@@ -46,7 +46,9 @@ import type {
             <span class="header-icon">📈</span>
             <div>
               <h3 id="interest-preview-title" class="title-text">Interest Accrual Simulation</h3>
-              <p class="subtitle-text">Forecast daily accruals and projected interest postings for accounts</p>
+              <p class="subtitle-text">
+                Forecast daily accruals and projected interest postings for accounts
+              </p>
             </div>
           </div>
           <button
@@ -70,7 +72,9 @@ import type {
           <!-- Simulation Parameters -->
           <div class="form-row">
             <div class="form-group flex-2">
-              <label class="form-label" for="preview-acc-id">Account ID <span class="required">*</span></label>
+              <label class="form-label" for="preview-acc-id"
+                >Account ID <span class="required">*</span></label
+              >
               <input
                 id="preview-acc-id"
                 type="text"
@@ -84,7 +88,9 @@ import type {
             </div>
 
             <div class="form-group flex-1">
-              <label class="form-label" for="preview-from-date">From Date <span class="required">*</span></label>
+              <label class="form-label" for="preview-from-date"
+                >From Date <span class="required">*</span></label
+              >
               <input
                 id="preview-from-date"
                 type="date"
@@ -97,7 +103,9 @@ import type {
             </div>
 
             <div class="form-group flex-1">
-              <label class="form-label" for="preview-to-date">To Date <span class="required">*</span></label>
+              <label class="form-label" for="preview-to-date"
+                >To Date <span class="required">*</span></label
+              >
               <input
                 id="preview-to-date"
                 type="date"
@@ -140,7 +148,9 @@ import type {
 
             <!-- Daily Accruals List -->
             <div class="daily-table-container">
-              <span class="table-title">Daily Accruals Breakdown ({{ dailyAccruals().length }} Days)</span>
+              <span class="table-title"
+                >Daily Accruals Breakdown ({{ dailyAccruals().length }} Days)</span
+              >
               <table class="accrual-table" data-testid="accrual-table">
                 <thead>
                   <tr>
@@ -154,9 +164,14 @@ import type {
                   <tr *ngFor="let item of dailyAccruals()">
                     <td class="font-mono">{{ item.businessDate }}</td>
                     <td class="font-mono">{{ formatMoney(item.eligibleBalance) }}</td>
-                    <td class="font-mono highlight-green">+{{ formatMoney(item.accruedAmount) }}</td>
+                    <td class="font-mono highlight-green">
+                      +{{ formatMoney(item.accruedAmount) }}
+                    </td>
                     <td>
-                      <span class="status-pill font-mono" [class.accrued]="item.status === 'ACCRUED'">
+                      <span
+                        class="status-pill font-mono"
+                        [class.accrued]="item.status === 'ACCRUED'"
+                      >
                         {{ item.status || 'ESTIMATED' }}
                       </span>
                     </td>

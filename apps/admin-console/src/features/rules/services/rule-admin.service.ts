@@ -152,7 +152,10 @@ export class RuleAdminService {
 
   // --- Interest Rules API ---
 
-  async loadInterestRules(productCode?: string, activeOnly = false): Promise<InterestRuleResponse[]> {
+  async loadInterestRules(
+    productCode?: string,
+    activeOnly = false,
+  ): Promise<InterestRuleResponse[]> {
     this.loading.set(true);
     this.error.set(null);
     try {

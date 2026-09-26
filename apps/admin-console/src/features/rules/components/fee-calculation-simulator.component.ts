@@ -25,7 +25,9 @@ import type {
           <span class="header-icon">🧮</span>
           <div class="header-titles">
             <h4 class="title-text">Fee Calculation Simulator</h4>
-            <p class="subtitle-text">Test fee schedules, progressive tiers, and VAT deduction in real-time</p>
+            <p class="subtitle-text">
+              Test fee schedules, progressive tiers, and VAT deduction in real-time
+            </p>
           </div>
         </div>
       </div>
@@ -132,11 +134,11 @@ import type {
           </div>
 
           <div class="metric-tiles">
-            <!-- Gross Fee Tile -->
+            <!-- Base Fee Tile -->
             <div class="tile">
-              <span class="tile-label">Gross Fee</span>
+              <span class="tile-label">Base Fee</span>
               <span class="tile-val gross font-mono" data-testid="gross-fee-val">
-                {{ formatMoney(result()?.grossFee) }}
+                {{ formatMoney(result()?.feeAmount) }}
               </span>
               <span class="tile-sub">Base calculation</span>
             </div>
@@ -150,11 +152,11 @@ import type {
               <span class="tile-sub">Withheld tax</span>
             </div>
 
-            <!-- Net Total Fee Tile -->
+            <!-- Gross Total Fee Tile -->
             <div class="tile highlight">
               <span class="tile-label">Total Customer Deduction</span>
               <span class="tile-val total font-mono" data-testid="net-fee-val">
-                {{ formatMoney(result()?.netFee) }}
+                {{ formatMoney(result()?.grossAmount) }}
               </span>
               <span class="tile-sub">Gross Fee + Tax</span>
             </div>
@@ -442,8 +444,11 @@ export class FeeCalculationSimulatorComponent {
 
   readonly formattedEffectiveRate = computed<string>(() => {
     const res = this.result();
-    if (!res || res.effectiveRate === undefined) return '0.00%';
-    const pct = res.effectiveRate > 1 ? res.effectiveRate : res.effectiveRate * 100;
+    if (!res) return '0.00%';
+    const feeVal = res.feeAmount?.amount ?? res.fee ?? 0;
+    const baseAmount = res.principalAmount?.amount ?? this.amount();
+    if (!baseAmount || baseAmount <= 0) return '0.00%';
+    const pct = (feeVal / baseAmount) * 100;
     return `${pct.toFixed(2)}%`;
   });
 

@@ -11,10 +11,7 @@ import {
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RuleAdminService } from '../services/rule-admin.service';
-import type {
-  InterestRuleResponse,
-  CreateInterestRuleRequest,
-} from '@ble-frontend/api-client';
+import type { InterestRuleResponse, CreateInterestRuleRequest } from '@ble-frontend/api-client';
 
 /**
  * InterestRuleFormComponent
@@ -47,7 +44,9 @@ import type {
             <span class="header-icon">📈</span>
             <div>
               <h3 id="interest-rule-form-title" class="title-text">Create Interest Rate Rule</h3>
-              <p class="subtitle-text">Configure yield schedules, day count conventions, and balance thresholds</p>
+              <p class="subtitle-text">
+                Configure yield schedules, day count conventions, and balance thresholds
+              </p>
             </div>
           </div>
           <button
@@ -195,7 +194,9 @@ import type {
           <!-- Min Eligible Balance & Clearing Account -->
           <div class="form-row">
             <div class="form-group flex-1">
-              <label class="form-label" for="int-min-balance">Minimum Eligible Balance (Optional)</label>
+              <label class="form-label" for="int-min-balance"
+                >Minimum Eligible Balance (Optional)</label
+              >
               <input
                 id="int-min-balance"
                 type="number"
@@ -578,9 +579,7 @@ export class InterestRuleFormComponent {
           ? { amount: Number(this.minEligibleBalance()), currency: 'EUR' }
           : undefined,
       interestAccountId:
-        this.interestAccountId().trim().length > 0
-          ? this.interestAccountId().trim()
-          : undefined,
+        this.interestAccountId().trim().length > 0 ? this.interestAccountId().trim() : undefined,
     };
 
     try {

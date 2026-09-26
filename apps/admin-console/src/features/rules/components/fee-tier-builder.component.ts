@@ -18,14 +18,11 @@ import type { FeeTierDto } from '@ble-frontend/api-client';
       <div class="builder-header">
         <div class="header-titles">
           <span class="builder-title">Dynamic Fee Tiers</span>
-          <span class="builder-subtitle">Define volume-based brackets for progressive fee calculations</span>
+          <span class="builder-subtitle"
+            >Define volume-based brackets for progressive fee calculations</span
+          >
         </div>
-        <button
-          type="button"
-          class="btn-add-tier"
-          (click)="addTier()"
-          data-testid="add-tier-btn"
-        >
+        <button type="button" class="btn-add-tier" (click)="addTier()" data-testid="add-tier-btn">
           + Add Bracket
         </button>
       </div>
@@ -357,7 +354,7 @@ export class FeeTierBuilderComponent {
       if (tier.maxAmount !== undefined && tier.maxAmount !== null) {
         if (Number(tier.maxAmount) <= Number(tier.minAmount)) {
           errors.push(
-            `Tier ${i + 1}: Upper bound (${tier.maxAmount}) must be strictly greater than lower bound (${tier.minAmount}).`
+            `Tier ${i + 1}: Upper bound (${tier.maxAmount}) must be strictly greater than lower bound (${tier.minAmount}).`,
           );
         }
       }
@@ -386,7 +383,10 @@ export class FeeTierBuilderComponent {
     let nextMin = 0;
     if (list.length > 0) {
       const last = list[list.length - 1];
-      nextMin = last.maxAmount !== undefined && last.maxAmount !== null ? Number(last.maxAmount) : Number(last.minAmount) + 1000;
+      nextMin =
+        last.maxAmount !== undefined && last.maxAmount !== null
+          ? Number(last.maxAmount)
+          : Number(last.minAmount) + 1000;
     }
 
     const newTier: FeeTierDto = {

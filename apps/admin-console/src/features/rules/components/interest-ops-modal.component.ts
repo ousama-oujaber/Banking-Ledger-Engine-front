@@ -76,13 +76,16 @@ import { RuleAdminService } from '../services/rule-admin.service';
             <div class="info-callout">
               <span class="callout-icon">ℹ</span>
               <p class="callout-text">
-                This triggers the backend interest accrual engine for all active accounts matching interest rules.
-                Daily accruals will be calculated and staged in the ledger without moving settled funds until posting.
+                This triggers the backend interest accrual engine for all active accounts matching
+                interest rules. Daily accruals will be calculated and staged in the ledger without
+                moving settled funds until posting.
               </p>
             </div>
 
             <div class="form-group">
-              <label class="form-label" for="ops-business-date">Business Date (Optional, default = today)</label>
+              <label class="form-label" for="ops-business-date"
+                >Business Date (Optional, default = today)</label
+              >
               <input
                 id="ops-business-date"
                 type="date"
@@ -98,13 +101,16 @@ import { RuleAdminService } from '../services/rule-admin.service';
             <div class="info-callout">
               <span class="callout-icon">ℹ</span>
               <p class="callout-text">
-                This will finalize accrued interest entries and generate double-entry ledger transactions
-                crediting customer balances and debiting the configured interest expense accounts.
+                This will finalize accrued interest entries and generate double-entry ledger
+                transactions crediting customer balances and debiting the configured interest
+                expense accounts.
               </p>
             </div>
 
             <div class="form-group">
-              <label class="form-label" for="ops-account-id">Target Account ID <span class="required">*</span></label>
+              <label class="form-label" for="ops-account-id"
+                >Target Account ID <span class="required">*</span></label
+              >
               <input
                 id="ops-account-id"
                 type="text"
@@ -149,7 +155,9 @@ import { RuleAdminService } from '../services/rule-admin.service';
             data-testid="ops-submit-btn"
           >
             <span *ngIf="submitting()" class="spinner"></span>
-            <span>{{ mode() === 'ACCRUE' ? 'Trigger Accrual Sweep' : 'Confirm Interest Posting' }}</span>
+            <span>{{
+              mode() === 'ACCRUE' ? 'Trigger Accrual Sweep' : 'Confirm Interest Posting'
+            }}</span>
           </button>
         </div>
       </div>
@@ -423,9 +431,10 @@ export class InterestOpsModalComponent {
     try {
       if (this.mode() === 'ACCRUE') {
         const res = await this.adminService.triggerDailyAccrual({
-          businessDate: this.businessDate().trim().length > 0 ? this.businessDate().trim() : undefined,
+          businessDate:
+            this.businessDate().trim().length > 0 ? this.businessDate().trim() : undefined,
         });
-        this.onSuccess.emit({ action: 'ACCRUE', count: res?.processedAccounts || 0 });
+        this.onSuccess.emit({ action: 'ACCRUE', count: res?.accrualCount || 0 });
       } else if (this.mode() === 'POST') {
         const res = await this.adminService.triggerInterestPosting({
           accountId: this.targetAccountId().trim(),
