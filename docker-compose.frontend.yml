@@ -1,0 +1,40 @@
+services:
+  customer-portal:
+    build:
+      context: .
+      dockerfile: apps/customer-portal/Dockerfile
+    image: ble-customer-portal:latest
+    container_name: ble-customer-portal
+    restart: unless-stopped
+    ports:
+      - "${CUSTOMER_PORTAL_PORT:-3000}:8080"
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8080/ || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    networks:
+      - ble-network
+
+  admin-console:
+    build:
+      context: .
+      dockerfile: apps/admin-console/Dockerfile
+    image: ble-admin-console:latest
+    container_name: ble-admin-console
+    restart: unless-stopped
+    ports:
+      - "${ADMIN_CONSOLE_PORT:-4200}:8080"
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8080/ || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    networks:
+      - ble-network
+
+networks:
+  ble-network:
+    driver: bridge
