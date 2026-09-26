@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { InterestOpsModalComponent } from './interest-ops-modal.component';
+import { InterestOpsModalComponent } from './index';
 import { RuleAdminService } from '../services/rule-admin.service';
 
 describe('InterestOpsModalComponent', () => {

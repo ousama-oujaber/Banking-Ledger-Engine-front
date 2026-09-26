@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { FeeRuleFormComponent } from './fee-rule-form.component';
+import { FeeRuleFormComponent } from './index';
 import { RuleAdminService } from '../services/rule-admin.service';
 import type { FeeRuleResponse } from '@ble-frontend/api-client';
 

@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { InterestPreviewModalComponent } from './interest-preview-modal.component';
+import { InterestPreviewModalComponent } from './index';
 import { RuleAdminService } from '../services/rule-admin.service';
 import type { InterestPreviewResponse } from '@ble-frontend/api-client';
 

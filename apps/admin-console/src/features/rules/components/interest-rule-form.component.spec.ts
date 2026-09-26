@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { InterestRuleFormComponent } from './interest-rule-form.component';
+import { InterestRuleFormComponent } from './index';
 import { RuleAdminService } from '../services/rule-admin.service';
 import type { InterestRuleResponse } from '@ble-frontend/api-client';
 

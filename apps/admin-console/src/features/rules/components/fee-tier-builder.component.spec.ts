@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { FeeTierBuilderComponent } from './fee-tier-builder.component';
+import { FeeTierBuilderComponent } from './index';
 import type { FeeTierDto } from '@ble-frontend/api-client';
 
 describe('FeeTierBuilderComponent', () => {

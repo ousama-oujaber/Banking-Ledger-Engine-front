@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { FeeCalculationSimulatorComponent } from './fee-calculation-simulator.component';
+import { FeeCalculationSimulatorComponent } from './index';
 import { RuleAdminService } from '../services/rule-admin.service';
 import type { FeePreviewResponse } from '@ble-frontend/api-client';
 
