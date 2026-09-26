@@ -244,7 +244,7 @@ export class ReconAdminService {
    */
   async resolveCase(
     caseId: string,
-    req: ResolveReconciliationCaseRequest
+    req: ResolveReconciliationCaseRequest,
   ): Promise<ReconciliationCaseResponse> {
     this.mutating.set(true);
     this.error.set(null);
@@ -257,7 +257,9 @@ export class ReconAdminService {
 
       // Update in cases collection
       this.cases.update((items) =>
-        items.map((item) => (item.id === caseId ? { ...item, ...resolved, status: 'RESOLVED' } : item))
+        items.map((item) =>
+          item.id === caseId ? { ...item, ...resolved, status: 'RESOLVED' } : item,
+        ),
       );
 
       if (this.selectedCase()?.id === caseId) {
@@ -279,7 +281,7 @@ export class ReconAdminService {
    */
   async escalateCase(
     caseId: string,
-    req: EscalateReconciliationCaseRequest
+    req: EscalateReconciliationCaseRequest,
   ): Promise<ReconciliationCaseResponse> {
     this.mutating.set(true);
     this.error.set(null);
@@ -291,7 +293,9 @@ export class ReconAdminService {
       });
 
       this.cases.update((items) =>
-        items.map((item) => (item.id === caseId ? { ...item, ...escalated, status: 'ESCALATED' } : item))
+        items.map((item) =>
+          item.id === caseId ? { ...item, ...escalated, status: 'ESCALATED' } : item,
+        ),
       );
 
       if (this.selectedCase()?.id === caseId) {
@@ -313,7 +317,7 @@ export class ReconAdminService {
    */
   async assignCase(
     caseId: string,
-    req: AssignReconciliationCaseRequest
+    req: AssignReconciliationCaseRequest,
   ): Promise<ReconciliationCaseResponse> {
     this.mutating.set(true);
     this.error.set(null);
@@ -325,7 +329,9 @@ export class ReconAdminService {
       });
 
       this.cases.update((items) =>
-        items.map((item) => (item.id === caseId ? { ...item, ...assigned, status: 'ASSIGNED' } : item))
+        items.map((item) =>
+          item.id === caseId ? { ...item, ...assigned, status: 'ASSIGNED' } : item,
+        ),
       );
 
       if (this.selectedCase()?.id === caseId) {

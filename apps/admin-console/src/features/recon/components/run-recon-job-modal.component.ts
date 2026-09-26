@@ -100,7 +100,9 @@ import type {
 
           <!-- Statement Reference -->
           <div class="form-group">
-            <label for="job-statement-ref" class="form-label required">Statement / Batch Reference</label>
+            <label for="job-statement-ref" class="form-label required"
+              >Statement / Batch Reference</label
+            >
             <input
               type="text"
               id="job-statement-ref"

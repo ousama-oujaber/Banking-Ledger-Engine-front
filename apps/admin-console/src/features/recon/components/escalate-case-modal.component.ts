@@ -85,7 +85,7 @@ import type {
             <span class="summary-label">Variance Amount</span>
             <span class="summary-val mono amount-text">
               {{ targetCase()?.currency || 'EUR' }}
-              {{ (targetCase()?.discrepancyAmount || 0) | number: '1.2-2' }}
+              {{ targetCase()?.discrepancyAmount || 0 | number: '1.2-2' }}
             </span>
           </div>
         </div>

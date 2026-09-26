@@ -77,7 +77,7 @@ import type {
             <span class="summary-label">Variance Amount</span>
             <span class="summary-val mono amount-text">
               {{ targetCase()?.currency || 'EUR' }}
-              {{ (targetCase()?.discrepancyAmount || 0) | number: '1.2-2' }}
+              {{ targetCase()?.discrepancyAmount || 0 | number: '1.2-2' }}
             </span>
           </div>
         </div>
@@ -103,7 +103,9 @@ import type {
               data-testid="resolve-action-select"
             >
               <option value="RESOLVE">RESOLVE — Manual Verification & Confirmed Match</option>
-              <option value="FORCE_ADJUST">FORCE_ADJUST — Post Compensating Ledger Adjustment</option>
+              <option value="FORCE_ADJUST">
+                FORCE_ADJUST — Post Compensating Ledger Adjustment
+              </option>
               <option value="WRITE_OFF">WRITE_OFF — Immaterial Variance Tolerance Write-Off</option>
               <option value="MANUAL_CLEAR">MANUAL_CLEAR — Force Clear External Discrepancy</option>
             </select>
@@ -116,8 +118,12 @@ import type {
           <div class="form-group">
             <label for="compensating-tx" class="form-label">
               Compensating Transaction ID
-              <span class="optional-tag" *ngIf="resolutionAction() !== 'FORCE_ADJUST'">(Optional)</span>
-              <span class="recommended-tag" *ngIf="resolutionAction() === 'FORCE_ADJUST'">(Recommended)</span>
+              <span class="optional-tag" *ngIf="resolutionAction() !== 'FORCE_ADJUST'"
+                >(Optional)</span
+              >
+              <span class="recommended-tag" *ngIf="resolutionAction() === 'FORCE_ADJUST'"
+                >(Recommended)</span
+              >
             </label>
             <input
               type="text"

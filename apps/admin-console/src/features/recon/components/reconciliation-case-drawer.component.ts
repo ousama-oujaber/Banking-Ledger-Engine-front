@@ -112,13 +112,15 @@ import type {
               </div>
               <div class="card-field">
                 <span class="field-label">External Tx ID</span>
-                <span class="field-val mono">{{ targetCase()?.externalTransactionId || 'N/A' }}</span>
+                <span class="field-val mono">{{
+                  targetCase()?.externalTransactionId || 'N/A'
+                }}</span>
               </div>
               <div class="card-field">
                 <span class="field-label">External Recorded Amount</span>
                 <span class="field-val amount-val mono">
                   {{ targetCase()?.currency || 'EUR' }}
-                  {{ (targetCase()?.discrepancyAmount || 0) | number: '1.2-2' }}
+                  {{ targetCase()?.discrepancyAmount || 0 | number: '1.2-2' }}
                 </span>
               </div>
               <div class="card-field">
@@ -131,7 +133,7 @@ import type {
             <div class="variance-pillar" data-testid="variance-pillar">
               <span class="variance-label">Net Variance</span>
               <span class="variance-delta mono">
-                Δ {{ (targetCase()?.discrepancyAmount || 0) | number: '1.2-2' }}
+                Δ {{ targetCase()?.discrepancyAmount || 0 | number: '1.2-2' }}
               </span>
               <span class="variance-chip warning">
                 {{ targetCase()?.discrepancyType || 'DISCREPANCY' }}
@@ -146,7 +148,9 @@ import type {
               </div>
               <div class="card-field">
                 <span class="field-label">Internal Tx ID</span>
-                <span class="field-val mono">{{ targetCase()?.internalTransactionId || 'MISSING_POSTING' }}</span>
+                <span class="field-val mono">{{
+                  targetCase()?.internalTransactionId || 'MISSING_POSTING'
+                }}</span>
               </div>
               <div class="card-field">
                 <span class="field-label">Ledger Booking Status</span>
@@ -156,13 +160,17 @@ import type {
                     [class.danger]="!targetCase()?.internalTransactionId"
                     [class.success]="!!targetCase()?.internalTransactionId"
                   >
-                    {{ targetCase()?.internalTransactionId ? 'POSTED_ENTRY' : 'UNMATCHED_IN_LEDGER' }}
+                    {{
+                      targetCase()?.internalTransactionId ? 'POSTED_ENTRY' : 'UNMATCHED_IN_LEDGER'
+                    }}
                   </span>
                 </span>
               </div>
               <div class="card-field">
                 <span class="field-label">Compensating Tx</span>
-                <span class="field-val mono">{{ targetCase()?.compensatingTransactionId || 'None' }}</span>
+                <span class="field-val mono">{{
+                  targetCase()?.compensatingTransactionId || 'None'
+                }}</span>
               </div>
             </div>
           </div>
@@ -189,11 +197,17 @@ import type {
                 <div class="timeline-dot"></div>
                 <div class="timeline-content">
                   <div class="timeline-header">
-                    <span class="timeline-action font-semibold">{{ h.action || 'STATUS_UPDATE' }}</span>
-                    <span class="timeline-time mono">{{ h.timestamp ? (h.timestamp | date: 'short') : 'Just now' }}</span>
+                    <span class="timeline-action font-semibold">{{
+                      h.action || 'STATUS_UPDATE'
+                    }}</span>
+                    <span class="timeline-time mono">{{
+                      h.timestamp ? (h.timestamp | date: 'short') : 'Just now'
+                    }}</span>
                   </div>
                   <div class="timeline-meta">
-                    <span class="meta-tag">From: {{ h.fromStatus || 'N/A' }} → To: {{ h.toStatus || 'N/A' }}</span>
+                    <span class="meta-tag"
+                      >From: {{ h.fromStatus || 'N/A' }} → To: {{ h.toStatus || 'N/A' }}</span
+                    >
                     <span class="operator-tag" *ngIf="h.changedBy">By: {{ h.changedBy }}</span>
                   </div>
                   <p class="timeline-notes" *ngIf="h.notes">{{ h.notes }}</p>

@@ -46,7 +46,9 @@ import type {
             <span class="header-icon">📑</span>
             <div>
               <div class="title-row">
-                <h3 id="jobs-drawer-title" class="title-text">Reconciliation Jobs & Clearing Batches</h3>
+                <h3 id="jobs-drawer-title" class="title-text">
+                  Reconciliation Jobs & Clearing Batches
+                </h3>
                 <span class="badge-count" data-testid="jobs-count-badge">
                   {{ reconService.jobs().length }} Jobs
                 </span>
@@ -115,10 +117,7 @@ import type {
                     <td class="mono">{{ j.statementReference || 'N/A' }}</td>
                     <td class="mono">{{ j.businessDate || 'N/A' }}</td>
                     <td>
-                      <span
-                        class="status-chip"
-                        [ngClass]="(j.status || 'PENDING').toLowerCase()"
-                      >
+                      <span class="status-chip" [ngClass]="(j.status || 'PENDING').toLowerCase()">
                         {{ j.status || 'PENDING' }}
                       </span>
                     </td>
@@ -152,15 +151,17 @@ import type {
           </div>
 
           <!-- Bottom Section: Selected Job Item Inspection -->
-          <div class="job-items-container" *ngIf="reconService.selectedJob()" data-testid="job-items-container">
+          <div
+            class="job-items-container"
+            *ngIf="reconService.selectedJob()"
+            data-testid="job-items-container"
+          >
             <div class="items-header">
               <div>
                 <span class="section-title">
                   Items for Job <span class="mono">{{ reconService.selectedJob()?.id }}</span>
                 </span>
-                <span class="sub-stat">
-                  Showing {{ reconService.jobItems().length }} records
-                </span>
+                <span class="sub-stat"> Showing {{ reconService.jobItems().length }} records </span>
               </div>
 
               <!-- Match Status Filter -->
@@ -182,7 +183,11 @@ import type {
             </div>
 
             <!-- Items Loading Indicator -->
-            <div class="loading-bar" *ngIf="reconService.itemsLoading()" data-testid="items-loading">
+            <div
+              class="loading-bar"
+              *ngIf="reconService.itemsLoading()"
+              data-testid="items-loading"
+            >
               <span class="spinner"></span>
               <span>Loading clearing records...</span>
             </div>
@@ -214,10 +219,10 @@ import type {
                     <td class="mono">{{ item.externalTransactionId || 'N/A' }}</td>
                     <td class="mono">{{ item.internalTransactionId || 'NONE' }}</td>
                     <td class="text-right mono">
-                      {{ (item.externalAmount || 0) | number: '1.2-2' }}
+                      {{ item.externalAmount || 0 | number: '1.2-2' }}
                     </td>
                     <td class="text-right mono">
-                      {{ (item.internalAmount || 0) | number: '1.2-2' }}
+                      {{ item.internalAmount || 0 | number: '1.2-2' }}
                     </td>
                     <td>
                       <span class="details-text">
@@ -686,10 +691,7 @@ export class ReconJobsDrawerComponent {
   selectJob(job: ReconciliationJobResponse): void {
     if (job.id) {
       const filter = this.matchStatusFilter();
-      this.reconService.loadJobDetails(
-        job.id,
-        filter !== 'ALL' ? filter : undefined
-      );
+      this.reconService.loadJobDetails(job.id, filter !== 'ALL' ? filter : undefined);
     }
   }
 
@@ -697,10 +699,7 @@ export class ReconJobsDrawerComponent {
     this.matchStatusFilter.set(status);
     const selected = this.reconService.selectedJob();
     if (selected?.id) {
-      this.reconService.loadJobDetails(
-        selected.id,
-        status !== 'ALL' ? status : undefined
-      );
+      this.reconService.loadJobDetails(selected.id, status !== 'ALL' ? status : undefined);
     }
   }
 

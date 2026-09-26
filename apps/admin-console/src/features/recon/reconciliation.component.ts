@@ -2,6 +2,7 @@ import { Component, signal, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SettlementBatchDashboardComponent } from '../settlement';
+import { ReconciliationCasesDashboardComponent } from './reconciliation-cases-dashboard.component';
 
 export type ReconTab = 'batches' | 'cases';
 
@@ -16,7 +17,7 @@ export type ReconTab = 'batches' | 'cases';
 @Component({
   selector: 'ble-reconciliation',
   standalone: true,
-  imports: [CommonModule, SettlementBatchDashboardComponent],
+  imports: [CommonModule, SettlementBatchDashboardComponent, ReconciliationCasesDashboardComponent],
   template: `
     <div class="recon-hub" data-testid="recon-hub">
       <!-- Navigation Tabs Header -->
@@ -42,32 +43,18 @@ export type ReconTab = 'batches' | 'cases';
         >
           <span class="tab-icon">⚖</span>
           <span>Reconciliation Cases</span>
-          <span class="badge-stage">S5-T3</span>
           <span class="active-indicator"></span>
         </button>
       </div>
 
-      <!-- Tab 1: Settlement Batches -->
+      <!-- Tab 1: Settlement Batches (FR-OPS-RECON-01) -->
       <div class="tab-content" *ngIf="activeTab() === 'batches'" data-testid="tab-content-batches">
         <ble-settlement-batch-dashboard />
       </div>
 
-      <!-- Tab 2: Reconciliation Discrepancy Cases (Staged S5-T3) -->
+      <!-- Tab 2: Reconciliation Discrepancy Cases (FR-OPS-RECON-02) -->
       <div class="tab-content" *ngIf="activeTab() === 'cases'" data-testid="tab-content-cases">
-        <div class="cases-placeholder" data-testid="cases-placeholder">
-          <div class="placeholder-card">
-            <span class="placeholder-icon">⚖</span>
-            <h3>External Reconciliation Cases (FR-OPS-RECON-02)</h3>
-            <p>
-              Compare internal ledger movements against external bank clearing files, inspect
-              discrepancy mismatches, and execute administrative resolution actions (RESOLVE,
-              ESCALATE, FORCE_ADJUST).
-            </p>
-            <div class="badge-staged-info">
-              <span>Staged for Sprint 5 Task 3</span>
-            </div>
-          </div>
-        </div>
+        <ble-reconciliation-cases-dashboard />
       </div>
     </div>
   `,
@@ -132,68 +119,9 @@ export type ReconTab = 'batches' | 'cases';
         font-size: 15px;
       }
 
-      .badge-stage {
-        font-size: 10px;
-        font-weight: 700;
-        padding: 1px 6px;
-        border-radius: 4px;
-        background: rgba(14, 165, 233, 0.15);
-        color: #38bdf8;
-        border: 1px solid rgba(14, 165, 233, 0.3);
-      }
-
       .tab-content {
         flex: 1;
         overflow: hidden;
-      }
-
-      .cases-placeholder {
-        padding: 40px 24px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        height: 100%;
-      }
-
-      .placeholder-card {
-        background: var(--ble-color-surface, #1e293b);
-        border: 1px solid var(--ble-color-border, #334155);
-        border-radius: 8px;
-        padding: 40px;
-        max-width: 580px;
-        text-align: center;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 12px;
-      }
-
-      .placeholder-icon {
-        font-size: 40px;
-      }
-
-      .placeholder-card h3 {
-        margin: 0;
-        font-size: 18px;
-        color: var(--ble-color-text-primary, #f8fafc);
-      }
-
-      .placeholder-card p {
-        margin: 0;
-        font-size: 13px;
-        line-height: 1.5;
-        color: var(--ble-color-text-secondary, #94a3b8);
-      }
-
-      .badge-staged-info {
-        margin-top: 8px;
-        background: rgba(245, 158, 11, 0.15);
-        border: 1px solid rgba(245, 158, 11, 0.3);
-        color: #fbbf24;
-        font-size: 11px;
-        font-weight: 600;
-        padding: 4px 12px;
-        border-radius: 9999px;
       }
     `,
   ],
