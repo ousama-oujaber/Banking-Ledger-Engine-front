@@ -1,4 +1,13 @@
-import { Component, signal, computed, Input, Output, EventEmitter, inject, HostListener } from '@angular/core';
+import {
+  Component,
+  signal,
+  computed,
+  Input,
+  Output,
+  EventEmitter,
+  inject,
+  HostListener,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AccountAdminService } from '../services/account-admin.service';
@@ -6,6 +15,14 @@ import type { AccountResponse } from '@ble-frontend/api-client';
 
 export type LifecycleMode = 'FREEZE' | 'UNFREEZE' | 'CLOSE';
 
+/**
+ * AccountLifecycleModalComponent
+ *
+ * Standalone Angular modal dialog for back-office administrative account lifecycle actions:
+ * - FREEZE: Administrative freeze with mandatory justification reason (FR-OPS-ACC-01).
+ * - UNFREEZE: Restore operations for frozen accounts with optional notes.
+ * - CLOSE: Irreversible closure with BR-F05 zero-balance invariant enforcement and explicit confirmation (FR-OPS-ACC-02).
+ */
 @Component({
   selector: 'ble-account-lifecycle-modal',
   standalone: true,
@@ -79,8 +96,8 @@ export type LifecycleMode = 'FREEZE' | 'UNFREEZE' | 'CLOSE';
             <div class="advisory-box warning">
               <span class="advisory-icon">⚠</span>
               <div class="advisory-text">
-                Administrative freezes immediately block all outbound debit transfers, payments,
-                and scheduled transactions per <strong>FR-OPS-ACC-01</strong>.
+                Administrative freezes immediately block all outbound debit transfers, payments, and
+                scheduled transactions per <strong>FR-OPS-ACC-01</strong>.
               </div>
             </div>
 
@@ -108,8 +125,8 @@ export type LifecycleMode = 'FREEZE' | 'UNFREEZE' | 'CLOSE';
             <div class="advisory-box success">
               <span class="advisory-icon">✓</span>
               <div class="advisory-text">
-                Unfreezing restores full operational capabilities, enabling normal debits and credits
-                per <strong>FR-OPS-ACC-01</strong>.
+                Unfreezing restores full operational capabilities, enabling normal debits and
+                credits per <strong>FR-OPS-ACC-01</strong>.
               </div>
             </div>
 
@@ -199,7 +216,7 @@ export type LifecycleMode = 'FREEZE' | 'UNFREEZE' | 'CLOSE';
             [ngClass]="{
               warning: mode() === 'FREEZE',
               success: mode() === 'UNFREEZE',
-              danger: mode() === 'CLOSE'
+              danger: mode() === 'CLOSE',
             }"
             data-testid="modal-submit-btn"
             (click)="submit()"
@@ -212,313 +229,333 @@ export type LifecycleMode = 'FREEZE' | 'UNFREEZE' | 'CLOSE';
       </div>
     </div>
   `,
-  styles: [`
-    .modal-backdrop {
-      position: fixed;
-      inset: 0;
-      background: rgba(11, 17, 32, 0.85);
-      backdrop-filter: blur(4px);
-      z-index: 1050;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 16px;
-      animation: fadeIn 150ms ease;
-    }
+  styles: [
+    `
+      .modal-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(11, 17, 32, 0.85);
+        backdrop-filter: blur(4px);
+        z-index: 1050;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 16px;
+        animation: fadeIn 150ms ease;
+      }
 
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
 
-    .modal-dialog {
-      background: var(--ble-color-surface, #1e293b);
-      border: 1px solid var(--ble-color-border, #334155);
-      border-radius: 8px;
-      width: 100%;
-      max-width: 520px;
-      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-    }
+      .modal-dialog {
+        background: var(--ble-color-surface, #1e293b);
+        border: 1px solid var(--ble-color-border, #334155);
+        border-radius: 8px;
+        width: 100%;
+        max-width: 520px;
+        box-shadow:
+          0 20px 25px -5px rgba(0, 0, 0, 0.5),
+          0 8px 10px -6px rgba(0, 0, 0, 0.5);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
 
-    .modal-header {
-      padding: 14px 18px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      border-bottom: 1px solid var(--ble-color-border, #334155);
-      background: rgba(15, 23, 42, 0.6);
-    }
+      .modal-header {
+        padding: 14px 18px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 1px solid var(--ble-color-border, #334155);
+        background: rgba(15, 23, 42, 0.6);
+      }
 
-    .header-title-row {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
+      .header-title-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
 
-    .mode-icon {
-      font-size: 16px;
-    }
+      .mode-icon {
+        font-size: 16px;
+      }
 
-    .modal-title {
-      margin: 0;
-      font-size: 15px;
-      font-weight: 700;
-      color: var(--ble-color-text-primary, #f8fafc);
-    }
+      .modal-title {
+        margin: 0;
+        font-size: 15px;
+        font-weight: 700;
+        color: var(--ble-color-text-primary, #f8fafc);
+      }
 
-    .close-icon-btn {
-      background: transparent;
-      border: none;
-      color: var(--ble-color-text-muted, #64748b);
-      font-size: 14px;
-      cursor: pointer;
-      padding: 4px;
-      border-radius: 4px;
-    }
+      .close-icon-btn {
+        background: transparent;
+        border: none;
+        color: var(--ble-color-text-muted, #64748b);
+        font-size: 14px;
+        cursor: pointer;
+        padding: 4px;
+        border-radius: 4px;
+      }
 
-    .close-icon-btn:hover {
-      color: #f8fafc;
-      background: var(--ble-color-surface-subtle, #334155);
-    }
+      .close-icon-btn:hover {
+        color: #f8fafc;
+        background: var(--ble-color-surface-subtle, #334155);
+      }
 
-    /* Account Summary */
-    .account-summary-card {
-      background: rgba(15, 23, 42, 0.7);
-      margin: 14px 18px 0 18px;
-      padding: 10px 14px;
-      border: 1px solid rgba(51, 65, 85, 0.6);
-      border-radius: 6px;
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 8px 16px;
-    }
+      /* Account Summary */
+      .account-summary-card {
+        background: rgba(15, 23, 42, 0.7);
+        margin: 14px 18px 0 18px;
+        padding: 10px 14px;
+        border: 1px solid rgba(51, 65, 85, 0.6);
+        border-radius: 6px;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px 16px;
+      }
 
-    .summary-item {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
+      .summary-item {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
 
-    .summary-label {
-      font-size: 10px;
-      color: var(--ble-color-text-muted, #64748b);
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-    }
+      .summary-label {
+        font-size: 10px;
+        color: var(--ble-color-text-muted, #64748b);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
 
-    .summary-value {
-      font-size: 12px;
-      color: var(--ble-color-text-primary, #f8fafc);
-    }
+      .summary-value {
+        font-size: 12px;
+        color: var(--ble-color-text-primary, #f8fafc);
+      }
 
-    /* Body */
-    .modal-body {
-      padding: 16px 18px;
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-    }
+      /* Body */
+      .modal-body {
+        padding: 16px 18px;
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+      }
 
-    .advisory-box {
-      padding: 10px 12px;
-      border-radius: 6px;
-      display: flex;
-      gap: 10px;
-      font-size: 12px;
-      line-height: 1.4;
-    }
+      .advisory-box {
+        padding: 10px 12px;
+        border-radius: 6px;
+        display: flex;
+        gap: 10px;
+        font-size: 12px;
+        line-height: 1.4;
+      }
 
-    .advisory-box.warning {
-      background: rgba(245, 158, 11, 0.15);
-      border: 1px solid rgba(245, 158, 11, 0.3);
-      color: #fef08a;
-    }
+      .advisory-box.warning {
+        background: rgba(245, 158, 11, 0.15);
+        border: 1px solid rgba(245, 158, 11, 0.3);
+        color: #fef08a;
+      }
 
-    .advisory-box.success {
-      background: rgba(16, 185, 129, 0.15);
-      border: 1px solid rgba(16, 185, 129, 0.3);
-      color: #a7f3d0;
-    }
+      .advisory-box.success {
+        background: rgba(16, 185, 129, 0.15);
+        border: 1px solid rgba(16, 185, 129, 0.3);
+        color: #a7f3d0;
+      }
 
-    .advisory-box.danger {
-      background: rgba(239, 68, 68, 0.15);
-      border: 1px solid rgba(239, 68, 68, 0.3);
-      color: #fca5a5;
-    }
+      .advisory-box.danger {
+        background: rgba(239, 68, 68, 0.15);
+        border: 1px solid rgba(239, 68, 68, 0.3);
+        color: #fca5a5;
+      }
 
-    .advisory-icon {
-      font-size: 16px;
-      flex-shrink: 0;
-    }
+      .advisory-icon {
+        font-size: 16px;
+        flex-shrink: 0;
+      }
 
-    .sweep-instruction {
-      margin-top: 6px;
-      font-size: 11px;
-      color: #fecaca;
-      font-style: italic;
-    }
+      .sweep-instruction {
+        margin-top: 6px;
+        font-size: 11px;
+        color: #fecaca;
+        font-style: italic;
+      }
 
-    .zero-close-flow {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
+      .zero-close-flow {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
 
-    .form-group {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
+      .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
 
-    .form-label {
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--ble-color-text-primary, #f8fafc);
-    }
+      .form-label {
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--ble-color-text-primary, #f8fafc);
+      }
 
-    .required {
-      color: #f87171;
-    }
+      .required {
+        color: #f87171;
+      }
 
-    .form-textarea,
-    .form-input {
-      background: var(--ble-color-surface-muted, #0f172a);
-      border: 1px solid var(--ble-color-border, #334155);
-      border-radius: 5px;
-      color: #f8fafc;
-      padding: 8px 10px;
-      font-size: 12px;
-      outline: none;
-      resize: vertical;
-    }
+      .form-textarea,
+      .form-input {
+        background: var(--ble-color-surface-muted, #0f172a);
+        border: 1px solid var(--ble-color-border, #334155);
+        border-radius: 5px;
+        color: #f8fafc;
+        padding: 8px 10px;
+        font-size: 12px;
+        outline: none;
+        resize: vertical;
+      }
 
-    .form-textarea:focus,
-    .form-input:focus {
-      border-color: #3b82f6;
-    }
+      .form-textarea:focus,
+      .form-input:focus {
+        border-color: #3b82f6;
+      }
 
-    .form-hint {
-      font-size: 11px;
-      color: var(--ble-color-text-muted, #64748b);
-    }
+      .form-hint {
+        font-size: 11px;
+        color: var(--ble-color-text-muted, #64748b);
+      }
 
-    .form-hint.hint-error {
-      color: #f87171;
-    }
+      .form-hint.hint-error {
+        color: #f87171;
+      }
 
-    .modal-error-banner {
-      background: rgba(239, 68, 68, 0.15);
-      border: 1px solid rgba(239, 68, 68, 0.3);
-      color: #fca5a5;
-      padding: 8px 12px;
-      border-radius: 5px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 12px;
-    }
+      .modal-error-banner {
+        background: rgba(239, 68, 68, 0.15);
+        border: 1px solid rgba(239, 68, 68, 0.3);
+        color: #fca5a5;
+        padding: 8px 12px;
+        border-radius: 5px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 12px;
+      }
 
-    /* Footer */
-    .modal-footer {
-      padding: 12px 18px;
-      border-top: 1px solid var(--ble-color-border, #334155);
-      display: flex;
-      justify-content: flex-end;
-      gap: 10px;
-      background: rgba(15, 23, 42, 0.4);
-    }
+      /* Footer */
+      .modal-footer {
+        padding: 12px 18px;
+        border-top: 1px solid var(--ble-color-border, #334155);
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        background: rgba(15, 23, 42, 0.4);
+      }
 
-    .modal-btn {
-      padding: 7px 16px;
-      border-radius: 5px;
-      font-size: 12px;
-      font-weight: 600;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      border: 1px solid transparent;
-      transition: all 150ms ease;
-    }
+      .modal-btn {
+        padding: 7px 16px;
+        border-radius: 5px;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        border: 1px solid transparent;
+        transition: all 150ms ease;
+      }
 
-    .modal-btn.secondary {
-      background: transparent;
-      border-color: var(--ble-color-border, #334155);
-      color: var(--ble-color-text-primary, #f8fafc);
-    }
+      .modal-btn.secondary {
+        background: transparent;
+        border-color: var(--ble-color-border, #334155);
+        color: var(--ble-color-text-primary, #f8fafc);
+      }
 
-    .modal-btn.secondary:hover:not(:disabled) {
-      background: var(--ble-color-surface-subtle, #334155);
-    }
+      .modal-btn.secondary:hover:not(:disabled) {
+        background: var(--ble-color-surface-subtle, #334155);
+      }
 
-    .modal-btn.warning {
-      background: #f59e0b;
-      color: #000000;
-    }
+      .modal-btn.warning {
+        background: #f59e0b;
+        color: #000000;
+      }
 
-    .modal-btn.warning:hover:not(:disabled) {
-      background: #d97706;
-    }
+      .modal-btn.warning:hover:not(:disabled) {
+        background: #d97706;
+      }
 
-    .modal-btn.success {
-      background: #10b981;
-      color: #ffffff;
-    }
+      .modal-btn.success {
+        background: #10b981;
+        color: #ffffff;
+      }
 
-    .modal-btn.success:hover:not(:disabled) {
-      background: #059669;
-    }
+      .modal-btn.success:hover:not(:disabled) {
+        background: #059669;
+      }
 
-    .modal-btn.danger {
-      background: #ef4444;
-      color: #ffffff;
-    }
+      .modal-btn.danger {
+        background: #ef4444;
+        color: #ffffff;
+      }
 
-    .modal-btn.danger:hover:not(:disabled) {
-      background: #dc2626;
-    }
+      .modal-btn.danger:hover:not(:disabled) {
+        background: #dc2626;
+      }
 
-    .modal-btn:disabled {
-      opacity: 0.4;
-      cursor: not-allowed;
-    }
+      .modal-btn:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+      }
 
-    .spinner {
-      width: 12px;
-      height: 12px;
-      border: 2px solid rgba(255, 255, 255, 0.3);
-      border-radius: 50%;
-      border-top-color: currentColor;
-      animation: spin 0.8s linear infinite;
-    }
+      .spinner {
+        width: 12px;
+        height: 12px;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        border-top-color: currentColor;
+        animation: spin 0.8s linear infinite;
+      }
 
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-  `]
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+    `,
+  ],
 })
 export class AccountLifecycleModalComponent {
   adminService: AccountAdminService;
 
-  // Signal properties with Input setters
-  private readonly _account = signal<AccountResponse | null>(null);
-  @Input() set account(v: AccountResponse | null) { this._account.set(v); }
-  get account() { return this._account; }
+  /** The target account on which the lifecycle action will be executed. */
+  readonly account = signal<AccountResponse | null>(null);
+  @Input('account') set accountInput(v: AccountResponse | null) {
+    this.account.set(v);
+  }
 
-  private readonly _mode = signal<LifecycleMode>('FREEZE');
-  @Input() set mode(v: LifecycleMode) { this._mode.set(v); }
-  get mode() { return this._mode; }
+  /** The lifecycle mode to execute: 'FREEZE' | 'UNFREEZE' | 'CLOSE'. */
+  readonly mode = signal<LifecycleMode>('FREEZE');
+  @Input('mode') set modeInput(v: LifecycleMode) {
+    this.mode.set(v);
+  }
 
-  private readonly _isOpen = signal<boolean>(false);
-  @Input() set isOpen(v: boolean) { this._isOpen.set(v); }
-  get isOpen() { return this._isOpen; }
+  /** Controls whether the modal dialog is open and visible. */
+  readonly isOpen = signal<boolean>(false);
+  @Input('isOpen') set isOpenInput(v: boolean) {
+    this.isOpen.set(v);
+  }
 
-  // Outputs
+  /** Emitted when the modal is closed or cancelled. */
   @Output() readonly onClose = new EventEmitter<void>();
-  @Output() readonly onSuccess = new EventEmitter<{ accountId: string; status: 'ACTIVE' | 'FROZEN' | 'CLOSED' }>();
+
+  /** Emitted upon successful execution of the lifecycle mutation. */
+  @Output() readonly onSuccess = new EventEmitter<{
+    accountId: string;
+    status: 'ACTIVE' | 'FROZEN' | 'CLOSED';
+  }>();
 
   // Internal Form State
   readonly reason = signal<string>('');
@@ -532,23 +569,28 @@ export class AccountLifecycleModalComponent {
     return acc ? this.adminService.formatBalance(acc) : '—';
   });
 
+  /** Checks if account balance is precisely 0.00 for BR-F05 closure invariant. */
   readonly isZeroBalance = computed<boolean>(() => {
     const acc = this.account();
     return acc ? this.adminService.isZeroBalance(acc) : false;
   });
 
+  /** FREEZE requires a non-empty administrative justification reason (min 3 chars). */
   readonly isFreezeValid = computed<boolean>(() => {
     return this.reason().trim().length >= 3;
   });
 
+  /** UNFREEZE does not mandate notes, always eligible to submit. */
   readonly isUnfreezeValid = computed<boolean>(() => {
     return true;
   });
 
+  /** CLOSE requires zero balance and explicit confirmation input matching 'CLOSE'. */
   readonly isCloseValid = computed<boolean>(() => {
     return this.isZeroBalance() && this.confirmCloseText().trim() === 'CLOSE';
   });
 
+  /** Determines whether the primary action button is enabled based on active mode validation. */
   readonly isSubmitEnabled = computed<boolean>(() => {
     if (this.submitting() || !this.account()) return false;
     switch (this.mode()) {
@@ -558,6 +600,8 @@ export class AccountLifecycleModalComponent {
         return this.isUnfreezeValid();
       case 'CLOSE':
         return this.isCloseValid();
+      default:
+        return false;
     }
   });
 
@@ -569,6 +613,8 @@ export class AccountLifecycleModalComponent {
         return 'Restore Account Operations';
       case 'CLOSE':
         return 'Permanent Account Closure';
+      default:
+        return 'Account Action';
     }
   });
 
@@ -580,6 +626,8 @@ export class AccountLifecycleModalComponent {
         return '🔓';
       case 'CLOSE':
         return '⛔';
+      default:
+        return '⚙';
     }
   });
 
@@ -591,6 +639,8 @@ export class AccountLifecycleModalComponent {
         return 'Unfreeze Account';
       case 'CLOSE':
         return 'Confirm Permanent Closure';
+      default:
+        return 'Confirm';
     }
   });
 
@@ -615,6 +665,9 @@ export class AccountLifecycleModalComponent {
     }
   }
 
+  /**
+   * Resets local form state and emits the modal close event.
+   */
   handleCancel(): void {
     this.reason.set('');
     this.confirmCloseText.set('');
@@ -624,6 +677,9 @@ export class AccountLifecycleModalComponent {
     this.onClose.emit();
   }
 
+  /**
+   * Executes the appropriate lifecycle mutation via AccountAdminService.
+   */
   async submit(): Promise<void> {
     const acc = this.account();
     if (!acc || !acc.id || !this.isSubmitEnabled()) return;

@@ -2,12 +2,16 @@ import { Component, signal, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AccountAdminService } from './services/account-admin.service';
+import {
+  AccountLifecycleModalComponent,
+  type LifecycleMode,
+} from './components/account-lifecycle-modal.component';
 import type { AccountResponse } from '@ble-frontend/api-client';
 
 @Component({
   selector: 'ble-account-table',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, AccountLifecycleModalComponent],
   template: `
     <div class="account-workspace" data-testid="account-workspace">
       <!-- Workspace Page Title & Stats -->
@@ -35,6 +39,26 @@ import type { AccountResponse } from '@ble-frontend/api-client';
             Refresh
           </button>
         </div>
+      </div>
+
+      <!-- Action Success Notification Toast / Banner -->
+      <div
+        *ngIf="actionSuccessMessage()"
+        class="success-banner"
+        data-testid="account-success-banner"
+      >
+        <div class="success-content">
+          <span class="success-icon">✓</span>
+          <span class="success-text">{{ actionSuccessMessage() }}</span>
+        </div>
+        <button
+          type="button"
+          class="dismiss-btn"
+          (click)="dismissSuccessMessage()"
+          aria-label="Dismiss message"
+        >
+          ✕
+        </button>
       </div>
 
       <!-- Filter & Search Toolbar -->
@@ -392,6 +416,15 @@ import type { AccountResponse } from '@ble-frontend/api-client';
           </div>
         </div>
       </div>
+
+      <!-- Account Lifecycle Confirmation Modal (S4-T3) -->
+      <ble-account-lifecycle-modal
+        [account]="modalAccount()"
+        [mode]="modalMode()"
+        [isOpen]="isModalOpen()"
+        (onClose)="onModalClose()"
+        (onSuccess)="onModalSuccess($event)"
+      ></ble-account-lifecycle-modal>
     </div>
   `,
   styles: [
@@ -611,6 +644,45 @@ import type { AccountResponse } from '@ble-frontend/api-client';
         font-size: 11px;
         font-weight: 600;
         cursor: pointer;
+      }
+
+      /* Success Banner */
+      .success-banner {
+        background: rgba(16, 185, 129, 0.15);
+        border: 1px solid rgba(16, 185, 129, 0.4);
+        color: #6ee7b7;
+        padding: 10px 14px;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        font-size: 12px;
+      }
+
+      .success-content {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .success-icon {
+        font-weight: 700;
+        font-size: 14px;
+      }
+
+      .dismiss-btn {
+        background: transparent;
+        border: none;
+        color: #6ee7b7;
+        font-size: 12px;
+        cursor: pointer;
+        padding: 2px 6px;
+        border-radius: 3px;
+      }
+
+      .dismiss-btn:hover {
+        background: rgba(16, 185, 129, 0.2);
       }
 
       /* Table Container */
@@ -1006,6 +1078,13 @@ export class AccountTableComponent implements OnInit {
   // Local interaction signals
   readonly copiedAccountId = signal<string | null>(null);
 
+  // Lifecycle Modal State (S4-T3)
+  readonly modalAccount = signal<AccountResponse | null>(null);
+  readonly modalMode = signal<LifecycleMode>('FREEZE');
+  readonly isModalOpen = signal<boolean>(false);
+  readonly actionSuccessMessage = signal<string | null>(null);
+  private successTimeoutId: ReturnType<typeof setTimeout> | null = null;
+
   constructor(service?: AccountAdminService) {
     if (service) {
       this.adminService = service;
@@ -1097,16 +1176,79 @@ export class AccountTableComponent implements OnInit {
     }
   }
 
-  // Lifecycle Action Triggers (Wired for S4-T3)
+  /**
+   * Opens the confirmation modal to administratively freeze the specified account.
+   * @param account The account to be frozen.
+   */
   freeze(account: AccountResponse): void {
-    console.info('[AccountOps] Trigger freeze dialog for', account.id);
+    this.modalAccount.set(account);
+    this.modalMode.set('FREEZE');
+    this.isModalOpen.set(true);
   }
 
+  /**
+   * Opens the confirmation modal to restore active operations for the specified frozen account.
+   * @param account The account to be unfrozen.
+   */
   unfreeze(account: AccountResponse): void {
-    console.info('[AccountOps] Trigger unfreeze dialog for', account.id);
+    this.modalAccount.set(account);
+    this.modalMode.set('UNFREEZE');
+    this.isModalOpen.set(true);
   }
 
+  /**
+   * Opens the confirmation modal to permanently close the account (BR-F05 zero balance required).
+   * @param account The account to be closed.
+   */
   close(account: AccountResponse): void {
-    console.info('[AccountOps] Trigger close dialog for', account.id);
+    this.modalAccount.set(account);
+    this.modalMode.set('CLOSE');
+    this.isModalOpen.set(true);
+  }
+
+  /**
+   * Handles modal dismissal or cancellation by closing dialog and clearing selection.
+   */
+  onModalClose(): void {
+    this.isModalOpen.set(false);
+    this.modalAccount.set(null);
+  }
+
+  /**
+   * Handles successful account lifecycle mutation callback from modal.
+   * Shows a temporary feedback banner notifying back-office staff of the updated account status.
+   * @param event The event payload containing accountId and new status.
+   */
+  onModalSuccess(event: {
+    accountId: string;
+    status: 'ACTIVE' | 'FROZEN' | 'CLOSED' | string;
+  }): void {
+    const actionLabel =
+      event.status === 'FROZEN'
+        ? 'administratively FROZEN'
+        : event.status === 'ACTIVE'
+          ? 'unfrozen and restored to ACTIVE'
+          : 'permanently CLOSED';
+
+    this.actionSuccessMessage.set(
+      `Account ${event.accountId} has been successfully ${actionLabel}.`,
+    );
+
+    if (this.successTimeoutId) {
+      clearTimeout(this.successTimeoutId);
+    }
+    this.successTimeoutId = setTimeout(() => {
+      this.actionSuccessMessage.set(null);
+    }, 5000);
+  }
+
+  /**
+   * Manually dismisses the action success notification banner.
+   */
+  dismissSuccessMessage(): void {
+    if (this.successTimeoutId) {
+      clearTimeout(this.successTimeoutId);
+    }
+    this.actionSuccessMessage.set(null);
   }
 }

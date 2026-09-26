@@ -149,4 +149,42 @@ describe('AccountTableComponent (S4-T2 High-Density Table)', () => {
     expect(writeTextSpy).toHaveBeenCalledWith('acc-101');
     expect(component.copiedAccountId()).toBe('acc-101');
   });
+
+  describe('Lifecycle Action Modal Triggers (S4-T3)', () => {
+    it('should open modal in FREEZE mode when freeze button clicked', () => {
+      component.freeze(mockTestAccounts[0]);
+      expect(component.isModalOpen()).toBe(true);
+      expect(component.modalMode()).toBe('FREEZE');
+      expect(component.modalAccount()?.id).toBe('acc-101');
+    });
+
+    it('should open modal in UNFREEZE mode when unfreeze button clicked', () => {
+      component.unfreeze(mockTestAccounts[1]);
+      expect(component.isModalOpen()).toBe(true);
+      expect(component.modalMode()).toBe('UNFREEZE');
+      expect(component.modalAccount()?.id).toBe('acc-102');
+    });
+
+    it('should open modal in CLOSE mode when close button clicked for eligible account', () => {
+      component.close(mockTestAccounts[1]); // zero balance
+      expect(component.isModalOpen()).toBe(true);
+      expect(component.modalMode()).toBe('CLOSE');
+      expect(component.modalAccount()?.id).toBe('acc-102');
+    });
+
+    it('should close modal and reset modalAccount on onModalClose', () => {
+      component.freeze(mockTestAccounts[0]);
+      expect(component.isModalOpen()).toBe(true);
+
+      component.onModalClose();
+      expect(component.isModalOpen()).toBe(false);
+      expect(component.modalAccount()).toBeNull();
+    });
+
+    it('should display success feedback banner on onModalSuccess', () => {
+      component.onModalSuccess({ accountId: 'acc-101', status: 'FROZEN' });
+      expect(component.actionSuccessMessage()).toContain('acc-101');
+      expect(component.actionSuccessMessage()).toContain('FROZEN');
+    });
+  });
 });
