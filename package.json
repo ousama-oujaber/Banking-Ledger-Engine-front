@@ -7,6 +7,7 @@
     "nx": "nx",
     "start": "nx serve",
     "build": "nx build",
+    "build:prod": "nx run-many --target=build --all --configuration=production",
     "serve": "nx run-many --target=serve --projects=customer-portal,admin-console",
     "test": "nx run-many --target=test --all",
     "test:ci": "nx run-many --target=test --all --coverage=true",
@@ -19,6 +20,9 @@
     "affected:lint": "nx affected --target=lint --base=origin/develop --head=HEAD",
     "affected:build": "nx affected --target=build --base=origin/develop --head=HEAD --configuration=production",
     "api:generate": "ts-node tools/scripts/generate-api-client.ts",
+    "docker:build": "docker compose -f docker-compose.frontend.yml build",
+    "docker:up": "docker compose -f docker-compose.frontend.yml up -d",
+    "docker:down": "docker compose -f docker-compose.frontend.yml down",
     "graph": "nx graph",
     "reset": "nx reset"
   },

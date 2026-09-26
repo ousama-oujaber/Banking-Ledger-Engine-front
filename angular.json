@@ -23,7 +23,21 @@
             "production": {
               "optimization": true,
               "outputHashing": "all",
-              "sourceMap": false
+              "sourceMap": false,
+              "namedChunks": false,
+              "extractLicenses": true,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "500kB",
+                  "maximumError": "1.5MB"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "10kB",
+                  "maximumError": "16kB"
+                }
+              ]
             },
             "development": {
               "optimization": false,
