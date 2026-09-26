@@ -42,3 +42,5 @@ Thumbs.db
 
 # Other
 project-doc/
+playwright-report/
+test-results/

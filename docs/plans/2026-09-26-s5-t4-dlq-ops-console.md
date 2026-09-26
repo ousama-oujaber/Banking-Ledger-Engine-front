@@ -41,6 +41,7 @@ graph TD
 ## 3. Scope of Implementation
 
 ### In Scope
+
 - `DlqAdminService` with Angular 19 signals (`events`, `selectedEvent`, `observabilityStats`, `kpiSummary`, `filteredEvents`, filters).
 - `DlqEventDrawerComponent` (error callout, full stack trace with copy, formatted JSON payload inspector, headers breakdown).
 - `ReplayConfirmModalComponent` (individual and bulk replay confirmation).
@@ -50,6 +51,7 @@ graph TD
 - Comprehensive unit test suites for all created components and services.
 
 ### Out of Scope
+
 - Backend modifications (backend endpoints already generated in `@ble-frontend/api-client`).
 - E2E Playwright test suite (Sprint 5 Task 5).
 
@@ -58,6 +60,7 @@ graph TD
 ## 4. Atomic Action Items
 
 ### Task 1: State Management (`DlqAdminService`)
+
 - Create `apps/admin-console/src/features/dlq/services/dlq-admin.service.ts`
 - Signals: `events`, `selectedEvent`, `observabilityStats`, `loading`, `mutating`, `error`, `statusFilter`, `topicFilter`, `searchQuery`.
 - Computed: `filteredEvents`, `kpiSummary`.
@@ -65,12 +68,14 @@ graph TD
 - Create unit test `apps/admin-console/src/features/dlq/services/dlq-admin.service.spec.ts`.
 
 ### Task 2: Modals & Drawer Components
+
 - Create `apps/admin-console/src/features/dlq/components/dlq-event-drawer.component.ts` & test.
 - Create `apps/admin-console/src/features/dlq/components/replay-confirm-modal.component.ts` & test.
 - Create `apps/admin-console/src/features/dlq/components/discard-confirm-modal.component.ts` & test.
 - Create `apps/admin-console/src/features/dlq/components/index.ts` barrel.
 
 ### Task 3: Dashboard Assembly (`DlqOpsComponent`)
+
 - Upgrade `apps/admin-console/src/features/dlq/dlq-ops.component.ts` with complete UI:
   - Header actions: Refresh, Replay All Pending.
   - KPI summary row (Pending, Replayed, Discarded, Outbox Lag).
@@ -81,6 +86,7 @@ graph TD
 - Create `apps/admin-console/src/features/dlq/index.ts` barrel.
 
 ### Task 4: Verification & Quality Assurance
+
 - Run `pnpm nx test admin-console` to ensure 100% test pass rate across the full suite.
 - Run `pnpm nx typecheck admin-console` to verify zero TypeScript errors.
 - Run `pnpm nx build admin-console` to verify production bundle generation.

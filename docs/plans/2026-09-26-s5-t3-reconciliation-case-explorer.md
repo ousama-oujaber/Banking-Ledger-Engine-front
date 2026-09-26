@@ -44,6 +44,7 @@ graph TD
 ## 3. Scope of Implementation
 
 ### In Scope
+
 - `ReconAdminService` with Angular 19 signals (`cases`, `jobs`, `selectedCase`, `selectedJob`, `jobItems`, `kpis`, filters).
 - `ReconciliationCasesDashboardComponent` (KPI header, toolbar, cases table, jobs sub-view, modal toggles).
 - `ReconciliationCaseDrawerComponent` (side-by-side ledger vs. clearing record comparison, delta indicator, audit trail).
@@ -55,6 +56,7 @@ graph TD
 - 100% comprehensive unit tests for service, modals, drawer, and dashboard components.
 
 ### Out of Scope
+
 - Backend modifications (backend endpoints already generated in `@ble-frontend/api-client`).
 - Dead-Letter Queue (DLQ) operations (Sprint 5 Task 4).
 
@@ -63,6 +65,7 @@ graph TD
 ## 4. Atomic Action Items
 
 ### Task 1: State Management (`ReconAdminService`)
+
 - Create `apps/admin-console/src/features/recon/services/recon-admin.service.ts`
 - Implement signals: `cases`, `jobs`, `selectedCase`, `selectedJob`, `jobItems`, `loading`, `mutating`, `error`.
 - Implement computed: `filteredCases`, `kpiSummary`.
@@ -70,6 +73,7 @@ graph TD
 - Create unit test `apps/admin-console/src/features/recon/services/recon-admin.service.spec.ts`.
 
 ### Task 2: Modals & Drawers
+
 - Create `apps/admin-console/src/features/recon/components/reconciliation-case-drawer.component.ts` & test.
 - Create `apps/admin-console/src/features/recon/components/resolve-case-modal.component.ts` & test.
 - Create `apps/admin-console/src/features/recon/components/escalate-case-modal.component.ts` & test.
@@ -78,12 +82,14 @@ graph TD
 - Create `apps/admin-console/src/features/recon/components/index.ts` barrel.
 
 ### Task 3: Dashboard Assembly & Reconciliation Hub Integration
+
 - Create `apps/admin-console/src/features/recon/reconciliation-cases-dashboard.component.ts` & test.
 - Update `apps/admin-console/src/features/recon/reconciliation.component.ts` to embed the new dashboard.
 - Update `apps/admin-console/src/features/recon/reconciliation.component.spec.ts`.
 - Export from `apps/admin-console/src/features/recon/index.ts`.
 
 ### Task 4: Verification & Validation
+
 - Run `pnpm nx test admin-console` to ensure all unit tests pass.
 - Run `pnpm nx typecheck admin-console` to ensure zero TypeScript errors.
 - Run `pnpm nx build admin-console` to verify production bundling.
@@ -94,5 +100,6 @@ graph TD
 ## 5. Execution Handoff Choice
 
 Plan complete and ready for execution. Two execution options:
+
 1. **Direct Session Execution:** Implement step-by-step in this session with immediate test validation and git commits.
 2. **Subagent-Driven Execution:** Execute each task in sequence.

@@ -60,8 +60,8 @@ export function LoginPage() {
   };
 
   return (
-    <div className="login-container">
-      <form onSubmit={handleSubmit} className="login-form">
+    <div className="login-container" data-testid="login-page">
+      <form onSubmit={handleSubmit} className="login-form" data-testid="login-form">
         <h1 className="login-form__title">Banking Ledger Engine</h1>
 
         <input
@@ -73,6 +73,7 @@ export function LoginPage() {
           required
           autoFocus
           disabled={isLockedOut}
+          data-testid="username-input"
         />
         <input
           className="login-form__input"
@@ -82,6 +83,7 @@ export function LoginPage() {
           onChange={(e) => setPassword(e.target.value)}
           required
           disabled={isLockedOut}
+          data-testid="password-input"
         />
 
         {error && (
@@ -93,7 +95,12 @@ export function LoginPage() {
           </div>
         )}
 
-        <button className="login-form__submit" type="submit" disabled={isLoading || isLockedOut}>
+        <button
+          className="login-form__submit"
+          type="submit"
+          disabled={isLoading || isLockedOut}
+          data-testid="login-submit-btn"
+        >
           {isLoading ? 'Logging in...' : isLockedOut ? 'Locked' : 'Login'}
         </button>
       </form>
