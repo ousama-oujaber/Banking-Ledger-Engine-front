@@ -11,7 +11,10 @@ import {
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { SettlementAdminService } from '../services/settlement-admin.service';
-import type { SettlementBatchResponse, CreateSettlementBatchRequest } from '@ble-frontend/api-client';
+import type {
+  SettlementBatchResponse,
+  CreateSettlementBatchRequest,
+} from '@ble-frontend/api-client';
 
 /**
  * Supported payment clearing rails.
@@ -88,7 +91,9 @@ export type SettlementRail = (typeof SETTLEMENT_RAILS)[number];
             >
               <option *ngFor="let r of rails" [value]="r">{{ r }}</option>
             </select>
-            <span class="form-hint">Payment rail network responsible for clearing instructions</span>
+            <span class="form-hint"
+              >Payment rail network responsible for clearing instructions</span
+            >
           </div>
 
           <!-- Currency Selection -->
@@ -125,7 +130,9 @@ export type SettlementRail = (typeof SETTLEMENT_RAILS)[number];
               name="businessDate"
               data-testid="batch-business-date-input"
             />
-            <span class="form-hint">Accounting value date for transaction net delta calculation</span>
+            <span class="form-hint"
+              >Accounting value date for transaction net delta calculation</span
+            >
           </div>
 
           <!-- Client Idempotency Preview -->

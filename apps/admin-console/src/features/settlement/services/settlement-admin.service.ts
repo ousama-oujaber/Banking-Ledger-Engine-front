@@ -204,7 +204,8 @@ export class SettlementAdminService {
       this.selectedBatch.set(batch);
       this.batchRecords.set(Array.isArray(records) ? records : []);
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : `Failed to load details for batch ${batchId}`;
+      const msg =
+        err instanceof Error ? err.message : `Failed to load details for batch ${batchId}`;
       this.error.set(msg);
     } finally {
       this.recordsLoading.set(false);
@@ -329,9 +330,7 @@ export class SettlementAdminService {
   /**
    * Enqueue a new record into the settlement pipeline.
    */
-  async enqueueRecord(
-    request: EnqueueSettlementRecordRequest,
-  ): Promise<SettlementRecordResponse> {
+  async enqueueRecord(request: EnqueueSettlementRecordRequest): Promise<SettlementRecordResponse> {
     this.mutating.set(true);
     this.error.set(null);
 

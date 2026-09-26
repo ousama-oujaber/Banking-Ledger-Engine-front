@@ -11,7 +11,10 @@ import {
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { SettlementAdminService } from '../services/settlement-admin.service';
-import type { SettlementBatchResponse, SettleSettlementBatchRequest } from '@ble-frontend/api-client';
+import type {
+  SettlementBatchResponse,
+  SettleSettlementBatchRequest,
+} from '@ble-frontend/api-client';
 
 /**
  * SettleBatchModalComponent
@@ -78,7 +81,9 @@ import type { SettlementBatchResponse, SettleSettlementBatchRequest } from '@ble
         <div class="batch-summary-card" *ngIf="targetBatch()" data-testid="batch-summary-card">
           <div class="summary-item">
             <span class="summary-label">Batch ID</span>
-            <span class="summary-val mono" data-testid="summary-batch-id">{{ targetBatch()?.id }}</span>
+            <span class="summary-val mono" data-testid="summary-batch-id">{{
+              targetBatch()?.id
+            }}</span>
           </div>
           <div class="summary-item">
             <span class="summary-label">Rail</span>
@@ -86,7 +91,9 @@ import type { SettlementBatchResponse, SettleSettlementBatchRequest } from '@ble
           </div>
           <div class="summary-item">
             <span class="summary-label">Records Count</span>
-            <span class="summary-val font-semibold">{{ targetBatch()?.recordCount ?? 0 }} items</span>
+            <span class="summary-val font-semibold"
+              >{{ targetBatch()?.recordCount ?? 0 }} items</span
+            >
           </div>
           <div class="summary-item">
             <span class="summary-label">Total Volume</span>
@@ -115,15 +122,14 @@ import type { SettlementBatchResponse, SettleSettlementBatchRequest } from '@ble
               data-testid="settle-ext-ref-input"
             />
             <span class="form-hint"
-              >Clearing network reconciliation tracking reference issued by central clearing house</span
+              >Clearing network reconciliation tracking reference issued by central clearing
+              house</span
             >
           </div>
 
           <!-- Settled At Timestamp (Optional) -->
           <div class="form-group">
-            <label for="settle-at-date" class="form-label">
-              Effective Settlement Timestamp
-            </label>
+            <label for="settle-at-date" class="form-label"> Effective Settlement Timestamp </label>
             <input
               id="settle-at-date"
               type="datetime-local"

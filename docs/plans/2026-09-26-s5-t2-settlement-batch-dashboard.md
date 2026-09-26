@@ -9,6 +9,7 @@
 ## 1. Goal Description
 
 Implement the **Settlement Batch Dashboard** (FR-OPS-RECON-01) in `apps/admin-console`, empowering back-office bank operators and administrators to:
+
 1. **Monitor clearing and settlement batches:** Real-time visibility into clearing batches across payment rails (`SEPA`, `ACH`, `FEDWIRE`, `SWIFT`, `FAWRY`), currencies, and business dates.
 2. **Inspect batch totals & balances:** High-density breakdown displaying gross debit, gross credit, net settlement delta, record count, and batch lifecycle status (`OPEN`, `PENDING`, `SETTLED`, `FAILED`, `CLOSED`).
 3. **Execute atomic batch settlement:** Operator trigger for executing batch settlement (`POST /api/v1/settlements/batches/{id}/settle`) with external clearing reference (`externalBatchReference`) and client idempotency (`BR-F03`).
@@ -22,6 +23,7 @@ Implement the **Settlement Batch Dashboard** (FR-OPS-RECON-01) in `apps/admin-co
 > [!IMPORTANT]
 > **API Path & Endpoint Alignment:**  
 > In `libs/api-client`, the backend OpenAPI contract generates:
+>
 > - `GET /api/v1/settlements/batches` (`listBatches({ rail?, status? })`)
 > - `POST /api/v1/settlements/batches` (`createBatch({ requestBody })`)
 > - `GET /api/v1/settlements/batches/{batchId}` (`getBatch({ batchId })`)
@@ -30,15 +32,16 @@ Implement the **Settlement Batch Dashboard** (FR-OPS-RECON-01) in `apps/admin-co
 > - `POST /api/v1/settlements/batches/{batchId}/close` (`closeBatch({ batchId })`)
 > - `GET /api/v1/settlements/batches/{batchId}/records` (`listBatchRecords({ batchId })`)
 > - `POST /api/v1/settlements/records/{recordId}/retry` (`retryRecord({ recordId })`)
-> All methods are fully generated and typed in `@ble-frontend/api-client`.
+>   All methods are fully generated and typed in `@ble-frontend/api-client`.
 
 > [!NOTE]
 > **Route Structure in Admin Console:**  
 > The existing sidebar in `LayoutComponent` already has a nav item for `Reconciliation` (`/recon`).  
 > We will structure `ReconciliationComponent` (`/recon`) as a unified back-office hub with two sub-tabs:
+>
 > - **Settlement Batches** (S5-T2 — Active)
 > - **Reconciliation Cases** (S5-T3 — Staged for next task)  
-> We will also add `/settlements` to `app.routes.ts` as an alias redirecting to `/recon?tab=batches`.
+>   We will also add `/settlements` to `app.routes.ts` as an alias redirecting to `/recon?tab=batches`.
 
 ---
 
@@ -53,7 +56,7 @@ graph TD
     B --> F[CreateBatchModalComponent<br/>Rail, Currency, Business Date]
     B --> G[SettleBatchModalComponent<br/>External Ref, Confirmation, Idempotency]
     B --> H[BatchRecordsDrawerComponent<br/>Records Table, Retry Action, Delta KPI]
-    
+
     B --> S[SettlementAdminService]
     S --> API["@ble-frontend/api-client<br/>/api/v1/settlements/*"]
 ```
@@ -65,6 +68,7 @@ graph TD
 ### Layer 1: State Management (`SettlementAdminService`)
 
 #### [NEW] `apps/admin-console/src/features/settlement/services/settlement-admin.service.ts`
+
 - **Signals:**
   - `batches = signal<SettlementBatchResponse[]>([])`
   - `selectedBatch = signal<SettlementBatchResponse | null>(null)`
@@ -99,6 +103,7 @@ graph TD
   - `enqueueRecord(request: EnqueueSettlementRecordRequest): Promise<SettlementRecordResponse>`
 
 #### [NEW] `apps/admin-console/src/features/settlement/services/settlement-admin.service.spec.ts`
+
 - Unit tests verifying:
   - Batch retrieval with query parameters.
   - Filtering by rail and status.
@@ -111,6 +116,7 @@ graph TD
 ### Layer 2: Modal & Dialog Components
 
 #### [NEW] `apps/admin-console/src/features/settlement/components/create-batch-modal.component.ts`
+
 - Standalone modal dialog (`role="dialog"`, `aria-modal="true"`).
 - Fields:
   - `rail`: Dropdown (`SEPA`, `ACH`, `FEDWIRE`, `SWIFT`, `FAWRY`).
@@ -122,6 +128,7 @@ graph TD
 - Loading and error states.
 
 #### [NEW] `apps/admin-console/src/features/settlement/components/settle-batch-modal.component.ts`
+
 - High-stakes execution modal with clear warning indicators.
 - Displays target batch details: Batch ID, Rail, Currency, Records Count, Total Amount.
 - Inputs:
@@ -130,10 +137,12 @@ graph TD
 - Submits settlement payload to `settleBatch` with error handling.
 
 #### [NEW] `apps/admin-console/src/features/settlement/components/fail-batch-modal.component.ts`
+
 - Modal dialog for marking a batch failed (`POST /api/v1/settlements/batches/{id}/fail`).
 - Mandatory `reason` textarea explaining the failure cause (e.g. Clearing network rejection, schema mismatch).
 
 #### [NEW] `apps/admin-console/src/features/settlement/components/batch-records-drawer.component.ts`
+
 - Slide-over drawer / modal showing individual records for a selected batch.
 - Batch Header:
   - Batch ID badge, status chip, rail, business date.
@@ -144,6 +153,7 @@ graph TD
 - Refresh records button and close drawer action.
 
 #### [NEW] `apps/admin-console/src/features/settlement/components/index.ts`
+
 - Barrel file exporting all settlement subcomponents.
 
 ---
@@ -151,6 +161,7 @@ graph TD
 ### Layer 3: Dashboard & Routing Integration
 
 #### [NEW] `apps/admin-console/src/features/settlement/settlement-batch-dashboard.component.ts`
+
 - Main back-office settlement workstation:
   - **KPI Banner:** 4 metric cards (Total Batches, Active/Open Batches, Settled Volume, Failed Batches).
   - **Filter Bar:** Rail filter dropdown, Status filter buttons/dropdown, search input (ID or external ref), Refresh button, `+ Create Batch` button.
@@ -161,12 +172,14 @@ graph TD
   - Modals embedded: `CreateBatchModal`, `SettleBatchModal`, `FailBatchModal`, `BatchRecordsDrawer`.
 
 #### [MODIFY] `apps/admin-console/src/features/recon/reconciliation.component.ts`
+
 - Upgrade from placeholder stub to dual-tab workspace:
   - Tab 1: `Settlement Batches` (embeds `<ble-settlement-batch-dashboard />`).
   - Tab 2: `Reconciliation Cases` (placeholder badge for S5-T3).
   - Supports query param tab synchronization (`?tab=batches` or `?tab=cases`).
 
 #### [MODIFY] `apps/admin-console/src/app/app.routes.ts`
+
 - Add route alias `/settlements` redirecting to `/recon?tab=batches`.
 
 ---
@@ -174,6 +187,7 @@ graph TD
 ## 5. Verification Plan
 
 ### Automated Tests
+
 1. **Unit Tests (Vitest):**
    ```bash
    pnpm vitest run --config apps/admin-console/vitest.config.ts src/features/settlement/
@@ -193,6 +207,7 @@ graph TD
    ```
 
 ### Manual Verification
+
 - Navigate to `/recon` or `/settlements`.
 - Verify KPI summary cards display accurate counts and volumes.
 - Open `+ Create Batch` modal, fill rail `SEPA`, currency `EUR`, and submit.

@@ -43,7 +43,9 @@ import type { SettlementBatchResponse } from '@ble-frontend/api-client';
             <span class="header-icon">⚠</span>
             <div>
               <h3 id="fail-batch-title" class="title-text">Mark Batch As Failed</h3>
-              <p class="subtitle-text">Record clearing rejection or settlement processing failure</p>
+              <p class="subtitle-text">
+                Record clearing rejection or settlement processing failure
+              </p>
             </div>
           </div>
           <button
@@ -425,9 +427,7 @@ export class FailBatchModalComponent {
   @Output() onFailed = new EventEmitter<SettlementBatchResponse>();
 
   readonly isValid = computed<boolean>(() => {
-    return (
-      this.targetBatch() !== null && this.reason().trim().length >= 5 && !this.submitting()
-    );
+    return this.targetBatch() !== null && this.reason().trim().length >= 5 && !this.submitting();
   });
 
   @HostListener('document:keydown.escape')
