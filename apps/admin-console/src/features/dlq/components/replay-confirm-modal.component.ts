@@ -69,7 +69,11 @@ import type { DeadLetterEventResponse } from '@ble-frontend/api-client';
         </div>
 
         <!-- Event Details (Single Mode) -->
-        <div class="event-summary-card" *ngIf="!isBulk() && targetEvent()" data-testid="replay-event-summary">
+        <div
+          class="event-summary-card"
+          *ngIf="!isBulk() && targetEvent()"
+          data-testid="replay-event-summary"
+        >
           <div class="summary-col">
             <span class="summary-label">Event ID</span>
             <span class="summary-val mono">{{ targetEvent()?.id }}</span>
@@ -117,7 +121,9 @@ import type { DeadLetterEventResponse } from '@ble-frontend/api-client';
             data-testid="replay-confirm-btn"
           >
             <span class="spinner" *ngIf="submitting()"></span>
-            <span>{{ submitting() ? 'Replaying...' : (isBulk() ? 'Replay All' : 'Confirm Replay') }}</span>
+            <span>{{
+              submitting() ? 'Replaying...' : isBulk() ? 'Replay All' : 'Confirm Replay'
+            }}</span>
           </button>
         </div>
       </div>

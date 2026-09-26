@@ -76,7 +76,14 @@ export class DlqAdminService {
         const errMsgMatch = e.errorMessage?.toLowerCase().includes(query) ?? false;
         const topicMatch = e.topic?.toLowerCase().includes(query) ?? false;
         const eventTypeMatch = e.eventType?.toLowerCase().includes(query) ?? false;
-        if (!idMatch && !origIdMatch && !aggIdMatch && !errMsgMatch && !topicMatch && !eventTypeMatch) {
+        if (
+          !idMatch &&
+          !origIdMatch &&
+          !aggIdMatch &&
+          !errMsgMatch &&
+          !topicMatch &&
+          !eventTypeMatch
+        ) {
           return false;
         }
       }
@@ -188,9 +195,7 @@ export class DlqAdminService {
       const replayed = await replayDeadLetterEvent({ id });
 
       this.events.update((items) =>
-        items.map((item) =>
-          item.id === id ? { ...item, ...replayed, status: 'REPLAYED' } : item
-        )
+        items.map((item) => (item.id === id ? { ...item, ...replayed, status: 'REPLAYED' } : item)),
       );
 
       if (this.selectedEvent()?.id === id) {
@@ -219,8 +224,8 @@ export class DlqAdminService {
 
       this.events.update((items) =>
         items.map((item) =>
-          item.id === id ? { ...item, ...discarded, status: 'DISCARDED' } : item
-        )
+          item.id === id ? { ...item, ...discarded, status: 'DISCARDED' } : item,
+        ),
       );
 
       if (this.selectedEvent()?.id === id) {

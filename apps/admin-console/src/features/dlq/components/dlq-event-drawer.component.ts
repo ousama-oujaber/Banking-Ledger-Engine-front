@@ -85,7 +85,8 @@ import type { DeadLetterEventResponse } from '@ble-frontend/api-client';
           <div class="meta-item">
             <span class="meta-label">Aggregate</span>
             <span class="meta-val mono">
-              {{ targetEvent()?.aggregateType || 'Aggregate' }}: {{ targetEvent()?.aggregateId || 'N/A' }}
+              {{ targetEvent()?.aggregateType || 'Aggregate' }}:
+              {{ targetEvent()?.aggregateId || 'N/A' }}
             </span>
           </div>
           <div class="meta-item">
@@ -118,20 +119,28 @@ import type { DeadLetterEventResponse } from '@ble-frontend/api-client';
           </div>
 
           <!-- Stack Trace Viewer -->
-          <div class="section-card" *ngIf="targetEvent()?.stackTrace" data-testid="drawer-stacktrace-section">
+          <div
+            class="section-card"
+            *ngIf="targetEvent()?.stackTrace"
+            data-testid="drawer-stacktrace-section"
+          >
             <div class="section-header">
               <span class="section-title">Exception Stack Trace</span>
               <button
                 type="button"
                 class="btn-copy"
-                (click)="copyToClipboard(targetEvent()?.stackTrace, 'Stack trace copied to clipboard')"
+                (click)="
+                  copyToClipboard(targetEvent()?.stackTrace, 'Stack trace copied to clipboard')
+                "
                 data-testid="copy-stacktrace-btn"
               >
                 <span>📋</span>
                 <span>Copy Stack Trace</span>
               </button>
             </div>
-            <pre class="code-block stack-trace mono" data-testid="drawer-stacktrace">{{ targetEvent()?.stackTrace }}</pre>
+            <pre class="code-block stack-trace mono" data-testid="drawer-stacktrace">{{
+              targetEvent()?.stackTrace
+            }}</pre>
           </div>
 
           <!-- JSON Payload Inspector -->
@@ -148,11 +157,17 @@ import type { DeadLetterEventResponse } from '@ble-frontend/api-client';
                 <span>Copy JSON Payload</span>
               </button>
             </div>
-            <pre class="code-block payload-json mono" data-testid="drawer-payload">{{ formattedPayload() }}</pre>
+            <pre class="code-block payload-json mono" data-testid="drawer-payload">{{
+              formattedPayload()
+            }}</pre>
           </div>
 
           <!-- Message Headers Table -->
-          <div class="section-card" *ngIf="headerEntries().length > 0" data-testid="drawer-headers-section">
+          <div
+            class="section-card"
+            *ngIf="headerEntries().length > 0"
+            data-testid="drawer-headers-section"
+          >
             <div class="section-header">
               <span class="section-title">Transport & Broker Headers</span>
               <span class="badge-headers-count">{{ headerEntries().length }} Headers</span>

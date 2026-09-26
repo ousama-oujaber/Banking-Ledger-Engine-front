@@ -40,9 +40,7 @@ import type { DeadLetterEventResponse } from '@ble-frontend/api-client';
             <span class="header-icon">✕</span>
             <div>
               <h3 id="discard-modal-title" class="title-text">Discard Dead-Letter Event</h3>
-              <p class="subtitle-text">
-                Permanently purge event from delivery pipeline
-              </p>
+              <p class="subtitle-text">Permanently purge event from delivery pipeline</p>
             </div>
           </div>
           <button
@@ -61,8 +59,8 @@ import type { DeadLetterEventResponse } from '@ble-frontend/api-client';
           <span class="callout-icon">⛔</span>
           <div class="callout-text">
             <strong>Irreversible Action:</strong> Discarding marks this event as dead-ended.
-            Subscribers will not receive this event and no further automatic or manual retries
-            will be attempted.
+            Subscribers will not receive this event and no further automatic or manual retries will
+            be attempted.
           </div>
         </div>
 
@@ -78,7 +76,9 @@ import type { DeadLetterEventResponse } from '@ble-frontend/api-client';
           </div>
           <div class="summary-col">
             <span class="summary-label">Failure Reason</span>
-            <span class="summary-val text-danger truncate">{{ targetEvent()?.errorMessage || 'Unknown error' }}</span>
+            <span class="summary-val text-danger truncate">{{
+              targetEvent()?.errorMessage || 'Unknown error'
+            }}</span>
           </div>
         </div>
 
